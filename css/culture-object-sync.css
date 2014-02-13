@@ -1,0 +1,27 @@
+h2 small {
+  font-size: 0.5em;
+}
+
+.form-table th {
+  width: 280px;
+}
+
+input[type=text] {
+  width: 350px;
+}
+
+div.help-tooltip {
+  margin-top: 4px;
+  margin-left: 2px;
+  -webkit-transition-duration: .1s;
+  transition-duration: .1s;
+}
+
+div.help-tooltip:hover {
+  color: #2ea2cc;
+  cursor: pointer;
+}
+
+.tooltiptext {
+  display: none;
+}
