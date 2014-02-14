@@ -19,8 +19,11 @@ class Culture_Object_Sync_Settings extends Culture_Object_Sync_Core {
     add_settings_section('cos_core_settings','Main Settings',array($this,'generate_settings_group_content'),'cos_settings');
   
   	register_setting('cos_settings', 'cos_core_sync_provider');
+  	register_setting('cos_settings', 'cos_core_sync_key');
   	
   	add_settings_field('cos_core_sync_provider', 'Sync Provider', array($this,'generate_settings_sync_providers_input'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_provider'));
+  	
+  	add_settings_field('cos_core_sync_key', 'Sync Key', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_key'));
     
     $provider = $this->get_sync_provider();
     if ($provider) {
@@ -77,6 +80,8 @@ class Culture_Object_Sync_Settings extends Culture_Object_Sync_Core {
     $field = $args['field'];
     $value = get_option($field);
     echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+    if ($field == "cos_core_sync_key") echo '<br /><small>This key forms part of the sync URL for a little bit more security.</small>';
+    
   }
   
 }

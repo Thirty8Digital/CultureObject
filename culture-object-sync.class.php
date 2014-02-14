@@ -10,6 +10,29 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
   function __construct() {
     $settings = new Culture_Object_Sync_Settings();
     add_action('init', array($this, 'wordpress_init'));
+    add_action('parse_request', array($this, 'should_sync'));
+  }
+  
+  function should_sync() {
+    if (isset($_GET['perform_culture_object_sync']) && isset($_GET['key'])) {
+      if (get_option('cos_core_sync_key') == $_GET['key']) {
+        $provider = $this->get_sync_provider();
+        if ($provider) {
+          if (!class_exists($provider['class'])) include_once($provider['file']);
+          $provider_class = new $provider['class'];
+          try {
+            $provider_class->perform_sync();
+          } catch (Culture_Object_Sync_Provider_Exception $e) {
+            echo "A sync exception occurred during sync:<br />";
+            echo $e->getMessage();
+          } catch (Exception $e) {
+            echo "An unknown exception occurred during sync:<br />";
+            echo $e->getMessage();
+          }
+          exit();
+        }
+      }
+    }
   }
   
   function wordpress_init() {
@@ -29,7 +52,7 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
       'public' => false,
       'menu_icon' => 'dashicons-list-view',
       'show_ui' => true,
-      'supports' => array('title')
+      'supports' => array('title','custom-fields')
       )
     );
     
