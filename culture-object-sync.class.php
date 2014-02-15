@@ -11,6 +11,12 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
     $settings = new Culture_Object_Sync_Settings();
     add_action('init', array($this, 'wordpress_init'));
     add_action('parse_request', array($this, 'should_sync'));
+    register_activation_hook(__FILE__, array($this, 'regenerate_permalinks'));
+    register_deactivation_hook(__FILE__, array($this, 'regenerate_permalinks'));
+  }
+  
+  function regenerate_permalinks() {
+  	flush_rewrite_rules();
   }
   
   function should_sync() {
@@ -49,9 +55,8 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
           "not_found" => "No objects found",
           "not_found_in_trash" => "No objects found in the trash"
         ),
-      'public' => false,
+      'public' => true,
       'menu_icon' => 'dashicons-list-view',
-      'show_ui' => true,
       'supports' => array('title','custom-fields')
       )
     );
