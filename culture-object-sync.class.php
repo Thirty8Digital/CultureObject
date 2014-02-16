@@ -56,6 +56,7 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
           "not_found_in_trash" => "No objects found in the trash"
         ),
       'public' => true,
+      'has_archive' => true,
       'menu_icon' => 'dashicons-list-view',
       'supports' => array('title','custom-fields')
       )
