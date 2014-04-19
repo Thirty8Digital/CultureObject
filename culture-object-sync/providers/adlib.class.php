@@ -59,30 +59,32 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
         
     $previous_posts = $this->get_current_object_ids();
     
-    die("Performing sync!");
+    $file = $_FILES['cos_adlib_import_file'];
+    $data = file_get_contents($file['tmp_name']);
+    $result = json_decode(json_encode((array)simplexml_load_string($data)),1);
     
-    /*
+    unlink($file['tmp_name']);
     
-    $result = $this->perform_request($url);
-    
-    $number_of_objects = $result['response']['numFound'];
+    $number_of_objects = count($result['recordList']['record']);
     if ($number_of_objects > 0) {
-      foreach($result['response']['docs'] as $doc) {
-        $object_exists = $this->object_exists($doc['dc.identifier']);
+      foreach($result['recordList']['record'] as $doc) {
+        $object_exists = $this->object_exists($doc['object_number']);
+        
         if (!$object_exists) {
           $current_objects[] = $this->create_object($doc);
-          echo "Created object ".$doc['dc.title'][0]."<br />\r\n";
+          echo "Created object ".$doc['title']."<br />\r\n";
         } else {
           $current_objects[] = $this->update_object($doc);
-          echo "Updated object ".$doc['dc.title'][0]."<br />\r\n";
+          echo "Updated object ".$doc['title']."<br />\r\n";
         }
+        
       }
       $this->clean_objects($current_objects,$previous_posts);
-    }*/
-      
+    }
+          
     $end = microtime(true);
     
-    echo "Sync Complete in ".($end-$start)." seconds\r\n";
+    echo "Import complete in ".($end-$start)." seconds\r\n";
     
   }
   
@@ -108,7 +110,7 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   
   function create_object($doc) {
     $post = array(
-      'post_title'        => $doc['dc.title'][0],
+      'post_title'        => $doc['title'],
       'post_type'         => 'object',
       'post_status'       => 'publish',
     );
@@ -119,10 +121,10 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   
   
   function update_object($doc) {
-    $existing_id = $this->existing_object_id($doc['dc.identifier']);
+    $existing_id = $this->existing_object_id($doc['object_number']);
     $post = array(
       'ID'                => $existing_id,
-      'post_title'        => $doc['dc.title'][0],
+      'post_title'        => $doc['title'],
       'post_type'         => 'object',
       'post_status'       => 'publish',
     );
@@ -133,7 +135,6 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   
   function update_object_meta($post_id,$doc) {
     foreach($doc as $key => $value) {
-      if (is_array($value)) $value = $value[0];
       update_post_meta($post_id,$key,$value);
     }
   }
@@ -141,7 +142,7 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   function object_exists($id) {
     $args = array(
       'post_type' => 'object',
-      'meta_key' => 'dc.identifier',
+      'meta_key' => 'object_number',
       'meta_value' => $id,
     );
     return (count(get_posts($args)) > 0) ? true : false;
@@ -150,7 +151,7 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   function existing_object_id($id) {
     $args = array(
       'post_type' => 'object',
-      'meta_key' => 'dc.identifier',
+      'meta_key' => 'object_number',
       'meta_value' => $id
     );
     $posts = get_posts($args);
