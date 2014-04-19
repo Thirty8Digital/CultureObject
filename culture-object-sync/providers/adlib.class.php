@@ -120,7 +120,7 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     
     $import_duration = $end-$start;
     
-    set_transient('cos_message', "AdLib import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds", 0);
+    set_transient('cos_message', "AdLib import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
     
     set_transient('cos_adlib_show_message', true, 0);
     set_transient('cos_adlib_status', $import_status, 0);
