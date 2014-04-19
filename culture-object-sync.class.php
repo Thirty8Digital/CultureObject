@@ -26,6 +26,10 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
         if ($provider) {
           if (!class_exists($provider['class'])) include_once($provider['file']);
           $provider_class = new $provider['class'];
+          $info = $provider_class->get_provider_information();
+          
+          if (!$info['cron']) die("Culture Object Sync Provider (".$info['name'].") does not support automated sync.");
+          
           try {
             $provider_class->perform_sync();
           } catch (Culture_Object_Sync_Provider_Exception $e) {

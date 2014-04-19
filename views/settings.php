@@ -10,9 +10,16 @@
   }
   ?>
 
-  <p>The Culture Object Sync plugin requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.</p>
-  <p>You shouldn't do this too frequently to avoid causing problems with your provider. Once a day should be enough.</p>
-  <p>You should load the following URL:<br /><?php echo get_site_url(); ?>?perform_culture_object_sync=true&key=<?php echo get_option('cos_core_sync_key'); ?></p>
+  
+  <?php if ($provider_info && !$provider_info['cron']) { ?>
+    <p><strong>Your current provider, <?php echo $provider_info['name']; ?>, doesn't support automated import by cron. You do not need to create a cronjob for this provider.</strong></p>
+  <?php } else { ?>
+  
+    <p>The Culture Object Sync plugin requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.</p>
+    <p>You shouldn't do this too frequently to avoid causing problems with your provider. Once a day should be enough.</p>
+    <p>You should load the following URL:<br /><?php echo get_site_url(); ?>?perform_culture_object_sync=true&key=<?php echo get_option('cos_core_sync_key'); ?></p>
+
+  <?php } ?>
 
   <form method="POST" action="options.php">
     <?php 

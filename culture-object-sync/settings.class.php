@@ -47,7 +47,15 @@ class Culture_Object_Sync_Settings extends Culture_Object_Sync_Core {
     add_options_page('Culture Object Sync Settings', 'Culture Object Sync', 'administrator', 'cos_settings', array($this,'generate_settings_page'));
   }
   
-  function generate_settings_page() {
+  function generate_settings_page() {    
+    
+    $provider = $this->get_sync_provider();
+    if ($provider) {
+      if (!class_exists($provider['class'])) include_once($provider['file']);
+      $provider_class = new $provider['class'];
+      $provider_info = $provider_class->get_provider_information();
+    }
+    
     include($this->plugin_directory.'/views/settings.php');
   }
   
