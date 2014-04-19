@@ -16,8 +16,12 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   }
   
   function execute_load_action() {
-    if (isset($_GET['cos_adlib_import_file']) && isset($_GET['cos_adlib_nonce']) && wp_verify_nonce('cos_adlib_import')) {
-      die('VERIFIED NONCE');
+    if (isset($_FILES['cos_adlib_import_file']) && isset($_POST['cos_adlib_nonce'])) {
+      if (wp_verify_nonce($_POST['cos_adlib_nonce'], 'cos_adlib_import')) {
+        $this->perform_sync();
+      } else {
+        die("Security Violation.");
+      }
     }
   }
   
@@ -55,10 +59,12 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
         
     $previous_posts = $this->get_current_object_ids();
     
-    $result = $this->perform_request($url);
-    
+    die("Performing sync!");
     
     /*
+    
+    $result = $this->perform_request($url);
+    
     $number_of_objects = $result['response']['numFound'];
     if ($number_of_objects > 0) {
       foreach($result['response']['docs'] as $doc) {
