@@ -10,6 +10,7 @@ abstract class Culture_Object_Sync_Provider {
   
   //This method must perform the sync for your provider. All errors must throw a 'Culture_Object_Sync_Provider_Exception' exception, or one extended from it.
   abstract function perform_sync();
+  
 }
 
 ?>

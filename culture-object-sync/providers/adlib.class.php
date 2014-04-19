@@ -15,24 +15,29 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     return $this->provider;
   }
   
-  function register_settings() {
-    add_settings_section('cos_provider_settings','Provider Settings',array($this,'generate_settings_group_content'),'cos_settings');
+  function execute_load_action() {
+    if (isset($_GET['cos_adlib_import_file']) && isset($_GET['cos_adlib_nonce']) && wp_verify_nonce('cos_adlib_import')) {
+      die('VERIFIED NONCE');
+    }
   }
   
-  function generate_settings_group_content() {
+  function register_settings() {
+    return;
+  }
+  
+  function generate_settings_outside_form_html() {
+  
+    echo "<h3>Provider Settings</h3>";
+    
     echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
     
     echo "<p>You need to upload an xml export file from AdLib in order to import.</p>";
     
     echo '<form method="post" action="" enctype="multipart/form-data">';
       echo '<input type="file" name="cos_adlib_import_file" />';
-      echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" />';
-      echo '<input type="submit" class="button" value="Import AdLib Dump" />';
+      echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" /><br /><br />';
+      echo '<input type="submit" class="button button-primary" value="Import AdLib Dump" />';
     echo '</form>';
-        
-  }
-  
-  function execute_load_action() {
     
   }
   

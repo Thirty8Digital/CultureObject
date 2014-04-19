@@ -29,4 +29,6 @@
     ?>
   </form>
   
+  <?php if (method_exists($provider_class, 'generate_settings_outside_form_html')) $provider_class->generate_settings_outside_form_html(); ?>
+  
 </div>
