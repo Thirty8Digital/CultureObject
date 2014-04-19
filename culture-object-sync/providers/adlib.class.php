@@ -35,14 +35,27 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     
     echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
     
-    echo "<p>You need to upload an xml export file from AdLib in order to import.</p>";
-    
-    echo '<form method="post" action="" enctype="multipart/form-data">';
-      echo '<input type="file" name="cos_adlib_import_file" />';
-      echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" /><br /><br />';
-      echo '<input type="submit" class="button button-primary" value="Import AdLib Dump" />';
-    echo '</form>';
-    
+    $show_message = get_transient('cos_adlib_show_message');
+    if ($show_message) {
+      echo "<p><strong>Your AdLib import was successful.</strong></p>";
+      
+      if (get_transient('cos_adlib_status')) echo implode('<br />',get_transient('cos_adlib_status'));
+      if (get_transient('cos_adlib_deleted')) echo implode('<br />',get_transient('cos_adlib_deleted'));
+      
+      delete_transient('cos_adlib_show_message');
+      delete_transient('cos_adlib_status');
+      delete_transient('cos_adlib_deleted');
+      
+      
+    } else {    
+      echo "<p>You need to upload an xml export file from AdLib in order to import.</p>";
+      
+      echo '<form method="post" action="" enctype="multipart/form-data">';
+        echo '<input type="file" name="cos_adlib_import_file" />';
+        echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" /><br /><br />';
+        echo '<input type="submit" class="button button-primary" value="Import AdLib Dump" />';
+      echo '</form>';
+    }
   }
   
   function generate_settings_field_input_text($args) {
@@ -65,6 +78,9 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     
     unlink($file['tmp_name']);
     
+    $created = 0;
+    $updated = 0;
+    
     $number_of_objects = count($result['recordList']['record']);
     if ($number_of_objects > 0) {
       foreach($result['recordList']['record'] as $doc) {
@@ -72,20 +88,26 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
         
         if (!$object_exists) {
           $current_objects[] = $this->create_object($doc);
-          echo "Created object ".$doc['title']."<br />\r\n";
+          $import_status[] = "Created object: ".$doc['title'];
+          $created++;
         } else {
           $current_objects[] = $this->update_object($doc);
-          echo "Updated object ".$doc['title']."<br />\r\n";
+          $import_status[] = "Updated object: ".$doc['title'];
+          $updated++;
         }
         
       }
-      $this->clean_objects($current_objects,$previous_posts);
+      $deleted = $this->clean_objects($current_objects,$previous_posts);
     }
           
     $end = microtime(true);
     
-    echo "Import complete in ".($end-$start)." seconds\r\n";
+    $import_duration = $end-$start;
     
+    set_transient('cos_message', "AdLib import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds", 0);
+    
+    set_transient('cos_adlib_show_message', true, 0);
+    set_transient('cos_adlib_status', $import_status, 0);
   }
   
   function get_current_object_ids() {
@@ -101,10 +123,19 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   function clean_objects($current_objects,$previous_objects) {
     $to_remove = array_diff($previous_objects, $current_objects);
     
+    $import_delete = array();
+    
+    $deleted = 0;
+    
     foreach($to_remove as $remove_id) {
       wp_delete_post($remove_id,true);
-      echo "Removed Post ID $remove_id as it is no longer in the list of objects from AdLib<br />";
+      $import_delete[] = "Removed Post ID $remove_id as it is no longer in the exported list of objects from AdLib";
+      $deleted++;
     }
+    
+    set_transient('cos_adlib_deleted', $import_delete, 0);
+    
+    return $deleted;
     
   }
   

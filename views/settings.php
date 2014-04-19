@@ -1,4 +1,11 @@
 <div class="wrap">
+  <?php if (get_transient('cos_message')) { ?>
+    <div class="updated">
+      <p><?php echo get_transient('cos_message'); ?></p>
+    </div>
+    <?php delete_transient('cos_message'); ?>
+  <?php } ?>
+
   <?php $plugin_data = get_plugin_data(__DIR__.'/../culture-object-sync.php'); ?>
   <h2>Culture Object Sync Settings <small>Version <?php echo $plugin_data['Version']; ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
 
