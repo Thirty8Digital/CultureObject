@@ -39,8 +39,24 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     if ($show_message) {
       echo "<p><strong>Your AdLib import was successful.</strong></p>";
       
+      echo '<a href="#" id="show_adlib_import_log">Show Log</a>';
+      
+      ?>
+      
+      <script>
+      jQuery('#show_adlib_import_log').click(function(e) {
+        e.preventDefault();
+        jQuery('#show_adlib_import_log').remove();
+        jQuery('#adlib_import_log').css('display','block');
+      });
+      </script>
+      
+      <?php 
+      
+      echo '<div id="adlib_import_log" style="display: none">';
       if (get_transient('cos_adlib_status')) echo implode('<br />',get_transient('cos_adlib_status'));
       if (get_transient('cos_adlib_deleted')) echo implode('<br />',get_transient('cos_adlib_deleted'));
+      echo '</div>';
       
       delete_transient('cos_adlib_show_message');
       delete_transient('cos_adlib_status');
