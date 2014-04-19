@@ -44,7 +44,19 @@ class Culture_Object_Sync_Settings extends Culture_Object_Sync_Core {
   }
   
   function add_menu_item() {
-    add_options_page('Culture Object Sync Settings', 'Culture Object Sync', 'administrator', 'cos_settings', array($this,'generate_settings_page'));
+    $options_page = add_options_page('Culture Object Sync Settings', 'Culture Object Sync', 'administrator', 'cos_settings', array($this,'generate_settings_page'));
+    add_action('load-'.$options_page, array($this,'provide_load_action'));
+  }
+  
+  function provide_load_action() {
+    
+    $provider = $this->get_sync_provider();
+    if ($provider) {
+      if (!class_exists($provider['class'])) include_once($provider['file']);
+      $provider_class = new $provider['class'];
+      if (method_exists($provider_class, 'execute_load_action')) $provider_class->execute_load_action();
+    }
+    
   }
   
   function generate_settings_page() {    

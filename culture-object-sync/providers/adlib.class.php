@@ -32,6 +32,10 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
         
   }
   
+  function execute_load_action() {
+    
+  }
+  
   function generate_settings_field_input_text($args) {
     $field = $args['field'];
     $value = get_option($field);
