@@ -130,12 +130,10 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
         
         if (!$object_exists) {
           $current_objects[] = $this->create_object($doc);
-          if (is_array($doc['title'])) die("STILL AN ARRAY");
           $import_status[] = "Created object: ".$doc['title'];
           $created++;
         } else {
           $current_objects[] = $this->update_object($doc);
-          if (is_array($doc['title'])) die("STILL AN ARRAY");
           $import_status[] = "Updated object: ".$doc['title'];
           $updated++;
         }
@@ -210,6 +208,22 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   
   function update_object_meta($post_id,$doc) {
     foreach($doc as $key => $value) {
+	    if (is_array($value)) {
+		    $value = array_filter($value);
+		    $value = array_unique($value, SORT_REGULAR);
+		    if (count($value) == 1) $value = array_pop($value);
+	    }
+	    if ($key == "reproduction.reference") {
+		    if (is_array($value)) {
+			    $newvalue = array();
+			    foreach($value as $img) {
+				    $newvalue[] = str_replace('\\','/',$img);
+			    }
+			    $value = $newvalue;
+		    } else {
+			    $value = str_replace('\\','/',$value);
+		    }
+	    }
       update_post_meta($post_id,$key,$value);
     }
   }
