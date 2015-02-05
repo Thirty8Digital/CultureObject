@@ -89,7 +89,15 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     $previous_posts = $this->get_current_object_ids();
     
     $file = $_FILES['cos_adlib_import_file'];
+    if ($file['error'] !== 0) {
+	    throw new Exception("Unable to import. PHP reported an error code ".$file['error']);
+	    return;
+	  }
     $data = file_get_contents($file['tmp_name']);
+    if (!$data) {
+	    throw new Exception("Unable to import: File upload corrupt");
+	    return;
+	  }
     $result = json_decode(json_encode((array)simplexml_load_string($data)),1);
     
     unlink($file['tmp_name']);
