@@ -66,11 +66,18 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     } else {    
       echo "<p>You need to upload an xml export file from AdLib in order to import.</p>";
       
-      echo '<form method="post" action="" enctype="multipart/form-data">';
+      echo '<form id="adlib_import_form" method="post" action="" enctype="multipart/form-data">';
         echo '<input type="file" name="cos_adlib_import_file" />';
         echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" /><br /><br />';
-        echo '<input type="submit" class="button button-primary" value="Import AdLib Dump" />';
+        echo '<input id="adlib_import_submit" type="button" class="button button-primary" value="Import AdLib Dump" />';
       echo '</form>';
+      echo '<script>
+      jQuery("#adlib_import_submit").click(function(e) {
+			  jQuery("#adlib_import_submit").val("Importing... This may take some time...");
+			  jQuery("#adlib_import_submit").addClass("button-disabled");
+			  window.setTimeout(\'jQuery("#adlib_import_form").submit();\',100);
+			});
+      </script>';
     }
   }
   
