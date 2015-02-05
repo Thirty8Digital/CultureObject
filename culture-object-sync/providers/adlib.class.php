@@ -82,7 +82,7 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
   
   function perform_sync() {
     set_time_limit(0);
-    ini_set('memory_limit','768M');
+    ini_set('memory_limit','2048M');
     
     $start = microtime(true);
         
@@ -105,17 +105,30 @@ class Culture_Object_Sync_Provider_AdLib extends Culture_Object_Sync_Provider {
     $created = 0;
     $updated = 0;
     
-    $number_of_objects = count($result['recordList']['record']);
+    if (isset($result['recordList']['record'])) {
+	    $import = $result['recordList']['record'];
+    } else if (isset($result['record'])) {
+	    $import = $result['record'];
+    } else {
+	    throw new Exception("Unable to import. This file appears to be incompatible.");
+	    return;
+    }
+    
+    $number_of_objects = count($import);
     if ($number_of_objects > 0) {
-      foreach($result['recordList']['record'] as $doc) {
+      foreach($import as $doc) {
+	      
+        if (is_array($doc['title'])) $doc['title'] = array_pop($doc['title']); //This is weird. Why would you have more than one title per record?
         $object_exists = $this->object_exists($doc['object_number']);
         
         if (!$object_exists) {
           $current_objects[] = $this->create_object($doc);
+          if (is_array($doc['title'])) die("STILL AN ARRAY");
           $import_status[] = "Created object: ".$doc['title'];
           $created++;
         } else {
           $current_objects[] = $this->update_object($doc);
+          if (is_array($doc['title'])) die("STILL AN ARRAY");
           $import_status[] = "Updated object: ".$doc['title'];
           $updated++;
         }
