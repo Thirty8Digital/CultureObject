@@ -8,76 +8,43 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
     'name' => 'RAMM',
     'version' => '1.0',
     'developer' => 'Thirty8 Digital',
-    'cron' => false
+    'cron' => true
   );
   
   function get_provider_information() {
     return $this->provider;
   }
   
-  function execute_load_action() {
-    if (isset($_FILES['cos_ramm_import_file']) && isset($_POST['cos_ramm_nonce'])) {
-      if (wp_verify_nonce($_POST['cos_ramm_nonce'], 'cos_ramm_import')) {
-        $this->perform_sync();
-      } else {
-        die("Security Violation.");
-      }
-    }
-  }
-  
   function register_settings() {
-    return;
+    add_settings_section('cos_provider_settings','Provider Settings',array($this,'generate_settings_group_content'),'cos_settings');
+  
+  	register_setting('cos_settings', 'cos_provider_feed_url');
+  	
+  	add_settings_field('cos_provider_feed_url', 'RAMM Feed URL', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_feed_url'));
   }
   
-  function generate_settings_outside_form_html() {
-  
-    echo "<h3>Provider Settings</h3>";
-    
+  function generate_settings_group_content() {
     echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
     
-    $show_message = get_transient('cos_ramm_show_message');
-    if ($show_message) {
-      echo "<p><strong>Your RAMM import was successful.</strong></p>";
-      
-      echo '<a href="#" id="show_ramm_import_log">Show Log</a>';
-      
-      ?>
-      
-      <script>
-      jQuery('#show_ramm_import_log').click(function(e) {
-        e.preventDefault();
-        jQuery('#show_ramm_import_log').remove();
-        jQuery('#ramm_import_log').css('display','block');
-      });
-      </script>
-      
-      <?php 
-      
-      echo '<div id="ramm_import_log" style="display: none">';
-      if (get_transient('cos_ramm_status')) echo implode('<br />',get_transient('cos_ramm_status'));
-      if (get_transient('cos_ramm_deleted')) echo implode('<br />',get_transient('cos_ramm_deleted'));
-      echo '</div>';
-      
-      delete_transient('cos_ramm_show_message');
-      delete_transient('cos_ramm_status');
-      delete_transient('cos_ramm_deleted');
-      
-      
-    } else {    
-      echo "<p>You need to upload an xml export file from RAMM in order to import.</p>";
-      
-      echo '<form id="ramm_import_form" method="post" action="" enctype="multipart/form-data">';
-        echo '<input type="file" name="cos_ramm_import_file" />';
-        echo '<input type="hidden" name="cos_ramm_nonce" value="'.wp_create_nonce('cos_ramm_import').'" /><br /><br />';
-        echo '<input id="ramm_import_submit" type="button" class="button button-primary" value="Import RAMM Dump" />';
-      echo '</form>';
-      echo '<script>
-      jQuery("#ramm_import_submit").click(function(e) {
-			  jQuery("#ramm_import_submit").val("Importing... This may take some time...");
-			  jQuery("#ramm_import_submit").addClass("button-disabled");
-			  window.setTimeout(\'jQuery("#ramm_import_form").submit();\',100);
-			});
-      </script>';
+    
+    $authority = get_option('cos_provider_feed_url');
+    if (!empty($authority)) {
+      echo "<p>RAMM's JSON data takes a while to generate, so we're unable to show a preview here, and import could take a very long time.</p>";
+    }
+    
+  }
+  
+  function perform_request($url) {
+    $json = file_get_contents($url);
+    $data = json_decode($json,true);
+    if ($data) {
+      if (isset($data[0]['Id'])) {
+        return $data;
+      } else {
+        throw new Culture_Object_Sync_Provider_RAMM_Exception("RAMM returned an invalid JSON response");
+      }
+    } else {
+      throw new Culture_Object_Sync_Provider_RAMM_Exception("RAMM returned an invalid response: ".$json);
     }
   }
   
@@ -89,69 +56,41 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
   
   function perform_sync() {
     set_time_limit(0);
-    ini_set('memory_limit','2048M');
-    
-    throw new Exception("Not yet implemented");
+    ini_set('memory_limit','768M');
     
     $start = microtime(true);
-        
+    
+    $url = get_option('cos_provider_feed_url');
+    if (empty($url)) {
+      throw new Culture_Object_Sync_Provider_RAMM_Exception("You haven't yet configured a URL in the Culture Object Sync settings");
+    }
+    
     $previous_posts = $this->get_current_object_ids();
     
-    $file = $_FILES['cos_ramm_import_file'];
-    if ($file['error'] !== 0) {
-	    throw new Exception("Unable to import. PHP reported an error code ".$file['error']);
-	    return;
-	  }
-    $data = file_get_contents($file['tmp_name']);
-    if (!$data) {
-	    throw new Exception("Unable to import: File upload corrupt");
-	    return;
-	  }
-    $result = json_decode(json_encode((array)simplexml_load_string($data)),1);
+    $result = $this->perform_request($url);
     
-    unlink($file['tmp_name']);
-    
-    $created = 0;
-    $updated = 0;
-    
-    if (isset($result['recordList']['record'])) {
-	    $import = $result['recordList']['record'];
-    } else if (isset($result['record'])) {
-	    $import = $result['record'];
-    } else {
-	    throw new Exception("Unable to import. This file appears to be incompatible.");
-	    return;
-    }
-    
-    $number_of_objects = count($import);
+    $number_of_objects = count($result);
+    echo "Importing ".$number_of_objects." objects.<br />\r\n";
     if ($number_of_objects > 0) {
-      foreach($import as $doc) {
-	      
-        if (is_array($doc['title'])) $doc['title'] = array_pop($doc['title']); //This is weird. Why would you have more than one title per record?
-        $object_exists = $this->object_exists($doc['object_number']);
-        
+      foreach($result as $doc) {
+	      $doc['identifier'] = $doc['Id'];
+	      unset($doc['Id']);
+        $object_exists = $this->object_exists($doc['identifier']);
         if (!$object_exists) {
           $current_objects[] = $this->create_object($doc);
-          $import_status[] = "Created object: ".$doc['title'];
-          $created++;
+          echo "Created object ".$doc['Title']."<br />\r\n";
         } else {
           $current_objects[] = $this->update_object($doc);
-          $import_status[] = "Updated object: ".$doc['title'];
-          $updated++;
+          echo "Updated object ".$doc['Title']."<br />\r\n";
         }
-        
       }
-      $deleted = $this->clean_objects($current_objects,$previous_posts);
+      $this->clean_objects($current_objects,$previous_posts);
     }
-          
+      
     $end = microtime(true);
     
-    $import_duration = $end-$start;
+    echo "Sync Complete in ".($end-$start)." seconds\r\n";
     
-    set_transient('cos_message', "RAMM import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
-    
-    set_transient('cos_ramm_show_message', true, 0);
-    set_transient('cos_ramm_status', $import_status, 0);
   }
   
   function get_current_object_ids() {
@@ -167,25 +106,16 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
   function clean_objects($current_objects,$previous_objects) {
     $to_remove = array_diff($previous_objects, $current_objects);
     
-    $import_delete = array();
-    
-    $deleted = 0;
-    
     foreach($to_remove as $remove_id) {
       wp_delete_post($remove_id,true);
-      $import_delete[] = "Removed Post ID $remove_id as it is no longer in the exported list of objects from RAMM";
-      $deleted++;
+      echo "Removed Post ID $remove_id as it is no longer in the list of objects from RAMM<br />";
     }
-    
-    set_transient('cos_ramm_deleted', $import_delete, 0);
-    
-    return $deleted;
     
   }
   
   function create_object($doc) {
     $post = array(
-      'post_title'        => $doc['title'],
+      'post_title'        => $doc['Title'],
       'post_type'         => 'object',
       'post_status'       => 'publish',
     );
@@ -196,10 +126,10 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
   
   
   function update_object($doc) {
-    $existing_id = $this->existing_object_id($doc['object_number']);
+    $existing_id = $this->existing_object_id($doc['identifier']);
     $post = array(
       'ID'                => $existing_id,
-      'post_title'        => $doc['title'],
+      'post_title'        => $doc['Title'],
       'post_type'         => 'object',
       'post_status'       => 'publish',
     );
@@ -210,30 +140,28 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
   
   function update_object_meta($post_id,$doc) {
     foreach($doc as $key => $value) {
-	    if (is_array($value)) {
-		    $value = array_filter($value);
-		    $value = array_unique($value, SORT_REGULAR);
-		    if (count($value) == 1) $value = array_pop($value);
-	    }
-	    if ($key == "reproduction.reference") {
-		    if (is_array($value)) {
-			    $newvalue = array();
-			    foreach($value as $img) {
-				    $newvalue[] = str_replace('\\','/',$img);
-			    }
-			    $value = $newvalue;
-		    } else {
-			    $value = str_replace('\\','/',$value);
+	    if (empty($value)) continue;
+	    $key = strtolower($key);
+	    if (is_array($value) && $key == "data") {
+		    foreach($value as $single_value) {
+			    $key = $this->slugify_key($single_value['Name']);
+			    update_post_meta($post_id,'data_'.$key,$single_value['Value']);
 		    }
-	    }
-      update_post_meta($post_id,$key,$value);
+	    } else if (is_array($value) && $key == "comments") {
+		    foreach($value as $key => $single_value) {
+			    $key = $this->slugify_key($key);
+			    update_post_meta($post_id,'comments_'.$key,$single_value);
+		    }
+	    } else {
+		    update_post_meta($post_id,$key,$value);
+      }
     }
   }
   
   function object_exists($id) {
     $args = array(
       'post_type' => 'object',
-      'meta_key' => 'object_number',
+      'meta_key' => 'identifier',
       'meta_value' => $id,
     );
     return (count(get_posts($args)) > 0) ? true : false;
@@ -242,7 +170,7 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
   function existing_object_id($id) {
     $args = array(
       'post_type' => 'object',
-      'meta_key' => 'object_number',
+      'meta_key' => 'identifier',
       'meta_value' => $id
     );
     $posts = get_posts($args);
@@ -250,6 +178,15 @@ class Culture_Object_Sync_Provider_RAMM extends Culture_Object_Sync_Provider {
     return $posts[0]->ID;
   }
   
+  function slugify_key($text) {
+		$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
+		$text = trim($text, '-');
+		$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+		$text = strtolower($text);
+		$text = preg_replace('~[^-\w]+~', '', $text);
+		if (empty($text)) return 'empty';
+		return $text;
+  }
   
 }
 

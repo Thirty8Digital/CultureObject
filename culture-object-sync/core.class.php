@@ -17,9 +17,10 @@ abstract class Culture_Object_Sync_Core {
     foreach (glob(__DIR__.'/providers/*.class.php') as $filename) {
       $classes = $this->file_get_php_classes($filename);
       foreach($classes as $class) {
-        $test = '/Culture_Object_Sync_Provider_[0-9a-z]+$/i';
+        $test = '/Culture_Object_Sync_Provider_[0-9a-z_]+$/i';
         $match = preg_match($test, $class);
-        if ($match) {
+        $is_exception = substr(strtolower($class),-9);
+        if ($match && $is_exception != "exception") {
           $provider['file'] = $filename;
           $provider['class'] = $class;
           

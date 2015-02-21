@@ -5,7 +5,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu_Exception extends Culture_Obje
 class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Provider {
   
   private $provider = array(
-    'name' => 'Serialized_Emu',
+    'name' => 'Serialized Emu',
     'version' => '1.0',
     'developer' => 'Thirty8 Digital',
     'cron' => false
@@ -37,7 +37,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
     
     $show_message = get_transient('cos_emu_show_message');
     if ($show_message) {
-      echo "<p><strong>Your Serialized_Emu import was successful.</strong></p>";
+      echo "<p><strong>Your Serialized Emu import was successful.</strong></p>";
       
       echo '<a href="#" id="show_emu_import_log">Show Log</a>';
       
@@ -64,12 +64,12 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
       
       
     } else {    
-      echo "<p>You need to upload an xml export file from Serialized_Emu in order to import.</p>";
+      echo "<p>You need to upload an serialised PHP export file from emu in order to import.</p>";
       
       echo '<form id="emu_import_form" method="post" action="" enctype="multipart/form-data">';
         echo '<input type="file" name="cos_emu_import_file" />';
         echo '<input type="hidden" name="cos_emu_nonce" value="'.wp_create_nonce('cos_emu_import').'" /><br /><br />';
-        echo '<input id="emu_import_submit" type="button" class="button button-primary" value="Import Serialized_Emu Dump" />';
+        echo '<input id="emu_import_submit" type="button" class="button button-primary" value="Import Serialized Emu Dump" />';
       echo '</form>';
       echo '<script>
       jQuery("#emu_import_submit").click(function(e) {
@@ -91,8 +91,6 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
     set_time_limit(0);
     ini_set('memory_limit','2048M');
     
-    throw new Exception("Not yet implemented");
-    
     $start = microtime(true);
         
     $previous_posts = $this->get_current_object_ids();
@@ -107,21 +105,20 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
 	    throw new Exception("Unable to import: File upload corrupt");
 	    return;
 	  }
-    $result = json_decode(json_encode((array)simplexml_load_string($data)),1);
+	  
+	  $data = unserialize($data);
+	  
+	  if (!$data) throw new Culture_Object_Sync_Provider_Serialized_Emu_Exception('PHP\'s unserialize was unable to process the file provided.');
     
     unlink($file['tmp_name']);
     
     $created = 0;
     $updated = 0;
     
-    if (isset($result['recordList']['record'])) {
-	    $import = $result['recordList']['record'];
-    } else if (isset($result['record'])) {
-	    $import = $result['record'];
-    } else {
-	    throw new Exception("Unable to import. This file appears to be incompatible.");
-	    return;
-    }
+    $import = $data[0]->rows;
+    
+    var_dump($import);
+    die();
     
     $number_of_objects = count($import);
     if ($number_of_objects > 0) {
@@ -185,7 +182,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   
   function create_object($doc) {
     $post = array(
-      'post_title'        => $doc['title'],
+      'post_title'        => $doc['Name'],
       'post_type'         => 'object',
       'post_status'       => 'publish',
     );
@@ -196,10 +193,10 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   
   
   function update_object($doc) {
-    $existing_id = $this->existing_object_id($doc['object_number']);
+    $existing_id = $this->existing_object_id($doc['Identifier']);
     $post = array(
       'ID'                => $existing_id,
-      'post_title'        => $doc['title'],
+      'post_title'        => $doc['Name'],
       'post_type'         => 'object',
       'post_status'       => 'publish',
     );
@@ -210,21 +207,11 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   
   function update_object_meta($post_id,$doc) {
     foreach($doc as $key => $value) {
+	    $key = strtolower($key);
 	    if (is_array($value)) {
 		    $value = array_filter($value);
 		    $value = array_unique($value, SORT_REGULAR);
 		    if (count($value) == 1) $value = array_pop($value);
-	    }
-	    if ($key == "reproduction.reference") {
-		    if (is_array($value)) {
-			    $newvalue = array();
-			    foreach($value as $img) {
-				    $newvalue[] = str_replace('\\','/',$img);
-			    }
-			    $value = $newvalue;
-		    } else {
-			    $value = str_replace('\\','/',$value);
-		    }
 	    }
       update_post_meta($post_id,$key,$value);
     }
@@ -233,7 +220,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   function object_exists($id) {
     $args = array(
       'post_type' => 'object',
-      'meta_key' => 'object_number',
+      'meta_key' => 'identifier',
       'meta_value' => $id,
     );
     return (count(get_posts($args)) > 0) ? true : false;
