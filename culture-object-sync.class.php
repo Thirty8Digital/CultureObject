@@ -11,6 +11,7 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
     $settings = new Culture_Object_Sync_Settings();
     add_action('init', array($this, 'wordpress_init'));
     add_action('parse_request', array($this, 'should_sync'));
+    add_action('init', array($this, 'purge_objects'));
     register_activation_hook(__FILE__, array($this, 'regenerate_permalinks'));
     register_deactivation_hook(__FILE__, array($this, 'regenerate_permalinks'));
   }
@@ -42,6 +43,16 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
           exit();
         }
       }
+    }
+  }
+  
+  function purge_objects() {
+	  if (is_admin() && isset($_GET['perform_cos_debug_purge'])) {
+		  $all_objects = get_posts(array('post_type'=>'object','posts_per_page'=>-1));
+		  foreach($all_objects as $obj) {
+		    wp_delete_post($obj->ID,true);
+	    }
+	    die("Deleted all COS objects.");
     }
   }
   
