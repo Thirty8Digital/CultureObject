@@ -1,11 +1,11 @@
 <?php
 
-class Culture_Object_Sync_Provider_Serialized_Emu_Exception extends Culture_Object_Sync_Provider_Exception { }
+class Culture_Object_Sync_Provider_Emu_Exception extends Culture_Object_Sync_Provider_Exception { }
 
-class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Provider {
+class Culture_Object_Sync_Provider_Emu extends Culture_Object_Sync_Provider {
   
   private $provider = array(
-    'name' => 'Serialized Emu',
+    'name' => 'Emu',
     'version' => '1.0',
     'developer' => 'Thirty8 Digital',
     'cron' => false
@@ -37,7 +37,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
     
     $show_message = get_transient('cos_emu_show_message');
     if ($show_message) {
-      echo "<p><strong>Your Serialized Emu import was successful.</strong></p>";
+      echo "<p><strong>Your Emu import was successful.</strong></p>";
       
       echo '<a href="#" id="show_emu_import_log">Show Log</a>';
       
@@ -64,12 +64,12 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
       
       
     } else {    
-      echo "<p>You need to upload an serialised PHP export file from emu in order to import.</p>";
+      echo "<p>You need to upload the JSON export file from emu in order to import.</p>";
       
       echo '<form id="emu_import_form" method="post" action="" enctype="multipart/form-data">';
         echo '<input type="file" name="cos_emu_import_file" />';
         echo '<input type="hidden" name="cos_emu_nonce" value="'.wp_create_nonce('cos_emu_import').'" /><br /><br />';
-        echo '<input id="emu_import_submit" type="button" class="button button-primary" value="Import Serialized Emu Dump" />';
+        echo '<input id="emu_import_submit" type="button" class="button button-primary" value="Import Emu Dump" />';
       echo '</form>';
       echo '<script>
       jQuery("#emu_import_submit").click(function(e) {
@@ -106,34 +106,26 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
 	    return;
 	  }
 	  
-	  $data = unserialize($data);
-	  
-	  if (!$data) throw new Culture_Object_Sync_Provider_Serialized_Emu_Exception('PHP\'s unserialize was unable to process the file provided.');
+	  $data = json_decode($data,true);
+	  $created = $updated = 0;
     
-    unlink($file['tmp_name']);
+    $number_of_objects = 0;
     
-    $created = 0;
-    $updated = 0;
-    
-    $import = $data[0]->rows;
-    
-    var_dump($import);
-    die();
-    
-    $number_of_objects = count($import);
-    if ($number_of_objects > 0) {
-      foreach($import as $doc) {
+    foreach($data as $dataset) {
+	    $number_of_objects = $number_of_objects + count($dataset['rows']);
+      foreach($dataset['rows'] as $doc) {
 	      
-        if (is_array($doc['title'])) $doc['title'] = array_pop($doc['title']); //This is weird. Why would you have more than one title per record?
-        $object_exists = $this->object_exists($doc['object_number']);
+	      $doc = $this->flattenWithKeys($doc);
+	      
+        $object_exists = $this->object_exists($doc['ID']);
         
         if (!$object_exists) {
           $current_objects[] = $this->create_object($doc);
-          $import_status[] = "Created object: ".$doc['title'];
+          $import_status[] = "Created object: ".$doc['Name'];
           $created++;
         } else {
           $current_objects[] = $this->update_object($doc);
-          $import_status[] = "Updated object: ".$doc['title'];
+          $import_status[] = "Updated object: ".$doc['Name'];
           $updated++;
         }
         
@@ -145,7 +137,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
     
     $import_duration = $end-$start;
     
-    set_transient('cos_message', "Serialized Emu import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
+    set_transient('cos_message', "Emu import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
     
     set_transient('cos_emu_show_message', true, 0);
     set_transient('cos_emu_status', $import_status, 0);
@@ -193,7 +185,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   
   
   function update_object($doc) {
-    $existing_id = $this->existing_object_id($doc['Identifier']);
+    $existing_id = $this->existing_object_id($doc['ID']);
     $post = array(
       'ID'                => $existing_id,
       'post_title'        => $doc['Name'],
@@ -206,6 +198,8 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   }
   
   function update_object_meta($post_id,$doc) {
+	  $doc['identifier'] = $doc['ID'];
+	  unset($doc['ID']);
     foreach($doc as $key => $value) {
 	    $key = strtolower($key);
 	    if (is_array($value)) {
@@ -229,7 +223,7 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
   function existing_object_id($id) {
     $args = array(
       'post_type' => 'object',
-      'meta_key' => 'object_number',
+      'meta_key' => 'identifier',
       'meta_value' => $id
     );
     $posts = get_posts($args);
@@ -237,6 +231,21 @@ class Culture_Object_Sync_Provider_Serialized_Emu extends Culture_Object_Sync_Pr
     return $posts[0]->ID;
   }
   
+  function flattenWithKeys(array $array, array $path = []) {
+    $result = [];
+
+    foreach ($array as $key => $value) {
+      $currentPath = array_merge($path, [$key]);
+
+      if (is_array($value)) {
+          $result = array_merge($result, $this->flattenWithKeys($value, $currentPath));
+      } else {
+          $result[join('_', $currentPath)] = $value;
+      }
+    }
+
+    return $result;
+	}
   
 }
 
