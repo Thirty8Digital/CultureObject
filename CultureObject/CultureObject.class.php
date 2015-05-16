@@ -1,14 +1,16 @@
 <?php
+	
+namespace CultureObject;
 
-require_once('culture-object-sync/core.class.php');
-require_once('culture-object-sync/exceptions.class.php');
-require_once('culture-object-sync/provider.class.php');
-require_once('culture-object-sync/settings.class.php');
+require_once('Core.class.php');
+require_once('Exception/Exception.class.php');
+require_once('Provider.class.php');
+require_once('Settings.class.php');
 
-class Culture_Object_Sync extends Culture_Object_Sync_Core {
+class CultureObject extends Core {
   
   function __construct() {
-    $settings = new Culture_Object_Sync_Settings();
+    $settings = new Settings();
     add_action('init', array($this, 'wordpress_init'));
     add_action('parse_request', array($this, 'should_sync'));
     add_action('init', array($this, 'purge_objects'));
@@ -33,7 +35,7 @@ class Culture_Object_Sync extends Culture_Object_Sync_Core {
           
           try {
             $provider_class->perform_sync();
-          } catch (Culture_Object_Sync_Provider_Exception $e) {
+          } catch (ProviderException $e) {
             echo "A sync exception occurred during sync:<br />";
             echo $e->getMessage();
           } catch (Exception $e) {

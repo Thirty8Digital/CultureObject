@@ -1,6 +1,8 @@
 <?php
+	
+namespace CultureObject;
 
-class Culture_Object_Sync_Settings extends Culture_Object_Sync_Core {
+class Settings extends Core {
 
   private $plugin_directory;
   private $plugin_url;

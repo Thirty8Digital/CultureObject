@@ -18,7 +18,7 @@
   ?>
 
   
-  <?php if ($provider_info && !$provider_info['cron']) { ?>
+  <?php if (isset($provider_info) && $provider_info && !$provider_info['cron']) { ?>
     <p><strong>Your current provider, <?php echo $provider_info['name']; ?>, doesn't support automated import by cron. You do not need to create a cronjob for this provider.</strong></p>
   <?php } else { ?>
   
@@ -36,6 +36,6 @@
     ?>
   </form>
   
-  <?php if (method_exists($provider_class, 'generate_settings_outside_form_html')) $provider_class->generate_settings_outside_form_html(); ?>
+  <?php if (isset($provider_class) && method_exists($provider_class, 'generate_settings_outside_form_html')) $provider_class->generate_settings_outside_form_html(); ?>
   
 </div>

@@ -1,6 +1,8 @@
 <?php
+	
+namespace CultureObject;
 
-abstract class Culture_Object_Sync_Core {
+abstract class Core {
 
   function get_sync_provider() {
     $value = get_option('cos_core_sync_provider');
@@ -14,13 +16,11 @@ abstract class Culture_Object_Sync_Core {
 
   function find_providers() {
     $valid_providers = array();
-    foreach (glob(__DIR__.'/providers/*.class.php') as $filename) {
+    foreach (glob(__DIR__.'/../providers/*.class.php') as $filename) {
       $classes = $this->file_get_php_classes($filename);
       foreach($classes as $class) {
-        $test = '/Culture_Object_Sync_Provider_[0-9a-z_]+$/i';
-        $match = preg_match($test, $class);
         $is_exception = substr(strtolower($class),-9);
-        if ($match && $is_exception != "exception") {
+        if ($is_exception != "exception") {
           $provider['file'] = $filename;
           $provider['class'] = $class;
           
