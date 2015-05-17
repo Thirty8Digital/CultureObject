@@ -1,11 +1,11 @@
 CultureObject v2.0
 ====================
 
-##Welcome
+Welcome
 ---------------------
 CultureObject is an open source WordPress plugin designed to bring your collection management software to the web. Mike will write some more here.
 
-##Usage Instructions
+Usage Instructions
 ---------------------
 We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently 1.1)
 
@@ -17,4 +17,3 @@ Presently, if you want to write a custom provider, you'll need to follow the def
 
 ###A note of caution
 We're building out CultureObject 2.0 to support field mapping and image importing into WordPress which will result in significant changes to provider classes as we move a bunch of common and new functionality into helper classes. If you're looking to go into a production environment in the near term, we'd recommend building against CultureObject 1.1, which we will continue to support until 2.0 is released.
-
