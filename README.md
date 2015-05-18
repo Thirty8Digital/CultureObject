@@ -17,8 +17,12 @@ How it works
 
 At present the data you provide to CultureObject can be one of two flavours:
 
-1) eee
+1) A publicly queryable RESTy API
+2) A structured xml / json data file
 
+The data "shape" - and how to deal with the data the plugin finds - is dealt with in what are called "providers". These are PHP classes which you'll find in the /providers directory.
+
+The plugin is built to be extensible so that when other providers are added to this directory it'll pick them up in the interface and give you the option to select them and run the import.
 
 
 Usage Instructions
