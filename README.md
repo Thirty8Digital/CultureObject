@@ -29,7 +29,7 @@ Usage Instructions
 ---------------------
 We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently 1.1)
 
-Originally an in-house project at [Thirty8Digital](http://www.thirty8digital.co.uk) by [Liam Gladdy](https://gladdy.uk)
+Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
 We're currently building CultureObject into an expandable framework that will be listed in the WordPress plugin directory, and allow third-party plugins to add supply additional providers.
 
