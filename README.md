@@ -3,13 +3,33 @@ CultureObject v2.0
 
 Welcome
 ---------------------
-CultureObject is an open source WordPress plugin designed to bring your collection management software to the web. Mike will write some more here.
+CultureObject is an open source WordPress plugin designed to help you put your museum object records on the web. 
+
+How it works
+---------------------
+
+* Install it from here (and shortly the WordPress plugin respository)
+* Activate it
+* Point it at your data
+* Run the import
+* Build the necessary theme pages to display your content. 
+* Point in wonder at your beautiful new site before heading to the pub to celebrate.
+
+At present the data you provide to CultureObject can be one of two flavours:
+
+1. A publicly queryable RESTy API
+2. A structured xml / json data file
+
+The data "shape" - and how to deal with the data the plugin finds - is dealt with in what are called "providers". These are PHP classes which you'll find in the /providers directory.
+
+The plugin is built to be extensible so that when other providers are added to this directory it'll pick them up in the interface and give you the option to select them and run the import.
+
 
 Usage Instructions
 ---------------------
 We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently 1.1)
 
-Originally an in-house project at [Thirty8Digital](http://www.thirty8digital.co.uk) by [Liam Gladdy](https://gladdy.uk)
+Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
 We're currently building CultureObject into an expandable framework that will be listed in the WordPress plugin directory, and allow third-party plugins to add supply additional providers.
 
