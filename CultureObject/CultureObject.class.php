@@ -50,7 +50,7 @@ class CultureObject extends Core {
 	
 	function purge_objects() {
 		if (is_admin() && isset($_GET['perform_cos_debug_purge'])) {
-			$all_objects = get_posts(array('post_type'=>'object','posts_per_page'=>-1));
+			$all_objects = get_posts(array('post_status'=>'any','post_type'=>'object','posts_per_page'=>-1));
 			foreach($all_objects as $obj) {
 				wp_delete_post($obj->ID,true);
 			}

@@ -1,11 +1,11 @@
 <?php
 
-class CollectionSpaceException extends \CultureObject\Exception\ProviderException { }
+class AdLibException extends \CultureObject\Exception\ProviderException { }
 
-class CollectionSpace extends \CultureObject\Provider {
+class AdLib extends \CultureObject\Provider {
 	
 	private $provider = array(
-		'name' => 'CollectionSpace',
+		'name' => 'AdLib',
 		'version' => '1.0',
 		'developer' => 'Thirty8 Digital',
 		'cron' => false
@@ -16,8 +16,8 @@ class CollectionSpace extends \CultureObject\Provider {
 	}
 	
 	function execute_load_action() {
-		if (isset($_FILES['cos_collectionspace_import_file']) && isset($_POST['cos_collectionspace_nonce'])) {
-			if (wp_verify_nonce($_POST['cos_collectionspace_nonce'], 'cos_collectionspace_import')) {
+		if (isset($_FILES['cos_adlib_import_file']) && isset($_POST['cos_adlib_nonce'])) {
+			if (wp_verify_nonce($_POST['cos_adlib_nonce'], 'cos_adlib_import')) {
 				$this->perform_sync();
 			} else {
 				die("Security Violation.");
@@ -34,7 +34,51 @@ class CollectionSpace extends \CultureObject\Provider {
 		echo "<h3>Provider Settings</h3>";
 		
 		echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
+		
+		$show_message = get_transient('cos_adlib_show_message');
+		if ($show_message) {
+			echo "<p><strong>Your AdLib import was successful.</strong></p>";
 			
+			echo '<a href="#" id="show_adlib_import_log">Show Log</a>';
+			
+			?>
+			
+			<script>
+			jQuery('#show_adlib_import_log').click(function(e) {
+				e.preventDefault();
+				jQuery('#show_adlib_import_log').remove();
+				jQuery('#adlib_import_log').css('display','block');
+			});
+			</script>
+			
+			<?php 
+			
+			echo '<div id="adlib_import_log" style="display: none">';
+			if (get_transient('cos_adlib_status')) echo implode('<br />',get_transient('cos_adlib_status'));
+			if (get_transient('cos_adlib_deleted')) echo implode('<br />',get_transient('cos_adlib_deleted'));
+			echo '</div>';
+			
+			delete_transient('cos_adlib_show_message');
+			delete_transient('cos_adlib_status');
+			delete_transient('cos_adlib_deleted');
+			
+			
+		} else {		
+			echo "<p>You need to upload an xml export file from AdLib in order to import.</p>";
+			
+			echo '<form id="adlib_import_form" method="post" action="" enctype="multipart/form-data">';
+				echo '<input type="file" name="cos_adlib_import_file" />';
+				echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" /><br /><br />';
+				echo '<input id="adlib_import_submit" type="button" class="button button-primary" value="Import AdLib Dump" />';
+			echo '</form>';
+			echo '<script>
+			jQuery("#adlib_import_submit").click(function(e) {
+				jQuery("#adlib_import_submit").val("Importing... This may take some time...");
+				jQuery("#adlib_import_submit").addClass("button-disabled");
+				window.setTimeout(\'jQuery("#adlib_import_form").submit();\',100);
+			});
+			</script>';
+		}
 	}
 	
 	function generate_settings_field_input_text($args) {
@@ -51,14 +95,61 @@ class CollectionSpace extends \CultureObject\Provider {
 				
 		$previous_posts = $this->get_current_object_ids();
 		
+		$file = $_FILES['cos_adlib_import_file'];
+		if ($file['error'] !== 0) {
+			throw new Exception("Unable to import. PHP reported an error code ".$file['error']);
+			return;
+		}
+		$data = file_get_contents($file['tmp_name']);
+		if (!$data) {
+			throw new Exception("Unable to import: File upload corrupt");
+			return;
+		}
+		$result = json_decode(json_encode((array)simplexml_load_string($data)),1);
+		
+		unlink($file['tmp_name']);
+		
+		$created = 0;
+		$updated = 0;
+		
+		if (isset($result['recordList']['record'])) {
+			$import = $result['recordList']['record'];
+		} else if (isset($result['record'])) {
+			$import = $result['record'];
+		} else {
+			throw new Exception("Unable to import. This file appears to be incompatible.");
+			return;
+		}
+		
+		$number_of_objects = count($import);
+		if ($number_of_objects > 0) {
+			foreach($import as $doc) {
+				
+				if (is_array($doc['title'])) $doc['title'] = array_pop($doc['title']); //This is weird. Why would you have more than one title per record?
+				$object_exists = $this->object_exists($doc['object_number']);
+				
+				if (!$object_exists) {
+					$current_objects[] = $this->create_object($doc);
+					$import_status[] = "Created object: ".$doc['title'];
+					$created++;
+				} else {
+					$current_objects[] = $this->update_object($doc);
+					$import_status[] = "Updated object: ".$doc['title'];
+					$updated++;
+				}
+				
+			}
+			$deleted = $this->clean_objects($current_objects,$previous_posts);
+		}
+					
 		$end = microtime(true);
 		
 		$import_duration = $end-$start;
 		
-		set_transient('cos_message', "CollectionSpace import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
+		set_transient('cos_message', "AdLib import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
 		
-		set_transient('cos_collectionspace_show_message', true, 0);
-		set_transient('cos_collectionspace_status', $import_status, 0);
+		set_transient('cos_adlib_show_message', true, 0);
+		set_transient('cos_adlib_status', $import_status, 0);
 	}
 	
 	function get_current_object_ids() {
@@ -80,11 +171,11 @@ class CollectionSpace extends \CultureObject\Provider {
 		
 		foreach($to_remove as $remove_id) {
 			wp_delete_post($remove_id,true);
-			$import_delete[] = "Removed Post ID $remove_id as it is no longer in the exported list of objects from CollectionSpace";
+			$import_delete[] = "Removed Post ID $remove_id as it is no longer in the exported list of objects from AdLib";
 			$deleted++;
 		}
 		
-		set_transient('cos_collectionspace_deleted', $import_delete, 0);
+		set_transient('cos_adlib_deleted', $import_delete, 0);
 		
 		return $deleted;
 		
