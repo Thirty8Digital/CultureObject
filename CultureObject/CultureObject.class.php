@@ -79,7 +79,7 @@ class CultureObject extends Core {
 			'public' => true,
 			'has_archive' => true,
 			'menu_icon' => 'dashicons-list-view',
-			'supports' => array('title','custom-fields')
+			'supports' => array('title','custom-fields','thumbnail')
 			)
 		);
 		
