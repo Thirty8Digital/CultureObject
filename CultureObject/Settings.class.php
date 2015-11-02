@@ -14,6 +14,7 @@ class Settings extends Core {
 		add_action('admin_menu', array($this,'add_menu_item'));
 		add_action('admin_enqueue_scripts', array($this,'add_admin_assets'));
 		add_action('admin_init', array($this,'register_settings'));
+		add_action('init', array($this,'provide_init_action'));
 	}
 	
 	function register_settings() {
@@ -75,6 +76,17 @@ class Settings extends Core {
 			if (!class_exists($provider['class'])) include_once($provider['file']);
 			$provider_class = new $provider['class'];
 			if (method_exists($provider_class, 'execute_load_action')) $provider_class->execute_load_action();
+		}
+		
+	}
+	
+	function provide_init_action() {
+		
+		$provider = $this->get_sync_provider();
+		if ($provider) {
+			if (!class_exists($provider['class'])) include_once($provider['file']);
+			$provider_class = new $provider['class'];
+			if (method_exists($provider_class, 'execute_init_action')) $provider_class->execute_init_action();
 		}
 		
 	}

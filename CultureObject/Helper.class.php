@@ -26,11 +26,42 @@ class Helper extends Core {
 		echo cos_get_remapped_field_name($key);
 	}
 	
-	function add_image_to_gallery_from_url($url) {
+	function add_image_to_gallery_from_url($url,$save_as,$stream_context = false) {
 		$upload_dir = wp_upload_dir();
-		$save_path = $upload_dir['path'];
-		$img = @file_get_contents($url);
+		$img = @file_get_contents($url, false, $stream_context);
 		if ($img) {
+			foreach($http_response_header as $header) {
+        if (strpos(strtolower($header),'content-disposition') !== false) {
+          $tmp_name = explode('=', $header);
+          if ($tmp_name[1]) $file_name = trim($tmp_name[1],'";\'');
+	      }
+			}
+			if (isset($file_name) && $file_name) $save_as = $file_name;
+			$file_location = $upload_dir['path'].'/'.$save_as;
+			file_put_contents($file_location, $img);
+			
+			$filetype = wp_check_filetype( basename( $file_location ), null );
+			
+			// Prepare an array of post data for the attachment.
+			$attachment = array(
+				'guid'           => $upload_dir['url'] . '/' . basename( $file_location ), 
+				'post_mime_type' => $filetype['type'],
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_location ) ),
+				'post_content'   => '',
+				'post_status'    => 'inherit'
+			);
+			
+			// Insert the attachment.
+			$attach_id = wp_insert_attachment( $attachment, $file_location, 0);
+			
+			// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			
+			// Generate the metadata for the attachment, and update the database record.
+			$attach_data = wp_generate_attachment_metadata( $attach_id, $file_location );
+			wp_update_attachment_metadata( $attach_id, $attach_data );
+			
+			return $attach_id;
 			//TODO: Handle save
 		} else return false;
 	}

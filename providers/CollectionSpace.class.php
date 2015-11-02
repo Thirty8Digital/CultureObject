@@ -54,9 +54,11 @@ class CollectionSpace extends \CultureObject\Provider {
 		return $this->provider;
 	}
 	
+	function execute_init_action() {
+		$this->register_prevent_safe_password_save();
+	}
+	
 	function execute_load_action() {
-		
-		add_action('init', array($this, 'register_prevent_safe_password_save'));
 		
 		if (isset($_FILES['cos_collectionspace_import_file']) && isset($_POST['cos_collectionspace_nonce'])) {
 			if (wp_verify_nonce($_POST['cos_collectionspace_nonce'], 'cos_collectionspace_import')) {
@@ -71,15 +73,12 @@ class CollectionSpace extends \CultureObject\Provider {
 		add_settings_section('cos_provider_settings','Provider Settings',array($this,'generate_settings_group_content'),'cos_settings');
 	
 		register_setting('cos_settings', 'cos_provider_collectionspace_host_uri');
-		
 		add_settings_field('cos_provider_collectionspace_host_uri', 'CollectionSpace Host URI', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_host_uri'));
 	
 		register_setting('cos_settings', 'cos_provider_collectionspace_username');
-		
 		add_settings_field('cos_provider_collectionspace_username', 'CollectionSpace Username', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_username'));
 	
 		register_setting('cos_settings', 'cos_provider_collectionspace_password');
-		
 		add_settings_field('cos_provider_collectionspace_password', 'CollectionSpace Password', array($this,'generate_settings_field_input_password'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_password'));
 		
 	}
@@ -111,7 +110,7 @@ class CollectionSpace extends \CultureObject\Provider {
 			if ($result) {
 				$number_of_objects = $result['totalItems'];
 				echo "<p>There are ".number_format($number_of_objects)." objects currently available to sync from CollectionSpace.</p>";
-				echo "<p>Based on this number, you should expect a sync to take approximately ".ceil($number_of_objects/90)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
+				echo "<p>Based on this number, you should expect a sync to take approximately ".ceil($number_of_objects/30)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
 				if ($number_of_objects > 100000) echo "<p>CollectionSpace sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.</p>";
 			} else {
 				echo "<p>We couldn't connect to CollectionSpace. Please check the details below and try again.</p>";
@@ -196,6 +195,10 @@ class CollectionSpace extends \CultureObject\Provider {
 			$object = $this->perform_request($url, $this->generate_stream_context($user,$pass), true);
 			
 			$this->update_collectionspace_object($post,$object);
+			
+			$saved_image = $this->check_for_image($post);
+			if ($saved_image) $import_status[] = "Saved image for object ".$post->ID;
+			
 			update_post_meta($post->ID,'cos_init',1);
 			if (!$init) {
 				$update_post = array(
@@ -221,6 +224,50 @@ class CollectionSpace extends \CultureObject\Provider {
 		
 		set_transient('cos_collectionspace_show_message', true, 0);
 		set_transient('cos_collectionspace_status', $import_status, 0);
+	}
+	
+	function check_for_image($post) {
+		$csid = get_post_meta($post->ID, 'csid', true);
+		
+		$helper = new CultureObject\Helper;
+		
+		$host = get_option('cos_provider_collectionspace_host_uri');
+		$user = get_option('cos_provider_collectionspace_username');
+		$pass = get_option('cos_provider_collectionspace_password');
+		
+		echo "<pre>";
+		$uri = $host.'/relations?sbj='.$csid.'&objType=Media';
+		
+		$req = $this->perform_request($uri, $this->generate_stream_context($user,$pass), true);
+		
+		$image = false;
+		if (isset($req['relation-list-item']) && is_array($req['relation-list-item'])) {
+			if (isset($req['relation-list-item']['csid'])) {
+				//single item.
+				if (isset($req['relation-list-item']['object']['documentType']) && $req['relation-list-item']['object']['documentType'] == "Media") {
+					$image = $req['relation-list-item']['object'];
+				} else return false;
+			} else {
+				$req['relation-list-item'] = array_reverse($req['relation-list-item']);
+				foreach($req['relation-list-item'] as $item) {
+					if (isset($item['object']['documentType']) && $item['object']['documentType'] == "Media") {
+						$image = $item['object'];
+						break;
+					}
+				}
+			}
+		} else return false;
+		
+		if (!$image || !isset($image['csid'])) return;
+		
+		if (get_post_meta($post->ID, 'saved_image_id') != $image['csid']) {
+		
+			$image_id = $helper->add_image_to_gallery_from_url($host.'/media/'.$image['csid'].'/blob/content', $image['csid'], $this->generate_stream_context($user,$pass));
+			update_post_meta($post->ID, 'saved_image_id', $image['csid']);
+			set_post_thumbnail($post->ID, $image_id);
+			return true;
+		}
+		return false;
 	}
 	
 	function update_collectionspace_object($post,$object) {
