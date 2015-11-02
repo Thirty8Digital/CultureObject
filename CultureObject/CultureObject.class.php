@@ -4,13 +4,17 @@ namespace CultureObject;
 
 require_once('Core.class.php');
 require_once('Exception/Exception.class.php');
+require_once('Helper.class.php');
 require_once('Provider.class.php');
 require_once('Settings.class.php');
 
 class CultureObject extends Core {
 	
+	public $helper = false;
+	
 	function __construct() {
 		$settings = new Settings();
+		$this->helper = new Helper();
 		add_action('init', array($this, 'wordpress_init'));
 		add_action('parse_request', array($this, 'should_sync'));
 		add_action('init', array($this, 'purge_objects'));

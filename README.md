@@ -1,14 +1,15 @@
-CultureObject v2.0.1
+CultureObject v2.0.0
 ====================
 
 Welcome
 ---------------------
 CultureObject is an open source WordPress plugin designed to help you put your museum object records on the web. 
 
+
 How it works
 ---------------------
 
-* Install it from here (and shortly the WordPress plugin respository)
+* Install it from here (and shortly the WordPress plugin repository)
 * Activate it
 * Point it at your data
 * Run the import
@@ -36,4 +37,11 @@ We're currently building CultureObject into an expandable framework that will be
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
 ###A note of caution
-We're building out CultureObject 2.0 to support field mapping and image importing into WordPress which will result in significant changes to provider classes as we move a bunch of common and new functionality into helper classes. If you're looking to go into a production environment in the near term, we'd recommend building against CultureObject 1.1, which we will continue to support until 2.0 is released.
+If you're looking to go into a production environment in the near term, we'd recommend building against CultureObject 1.1, which we will continue to support until 2.0 is released.
+
+
+Developers
+---------------------
+Version 2 adds support for image importing and field mapping. At the moment, only the CollectionSpace provider supports this functionality.
+
+In order to enable field mapping, your theme must declare support for 'cos-remaps' using WordPress's [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support), from there you then use cos_get_remapped_field_name(<field_key>), or cos_remapped_field_name(<field_key>) to return, or output either the default, or remapped human-readable field name.

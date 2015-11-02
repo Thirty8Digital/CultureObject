@@ -14,13 +14,6 @@ class Settings extends Core {
 		add_action('admin_menu', array($this,'add_menu_item'));
 		add_action('admin_enqueue_scripts', array($this,'add_admin_assets'));
 		add_action('admin_init', array($this,'register_settings'));
-		
-		$provider = $this->get_sync_provider();
-		if ($provider) {
-			if (!class_exists($provider['class'])) include_once($provider['file']);
-			$provider_class = new $provider['class'];
-			if (method_exists($provider_class, 'init')) $provider_class->init();
-		}
 	}
 	
 	function register_settings() {
@@ -38,8 +31,26 @@ class Settings extends Core {
 		if ($provider) {
 			if (!class_exists($provider['class'])) include_once($provider['file']);
 			$provider_class = new $provider['class'];
+			$info = $provider_class->get_provider_information();
 			$provider_class->register_settings();
+			//If the provider supports remapping, it must implement register_remappable_fields. Fatal if not.
+			if (isset($info['supports_remap']) && $info['supports_remap']) {
+				if (!method_exists($provider_class, 'register_remappable_fields')) {
+					update_option('cos_core_sync_provider', false);
+					throw new Exception\ProviderException('The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the plugin developer, '.$info['developer'].'. To stop this breaking your site, the provider has been disabled.');
+				} else {
+					$fields = $provider_class->register_remappable_fields();
+					add_settings_section('cos_remaps', 'Field Mappings', array($this,'generate_settings_group_content'), 'cos_settings');
+					if (current_theme_supports('cos-remaps')) {
+						foreach($fields as $field_key => $field_default) {
+							register_setting('cos_settings', 'cos_remap_'.strtolower($field_key));
+							add_settings_field('cos_remap_'.strtolower($field_key), $field_key, array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_remaps', array('field'=>'cos_remap_'.strtolower($field_key),'default'=>$field_default));
+						}
+					}
+				}
+			}
 		}
+		
 		
 	}
 	
@@ -86,6 +97,13 @@ class Settings extends Core {
 			case 'cos_core_settings':
 				$message = 'These settings relate to the overall plugin and how it works.';
 				break;
+			case 'cos_remaps':
+				if (current_theme_supports('cos-remaps')) {
+					$message = 'Your plugin provider supports remappable fields. You can override the default display name for each field imported.';
+				} else {
+					$message = 'Your plugin provider supports remappable fields, but your theme does not declare support. If you are a theme developer, see the CultureObject documentation for more details.';
+				}
+				break;
 			default:
 				$message = '';
 		}
@@ -108,6 +126,7 @@ class Settings extends Core {
 	function generate_settings_field_input_text($args) {
 		$field = $args['field'];
 		$value = get_option($field);
+		if (empty($value) && isset($args['default'])) $value = $args['default'];
 		echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
 		if ($field == "cos_core_sync_key") echo '<br /><small>This key forms part of the sync URL for a little bit more security.</small>';
 		

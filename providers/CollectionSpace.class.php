@@ -8,11 +8,38 @@ class CollectionSpace extends \CultureObject\Provider {
 		'name' => 'CollectionSpace',
 		'version' => '1.0',
 		'developer' => 'Thirty8 Digital',
-		'cron' => true
+		'cron' => true,
+		'supports_remap' => true
 	);
 	
-	function init() {
-		add_action('init', array($this, 'register_prevent_safe_password_save'));
+	function register_remappable_fields() {
+		return array(
+			'objectNumber' => 'Object Number',
+			'briefDescription' => 'Brief Description',
+			'objectName' => 'Object Name',
+			'responsibleDepartment' => 'Responsible Department',
+			'contentConcept' => 'Concept',
+			'contentLanguage' => 'Language',
+			'dimension' => 'Dimension',
+			'material' => 'Material',
+			'objectProductionDate' => 'Object Production Date',
+			'dateEarliestSingleYear' => 'Earliest Year',
+			'dateLatestSingleYear' => 'Latest Year',
+			'objectProductionOrganization' => 'Production Organization',
+			'objectProductionOrganizationRole' => 'Production Organization Role',
+			'objectProductionPeople' => 'Production People',
+			'objectProductionPeopleRole' => 'Production People Role',
+			'objectProductionPerson' => 'Production Person',
+			'objectProductionPersonRole' => 'Production Person Role',
+			'technique' => 'Technique', 
+			'fieldCollectionDate' => 'Field Collection Date', 
+			'fieldCollectionMethod' => 'Field Collection Method', 
+			'fieldCollectionNote' => 'Field Collection Note', 
+			'fieldCollectionNumber' => 'Field Collection Number', 
+			'fieldCollectionPlace' => 'Field Collection Place',
+			'fieldCollector' => 'Field Collector',
+			'fieldColEventName' => 'Field Collection Event Name'
+		);
 	}
 	
 	function register_prevent_safe_password_save() {
@@ -28,6 +55,9 @@ class CollectionSpace extends \CultureObject\Provider {
 	}
 	
 	function execute_load_action() {
+		
+		add_action('init', array($this, 'register_prevent_safe_password_save'));
+		
 		if (isset($_FILES['cos_collectionspace_import_file']) && isset($_POST['cos_collectionspace_nonce'])) {
 			if (wp_verify_nonce($_POST['cos_collectionspace_nonce'], 'cos_collectionspace_import')) {
 				$this->perform_sync();

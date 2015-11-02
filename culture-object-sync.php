@@ -11,3 +11,13 @@
  
 require_once('CultureObject/CultureObject.class.php');
 $cos = new \CultureObject\CultureObject();
+
+function cos_get_remapped_field_name($field_key) {
+	global $cos;
+	return $cos->helper->cos_get_remapped_field_name($field_key);
+}
+
+function cos_remapped_field_name($field_key) {
+	global $cos;
+	return $cos->helper->cos_remapped_field_name($field_key);
+}
