@@ -260,7 +260,7 @@ class CollectionSpace extends \CultureObject\Provider {
 		
 		if (!$image || !isset($image['csid'])) return;
 		
-		if (get_post_meta($post->ID, 'saved_image_id') != $image['csid']) {
+		if (get_post_meta($post->ID, 'saved_image_id', true) != $image['csid']) {
 		
 			$image_id = $helper->add_image_to_gallery_from_url($host.'/media/'.$image['csid'].'/blob/content', $image['csid'], $this->generate_stream_context($user,$pass));
 			update_post_meta($post->ID, 'saved_image_id', $image['csid']);
@@ -271,8 +271,10 @@ class CollectionSpace extends \CultureObject\Provider {
 	}
 	
 	function update_collectionspace_object($post,$object) {
-		update_post_meta($post->ID,'objectNumber', $this->unarray($object['collectionobjects_common']['objectNumber']));
-		update_post_meta($post->ID,'briefDescription', $this->unarray($object['collectionobjects_common']['briefDescriptions']));
+		if (isset($object['collectionobjects_common']['objectNumber']))
+			update_post_meta($post->ID,'objectNumber', $this->unarray($object['collectionobjects_common']['objectNumber']));
+		if (isset($object['collectionobjects_common']['briefDescriptions']))
+			update_post_meta($post->ID,'briefDescription', $this->unarray($object['collectionobjects_common']['briefDescriptions']));
 		if (isset($object['collectionobjects_common']['objectNameList']['objectNameGroup']['objectName']))
 			update_post_meta($post->ID,'objectName', $this->unarray($object['collectionobjects_common']['objectNameList']['objectNameGroup']['objectName']));
 		if (isset($object['collectionobjects_common']['responsibleDepartments']))
@@ -301,8 +303,8 @@ class CollectionSpace extends \CultureObject\Provider {
 			update_post_meta($post->ID,'objectProductionPeopleRole', $this->unarray($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeopleRole']));
 		if (isset($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']))
 			update_post_meta($post->ID,'objectProductionPerson', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']));
-		if (isset($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']))
-			update_post_meta($post->ID,'objectProductionPersonRole', $this->unarray($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']));
+		if (isset($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPersonRole']))
+			update_post_meta($post->ID,'objectProductionPersonRole', $this->unarray($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPersonRole']));
 		if (isset($object['collectionobjects_common']['techniqueGroupList']['techniqueGroup']['technique']))
 			update_post_meta($post->ID,'technique', $this->unarray($object['collectionobjects_common']['techniqueGroupList']['techniqueGroup']['technique']));
 		if (isset($object['collectionobjects_common']['fieldCollectionDateGroup']['dateDisplayDate']))
