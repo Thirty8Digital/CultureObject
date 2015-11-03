@@ -56,6 +56,7 @@ class CollectionSpace extends \CultureObject\Provider {
 	
 	function execute_init_action() {
 		$this->register_prevent_safe_password_save();
+		$this->register_taxonomies();
 	}
 	
 	function execute_load_action() {
@@ -67,6 +68,60 @@ class CollectionSpace extends \CultureObject\Provider {
 				die("Security Violation.");
 			}
 		}
+		
+	}
+	
+	function register_taxonomies() {
+		$labels = array(
+			'name'              => __('People'),
+			'singular_name'     => __('Person'),
+			'search_items'      => __('Search People'),
+			'all_items'         => __('All People'),
+			'parent_item'       => __('Parent Person'),
+			'parent_item_colon' => __('Parent Person:'),
+			'edit_item'         => __('Edit Person'),
+			'update_item'       => __('Update Person'),
+			'add_new_item'      => __('Add New Person'),
+			'new_item_name'     => __('New Person Name'),
+			'menu_name'         => __('People'),
+		);
+	
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array('slug' => 'person', 'with_front' => false),
+		);
+		
+		register_taxonomy('people', array('object'), $args);
+		
+		
+		$labels = array(
+			'name'              => __('Organizations'),
+			'singular_name'     => __('Organization'),
+			'search_items'      => __('Search Organizations'),
+			'all_items'         => __('All Organizations'),
+			'parent_item'       => __('Parent Organization'),
+			'parent_item_colon' => __('Parent Organization:'),
+			'edit_item'         => __('Edit Organization'),
+			'update_item'       => __('Update Organization'),
+			'add_new_item'      => __('Add New Organization'),
+			'new_item_name'     => __('New Organization Name'),
+			'menu_name'         => __('Organizations'),
+		);
+	
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array('slug' => 'organization', 'with_front' => false),
+		);
+		
+		register_taxonomy('organizations', array('object'), $args);
 	}
 	
 	function register_settings() {
