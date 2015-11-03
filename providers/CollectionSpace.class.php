@@ -165,7 +165,7 @@ class CollectionSpace extends \CultureObject\Provider {
 			if ($result) {
 				$number_of_objects = $result['totalItems'];
 				echo "<p>There are ".number_format($number_of_objects)." objects currently available to sync from CollectionSpace.</p>";
-				echo "<p>Based on this number, you should expect a sync to take approximately ".ceil($number_of_objects/30)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
+				echo "<p>Based on this number, you should expect a sync to take approximately ".ceil(($number_of_objects/30)+2)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
 				if ($number_of_objects > 100000) echo "<p>CollectionSpace sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.</p>";
 			} else {
 				echo "<p>We couldn't connect to CollectionSpace. Please check the details below and try again.</p>";
@@ -198,7 +198,9 @@ class CollectionSpace extends \CultureObject\Provider {
 		ini_set('memory_limit','2048M');
 		
 		$start = microtime(true);
-				
+		
+		echo "<pre>";
+		
 		$previous_posts = $this->get_current_object_ids();
 		
 		$host = get_option('cos_provider_collectionspace_host_uri');
@@ -206,6 +208,11 @@ class CollectionSpace extends \CultureObject\Provider {
 		$pass = get_option('cos_provider_collectionspace_password');
 		
 		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
+
+		//$this->import_people_taxonomy();
+		echo "Imported People Taxonomies\r\n";
+		//$this->import_organizations_taxonomy();
+		echo "Imported Organization Taxonomies\r\n";
 		
 		$url = $host.'/collectionobjects/?pgSz=0&wf_deleted=false';
 		$import = $this->perform_request($url, $this->generate_stream_context($user,$pass));
@@ -221,10 +228,12 @@ class CollectionSpace extends \CultureObject\Provider {
 				if (!$object_exists) {
 					$current_objects[] = $this->create_object($doc);
 					$import_status[] = "Created initial object: ".$doc['csid'];
+					echo "Created initial object: ".$doc['csid']."\r\n";
 					$created++;
 				} else {
 					$current_objects[] = $this->update_object($doc);
 					$import_status[] = "Updated initial object: ".$doc['csid'];
+					echo "Updated initial object: ".$doc['csid']."\r\n";
 					$updated++;
 				}
 				
@@ -252,7 +261,10 @@ class CollectionSpace extends \CultureObject\Provider {
 			$this->update_collectionspace_object($post,$object);
 			
 			$saved_image = $this->check_for_image($post);
-			if ($saved_image) $import_status[] = "Saved image for object ".$post->ID;
+			if ($saved_image) {
+				$import_status[] = "Saved image for object ".$post->ID;
+				echo "Saved image for object ".$post->ID."\r\n";
+			}
 			
 			update_post_meta($post->ID,'cos_init',1);
 			if (!$init) {
@@ -262,8 +274,10 @@ class CollectionSpace extends \CultureObject\Provider {
 				);
 				wp_update_post($update_post);
 				$import_status[] = "Completed initial detail import for object ".$post->ID;
+				echo "Completed initial detail import for object ".$post->ID."\r\n";
 			} else {
 				$import_status[] = "Updated details for object ".$post->ID;
+				echo "Updated details for object ".$post->ID."\r\n";
 			}
 			
 		}
@@ -272,13 +286,175 @@ class CollectionSpace extends \CultureObject\Provider {
 		$end = microtime(true);
 		
 		$import_duration = $end-$start;
-		
-		echo implode("\r\n<br />", $import_status);
+
 		
 		set_transient('cos_message', "CollectionSpace import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
 		
 		set_transient('cos_collectionspace_show_message', true, 0);
 		set_transient('cos_collectionspace_status', $import_status, 0);
+	}
+	
+	function import_people_taxonomy() {
+		
+		$taxonomy_name = 'people';
+		$cspace_path = 'personauthorities';
+		
+		$host = get_option('cos_provider_collectionspace_host_uri');
+		$user = get_option('cos_provider_collectionspace_username');
+		$pass = get_option('cos_provider_collectionspace_password');
+		
+		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
+
+		$uri = $host.'/'.$cspace_path;
+		
+		$req = $this->perform_request($uri.'?pgSz=0', $this->generate_stream_context($user,$pass), true);
+		
+		if ($req['list-item']) {
+			$parents = array();
+			if (isset($req['list-item']['csid'])) {
+				$parents[] = $req['list-item'];
+			} else {
+				foreach($req['list-item'] as $subcat) {
+					$parents[] = $subcat;
+				}
+			}
+		}
+		
+		foreach($parents as $parent) {
+			//Create the parent term if needbe.
+			$term_name = $parent['displayName'];
+			$parent_term_id = term_exists($term_name, $taxonomy_name);
+			if (!$parent_term_id) {
+				$parent_term_id = wp_insert_term($term_name, $taxonomy_name);
+			}
+			
+			$authcat = $uri.'/'.$parent['csid'].'/items';
+			$req = $this->perform_request($authcat.'?pgSz=0', $this->generate_stream_context($user,$pass), true);
+			if (isset($req['list-item'])) {
+				$person_uris = array();
+				if (isset($req['list-item']['csid'])) {
+					$person_uris[] = $req['list-item']['uri'];
+				} else {
+					foreach($req['list-item'] as $subcat) {
+						$person_uris[] = $subcat['uri'];
+					}
+				}
+			}
+			
+			if (!empty($person_uris)) {
+				foreach($person_uris as $person_uri) {
+					$req = $this->perform_request($host.$person_uri, $this->generate_stream_context($user,$pass), true);
+					
+					if (!isset($req['persons_common']['personTermGroupList']['personTermGroup']['termDisplayName'])) continue;
+					
+					$termDisplayName = $req['persons_common']['personTermGroupList']['personTermGroup']['termDisplayName'];
+					
+					$term_id = term_exists($termDisplayName, $taxonomy_name, $parent_term_id);
+					if (!$term_id) {
+						$term_id = wp_insert_term($termDisplayName, $taxonomy_name, array('parent'=>$parent_term_id['term_id']));
+					}
+					
+					$description = array();
+					$description['termDisplayName'] = $req['persons_common']['personTermGroupList']['personTermGroup']['termDisplayName'];
+					$description['termSource'] = isset($req['persons_common']['personTermGroupList']['personTermGroup']['termSource']) ? $this->unarray($req['persons_common']['personTermGroupList']['personTermGroup']['termSource']) : '';
+					$description['birthDateGroup'] = isset($req['persons_common']['birthDateGroup']['dateDisplayDate']) ? $this->unarray($req['persons_common']['birthDateGroup']['dateDisplayDate']) : '';
+					$description['deathDateGroup'] = isset($req['persons_common']['deathDateGroup']['dateDisplayDate']) ? $this->unarray($req['persons_common']['deathDateGroup']['dateDisplayDate']) : '';
+					$description['group'] = isset($req['persons_common']['groups']) ? $this->unarray($req['persons_common']['groups']) : '';
+					$description['nationality'] = isset($req['persons_common']['nationalities']) ? $this->unarray($req['persons_common']['nationalities']) : '';
+					$description['bioNote'] = isset($req['persons_common']['bioNotes']) ? $this->unarray($req['persons_common']['bioNotes']) : '';
+
+					$description_text = json_encode($description);
+					
+					$result = wp_update_term($term_id['term_id'], $taxonomy_name, array('description'=>$description_text));
+					
+				}
+			}
+			
+		}
+		
+	}
+	
+	
+	function import_organizations_taxonomy() {
+		
+		$taxonomy_name = 'organizations';
+		$cspace_path = 'orgauthorities';
+		
+		$host = get_option('cos_provider_collectionspace_host_uri');
+		$user = get_option('cos_provider_collectionspace_username');
+		$pass = get_option('cos_provider_collectionspace_password');
+		
+		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
+
+		$uri = $host.'/'.$cspace_path;
+		
+		$req = $this->perform_request($uri.'?pgSz=0', $this->generate_stream_context($user,$pass), true);
+		
+		if ($req['list-item']) {
+			$parents = array();
+			if (isset($req['list-item']['csid'])) {
+				$parents[] = $req['list-item'];
+			} else {
+				foreach($req['list-item'] as $subcat) {
+					$parents[] = $subcat;
+				}
+			}
+		}
+		
+		foreach($parents as $parent) {
+			//Create the parent term if needbe.
+			$term_name = $parent['displayName'];
+			$parent_term_id = term_exists($term_name, $taxonomy_name);
+			if (!$parent_term_id) {
+				$parent_term_id = wp_insert_term($term_name, $taxonomy_name);
+			}
+			
+			$authcat = $uri.'/'.$parent['csid'].'/items';
+			$req = $this->perform_request($authcat.'?pgSz=0', $this->generate_stream_context($user,$pass), true);
+			if (isset($req['list-item'])) {
+				$org_uris = array();
+				if (isset($req['list-item']['csid'])) {
+					$org_uris[] = $req['list-item']['uri'];
+				} else {
+					foreach($req['list-item'] as $subcat) {
+						$org_uris[] = $subcat['uri'];
+					}
+				}
+			}
+			
+			if (!empty($org_uris)) {
+				foreach($org_uris as $org_uri) {
+					$req = $this->perform_request($host.$org_uri, $this->generate_stream_context($user,$pass), true);
+					
+					if (!isset($req['organizations_common']['orgTermGroupList']['orgTermGroup']['termDisplayName'])) continue;
+					
+					$termDisplayName = $req['organizations_common']['orgTermGroupList']['orgTermGroup']['termDisplayName'];
+					
+					$term_id = term_exists($termDisplayName, $taxonomy_name, $parent_term_id);
+					if (!$term_id) {
+						$term_id = wp_insert_term($termDisplayName, $taxonomy_name, array('parent'=>$parent_term_id['term_id']));
+					}
+					
+					$description = array();
+					$description['termDisplayName'] = $req['organizations_common']['orgTermGroupList']['orgTermGroup']['termDisplayName'];
+					$description['mainBodyName'] = isset($req['organizations_common']['personTermGroupList']['personTermGroup']['mainBodyName']) ? $this->unarray($req['organizations_common']['personTermGroupList']['personTermGroup']['mainBodyName']) : '';
+					$description['termName'] = isset($req['organizations_common']['personTermGroupList']['personTermGroup']['termName']) ? $this->unarray($req['organizations_common']['personTermGroupList']['personTermGroup']['termName']) : '';
+					$description['additionsToName'] = isset($req['organizations_common']['personTermGroupList']['personTermGroup']['additionsToName']) ? $this->unarray($req['organizations_common']['personTermGroupList']['personTermGroup']['additionsToName']) : '';
+					$description['termSource'] = isset($req['organizations_common']['personTermGroupList']['personTermGroup']['termSource']) ? $this->unarray($req['organizations_common']['personTermGroupList']['personTermGroup']['termSource']) : '';
+					$description['foundingDateGroup'] = isset($req['organizations_common']['foundingDateGroup']['dateDisplayDate']) ? $this->unarray($req['organizations_common']['foundingDateGroup']['dateDisplayDate']) : '';
+					$description['dissolutionDateGroup'] = isset($req['organizations_common']['dissolutionDateGroup']['dateDisplayDate']) ? $this->unarray($req['organizations_common']['dissolutionDateGroup']['dateDisplayDate']) : '';
+					$description['function'] = isset($req['organizations_common']['functions']) ? $this->unarray($req['organizations_common']['functions']) : '';
+					$description['historyNote'] = isset($req['organizations_common']['historyNotes']) ? $this->unarray($req['organizations_common']['historyNotes']) : '';
+
+					$description_text = json_encode($description);
+					
+					$result = wp_update_term($term_id['term_id'], $taxonomy_name, array('description'=>$description_text));
+					
+				}
+			}
+			
+		}
+		
 	}
 	
 	function check_for_image($post) {
@@ -290,7 +466,6 @@ class CollectionSpace extends \CultureObject\Provider {
 		$user = get_option('cos_provider_collectionspace_username');
 		$pass = get_option('cos_provider_collectionspace_password');
 		
-		echo "<pre>";
 		$uri = $host.'/relations?sbj='.$csid.'&objType=Media';
 		
 		$req = $this->perform_request($uri, $this->generate_stream_context($user,$pass), true);
@@ -348,16 +523,10 @@ class CollectionSpace extends \CultureObject\Provider {
 			update_post_meta($post->ID,'dateEarliestSingleYear', $this->unarray($object['collectionobjects_common']['objectProductionDateGroupList']['objectProductionDateGroup']['dateEarliestSingleYear']));
 		if (isset($object['collectionobjects_common']['objectProductionDateGroupList']['objectProductionDateGroup']['dateLatestYear']))
 			update_post_meta($post->ID,'dateLatestSingleYear', $this->unarray($object['collectionobjects_common']['objectProductionDateGroupList']['objectProductionDateGroup']['dateLatestYear']));
-		if (isset($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganization']))
-			update_post_meta($post->ID,'objectProductionOrganization', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganization']));
 		if (isset($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganizationRole']))
 			update_post_meta($post->ID,'objectProductionOrganizationRole', $this->unarray($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganizationRole']));
-		if (isset($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeople']))
-			update_post_meta($post->ID,'objectProductionPeople', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeople']));
 		if (isset($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeopleRole']))
 			update_post_meta($post->ID,'objectProductionPeopleRole', $this->unarray($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeopleRole']));
-		if (isset($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']))
-			update_post_meta($post->ID,'objectProductionPerson', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']));
 		if (isset($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPersonRole']))
 			update_post_meta($post->ID,'objectProductionPersonRole', $this->unarray($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPersonRole']));
 		if (isset($object['collectionobjects_common']['techniqueGroupList']['techniqueGroup']['technique']))
@@ -370,12 +539,43 @@ class CollectionSpace extends \CultureObject\Provider {
 			update_post_meta($post->ID,'fieldCollectionNote', $this->unarray($object['collectionobjects_common']['fieldCollectionNote']));
 		if (isset($object['collectionobjects_common']['fieldCollectionNumber']))
 			update_post_meta($post->ID,'fieldCollectionNumber', $this->unarray($object['collectionobjects_common']['fieldCollectionNumber']));
-		if (isset($object['collectionobjects_common']['fieldCollectionPlace']))
-			update_post_meta($post->ID,'fieldCollectionPlace', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['fieldCollectionPlace']));
-		if (isset($object['collectionobjects_common']['fieldCollectors']['fieldCollector']))
-			update_post_meta($post->ID,'fieldCollector', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['fieldCollectors']['fieldCollector']));
 		if (isset($object['collectionobjects_common']['fieldColEventNames']['fieldColEventName']))
 			update_post_meta($post->ID,'fieldColEventName', $this->unarray($object['collectionobjects_common']['fieldColEventNames']['fieldColEventName']));
+			
+		
+		if (isset($object['collectionobjects_common']['fieldCollectionPlace'])) {
+			update_post_meta($post->ID,'fieldCollectionPlace', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['fieldCollectionPlace']));
+		}
+		
+		if (isset($object['collectionobjects_common']['fieldCollectors']['fieldCollector'])) {
+			update_post_meta($post->ID,'fieldCollector', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['fieldCollectors']['fieldCollector']));
+			$this->add_taxonomy_to_object($post->ID, 'people', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['fieldCollectors']['fieldCollector']));
+		}
+		
+		if (isset($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson'])) {
+			update_post_meta($post->ID,'objectProductionPerson', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']));
+			$this->add_taxonomy_to_object($post->ID, 'people', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPersonGroupList']['objectProductionPersonGroup']['objectProductionPerson']));
+		}
+		
+		if (isset($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeople'])) {
+			update_post_meta($post->ID,'objectProductionPeople', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeople']));
+			$this->add_taxonomy_to_object($post->ID, 'people', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionPeopleGroupList']['objectProductionPeopleGroup']['objectProductionPeople']));
+		}
+		
+		if (isset($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganization'])) {
+			update_post_meta($post->ID,'objectProductionOrganization', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganization']));
+			$this->add_taxonomy_to_object($post->ID, 'organizations', $this->quick_parse_human_value_from_urn($object['collectionobjects_common']['objectProductionOrganizationGroupList']['objectProductionOrganizationGroup']['objectProductionOrganization']));
+		}
+			
+	}
+	
+	function add_taxonomy_to_object($post_id, $tax, $name) {
+		if (empty($name)) return;
+		$term_id = term_exists($name, $tax);
+		if ($term_id) {
+			echo "Adding taxonomy ".intval($term_id['term_id'])." to object ".$post_id."\r\n";
+			wp_set_object_terms($post_id, intval($term_id['term_id']), $tax, true);
+		}
 	}
 	
 	function quick_parse_human_value_from_urn($urn) {

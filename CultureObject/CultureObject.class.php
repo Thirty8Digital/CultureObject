@@ -84,9 +84,7 @@ class CultureObject extends Core {
 			)
 		);
 		
-		
 		add_filter('post_updated_messages', array($this,'object_updated_messages'));
-		
 	}
 	
 	
