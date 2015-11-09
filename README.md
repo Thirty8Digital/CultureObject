@@ -28,7 +28,7 @@ The plugin is built to be extensible so that when other providers are added to t
 
 Usage Instructions
 ---------------------
-We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently 1.1)
+We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.0.0)
 
 Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
