@@ -59,18 +59,6 @@ class CollectionSpace extends \CultureObject\Provider {
 		$this->register_taxonomies();
 	}
 	
-	function execute_load_action() {
-		
-		if (isset($_FILES['cos_collectionspace_import_file']) && isset($_POST['cos_collectionspace_nonce'])) {
-			if (wp_verify_nonce($_POST['cos_collectionspace_nonce'], 'cos_collectionspace_import')) {
-				$this->perform_sync();
-			} else {
-				die("Security Violation.");
-			}
-		}
-		
-	}
-	
 	function register_taxonomies() {
 		$labels = array(
 			'name'              => __('People'),

@@ -19,7 +19,7 @@ class Settings extends Core {
 	
 	function register_settings() {
 	
-		add_settings_section('cos_core_settings', 'Main Settings', array($this,'generate_settings_group_content'), 'cos_settings');
+		add_utility_page('cos_core_settings', 'Main Settings', '', 'cos_core_settings', array($this,'generate_settings_group_content'));
 	
 		register_setting('cos_settings', 'cos_core_sync_provider');
 		register_setting('cos_settings', 'cos_core_sync_key');
@@ -65,12 +65,12 @@ class Settings extends Core {
 	}
 	
 	function add_menu_item() {
-		$options_page = add_options_page('Culture Object Sync Settings', 'Culture Object Sync', 'administrator', 'cos_settings', array($this,'generate_settings_page'));
+		$options_page = add_utility_page('Culture Object Settings', 'Culture Object', 'administrator', 'cos_settings', array($this,'generate_settings_page'), '
+dashicons-update');
 		add_action('load-'.$options_page, array($this,'provide_load_action'));
 	}
 	
 	function provide_load_action() {
-		
 		$provider = $this->get_sync_provider();
 		if ($provider) {
 			if (!class_exists($provider['class'])) include_once($provider['file']);
