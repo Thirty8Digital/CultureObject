@@ -8,26 +8,11 @@
  * Author URI: https://www.gladdy.uk / http://www.thirty8digital.co.uk
  * License: Apache 2 License
  */
- 
-require_once('CultureObject/CultureObject.class.php');
-$cos = new \CultureObject\CultureObject();
 
-function cos_get_remapped_field_name($field_key) {
-	global $cos;
-	return $cos->helper->cos_get_remapped_field_name($field_key);
-}
-
-function cos_remapped_field_name($field_key) {
-	global $cos;
-	return $cos->helper->cos_remapped_field_name($field_key);
-}
-
-function cos_get_field($field_key) {
-	$id = get_the_ID();
-	if (!$id) return false;
-	echo get_post_meta($id, $field_key, true);
-}
-
-function cos_the_field($field_key) {
-	echo cos_get_field($field_key);
+if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+	require('culture-object-sync-init.php');
+} else {
+	$ver = phpversion();
+	trigger_error("Culture Object Sync requires at least PHP 5.3. You're on an unsupported and unmaintained version of PHP (".$ver.") which could contain major security holes and should upgrade immediately. Please contact your webhost for further assistance in this.", E_USER_ERROR);
+	exit();
 }
