@@ -18,8 +18,8 @@ class Settings extends Core {
 	}
 	
 	function register_settings() {
-	
-		add_utility_page('cos_core_settings', 'Main Settings', '', 'cos_core_settings', array($this,'generate_settings_group_content'));
+		
+		add_settings_section('cos_core_settings','Main Settings',array($this,'generate_settings_group_content'),'cos_settings');
 	
 		register_setting('cos_settings', 'cos_core_sync_provider');
 		register_setting('cos_settings', 'cos_core_sync_key');
