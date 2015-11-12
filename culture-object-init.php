@@ -18,7 +18,7 @@ function cos_remapped_field_name($field_key) {
 function cos_get_field($field_key) {
 	$id = get_the_ID();
 	if (!$id) return false;
-	echo get_post_meta($id, $field_key, true);
+	return get_post_meta($id, $field_key, true);
 }
 
 function cos_the_field($field_key) {
