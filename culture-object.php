@@ -7,6 +7,7 @@
  * Author: Liam Gladdy / Thirty8 Digital
  * Author URI: https://www.gladdy.uk / http://www.thirty8digital.co.uk
  * GitHub Plugin URI: Thirty8Digital/CultureObject
+ * GitHub Branch: master
  * License: Apache 2 License
  */
 
