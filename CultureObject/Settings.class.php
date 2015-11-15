@@ -45,11 +45,11 @@ class Settings extends Core {
 					throw new Exception\ProviderException('The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the plugin developer, '.$info['developer'].'. To stop this breaking your site, the provider has been disabled.');
 				} else {
 					$fields = $provider_class->register_remappable_fields();
-					add_settings_section('cos_remaps', 'Field Mappings', array($this,'generate_settings_group_content'), 'cos_settings');
+					add_settings_section('cos_remaps', 'Field Mappings', array($this,'generate_settings_group_content'), 'cos_provider_settings');
 					if (current_theme_supports('cos-remaps')) {
 						foreach($fields as $field_key => $field_default) {
-							register_setting('cos_settings', 'cos_remap_'.strtolower($field_key));
-							add_settings_field('cos_remap_'.strtolower($field_key), $field_key, array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_remaps', array('field'=>'cos_remap_'.strtolower($field_key),'default'=>$field_default));
+							register_setting('cos_provider_settings', 'cos_remap_'.strtolower($field_key));
+							add_settings_field('cos_remap_'.strtolower($field_key), $field_key, array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_remaps', array('field'=>'cos_remap_'.strtolower($field_key),'default'=>$field_default));
 						}
 					}
 				}
@@ -60,7 +60,7 @@ class Settings extends Core {
 	}
 	
 	function add_admin_assets($page) {
-		if ($page == 'toplevel_page_cos_settings') {
+		if ($page == 'toplevel_page_cos_settings' || $page == 'culture-object_page_cos_provider_settings') {
 			wp_register_style('cos_admin_css', $this->plugin_url . '/css/culture-object-sync.css', false, '1.0.0');
 			wp_enqueue_style('cos_admin_css');
 			wp_register_script('cos_admin_js', $this->plugin_url . '/js/culture-object-sync.js', array('jquery','jquery.qtip.js'), '1.0.0', true);
@@ -71,7 +71,8 @@ class Settings extends Core {
 	function add_menu_item() {
 		$options_page = add_utility_page('Culture Object Settings', 'Culture Object', 'administrator', 'cos_settings', array($this,'generate_settings_page'), '
 dashicons-update');
-		add_action('load-'.$options_page, array($this,'provide_load_action'));
+		$provider_page = add_submenu_page('cos_settings', 'Provider Settings', 'Provider Settings', 'administrator', 'cos_provider_settings', array($this,'generate_provider_page'));
+		add_action('load-'.$provider_page, array($this,'provide_load_action'));
 	}
 	
 	function provide_load_action() {
@@ -105,6 +106,18 @@ dashicons-update');
 		}
 		
 		include($this->plugin_directory.'/views/settings.php');
+	}
+	
+	function generate_provider_page() {		
+		
+		$provider = $this->get_sync_provider();
+		if ($provider) {
+			if (!class_exists($provider['class'])) include_once($provider['file']);
+			$provider_class = new $provider['class'];
+			$provider_info = $provider_class->get_provider_information();
+		}
+		
+		include($this->plugin_directory.'/views/provider.php');
 	}
 	
 	function generate_settings_group_content($group) {

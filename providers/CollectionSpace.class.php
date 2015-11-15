@@ -113,16 +113,16 @@ class CollectionSpace extends \CultureObject\Provider {
 	}
 	
 	function register_settings() {
-		add_settings_section('cos_provider_settings','Provider Settings',array($this,'generate_settings_group_content'),'cos_settings');
+		add_settings_section('cos_provider_settings','Provider Settings',array($this,'generate_settings_group_content'),'cos_provider_settings');
 	
-		register_setting('cos_settings', 'cos_provider_collectionspace_host_uri');
-		add_settings_field('cos_provider_collectionspace_host_uri', 'CollectionSpace Host URI', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_host_uri'));
+		register_setting('cos_provider_settings', 'cos_provider_collectionspace_host_uri');
+		add_settings_field('cos_provider_collectionspace_host_uri', 'CollectionSpace Host URI', array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_host_uri'));
 	
-		register_setting('cos_settings', 'cos_provider_collectionspace_username');
-		add_settings_field('cos_provider_collectionspace_username', 'CollectionSpace Username', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_username'));
+		register_setting('cos_provider_settings', 'cos_provider_collectionspace_username');
+		add_settings_field('cos_provider_collectionspace_username', 'CollectionSpace Username', array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_username'));
 	
-		register_setting('cos_settings', 'cos_provider_collectionspace_password');
-		add_settings_field('cos_provider_collectionspace_password', 'CollectionSpace Password', array($this,'generate_settings_field_input_password'), 'cos_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_password'));
+		register_setting('cos_provider_settings', 'cos_provider_collectionspace_password');
+		add_settings_field('cos_provider_collectionspace_password', 'CollectionSpace Password', array($this,'generate_settings_field_input_password'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_collectionspace_password'));
 		
 	}
 	
