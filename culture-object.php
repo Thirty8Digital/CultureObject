@@ -3,7 +3,7 @@
  * Plugin Name: Culture Object
  * Plugin URI: http://cultureobject.co.uk
  * Description: A framework as a plugin to enable sync of culture objects into WordPress.
- * Version: 2.0.0
+ * Version: 2.1.0-alpha.1
  * Author: Liam Gladdy / Thirty8 Digital
  * Author URI: https://www.gladdy.uk / http://www.thirty8digital.co.uk
  * GitHub Plugin URI: Thirty8Digital/CultureObject
