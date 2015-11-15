@@ -23,17 +23,21 @@ class Settings extends Core {
 	
 		register_setting('cos_settings', 'cos_core_sync_provider');
 		register_setting('cos_settings', 'cos_core_sync_key');
+		register_setting('cos_settings', 'cos_core_import_images');
 		
 		add_settings_field('cos_core_sync_provider', 'Sync Provider', array($this,'generate_settings_sync_providers_input'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_provider'));
 		
 		add_settings_field('cos_core_sync_key', 'Sync Key', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_key'));
 		
+		add_settings_field('cos_core_import_images', 'Import Images', array($this,'generate_settings_field_input_checkbox'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_import_images'));
+	
 		$provider = $this->get_sync_provider();
 		if ($provider) {
 			if (!class_exists($provider['class'])) include_once($provider['file']);
 			$provider_class = new $provider['class'];
 			$info = $provider_class->get_provider_information();
 			$provider_class->register_settings();
+			
 			//If the provider supports remapping, it must implement register_remappable_fields. Fatal if not.
 			if (isset($info['supports_remap']) && $info['supports_remap']) {
 				if (!method_exists($provider_class, 'register_remappable_fields')) {
@@ -141,6 +145,19 @@ dashicons-update');
 		if (empty($value) && isset($args['default'])) $value = $args['default'];
 		echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
 		if ($field == "cos_core_sync_key") echo '<br /><small>This key forms part of the sync URL for a little bit more security.</small>';
+		
+	}
+	
+	function generate_settings_field_input_checkbox($args) {
+		$field = $args['field'];
+		$value = get_option($field);
+		if (empty($value) && isset($args['default'])) $value = $args['default'];
+		if ($value) {
+			echo sprintf('<input type="checkbox" name="%s" value="1" id="%s" checked="checked" />', $field, $field);
+		} else {
+			echo sprintf('<input type="checkbox" name="%s" value="1" id="%s" />', $field, $field);
+		}
+		if ($field == "cos_core_import_images") echo '<br /><small>Some providers support importing images into the WordPress Media Gallery.<br />Tick this box to request the provider does this.</small>';
 		
 	}
 	

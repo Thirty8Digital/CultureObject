@@ -446,9 +446,13 @@ class CollectionSpace extends \CultureObject\Provider {
 	}
 	
 	function check_for_image($post) {
-		$csid = get_post_meta($post->ID, 'csid', true);
 		
 		$helper = new CultureObject\Helper;
+		
+		$should_import_images = $helper->get_core_setting('import_images');
+		if (!$should_import_images) return false;
+		
+		$csid = get_post_meta($post->ID, 'csid', true);
 		
 		$host = get_option('cos_provider_collectionspace_host_uri');
 		$user = get_option('cos_provider_collectionspace_username');

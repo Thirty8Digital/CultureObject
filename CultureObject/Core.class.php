@@ -35,6 +35,10 @@ abstract class Core {
 		return $valid_providers;
 	}
 	
+	function get_core_setting($setting) {
+		return get_option('cos_core_'.$setting, false);
+	}
+	
 	function file_get_php_classes($filepath) {
 		$php_code = file_get_contents($filepath);
 		$classes = $this->get_php_classes($php_code);
