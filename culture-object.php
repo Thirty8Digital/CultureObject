@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Culture Object
- * Plugin URI: http://www.gladdy.co.uk/projects/culture-object-sync
+ * Plugin URI: http://cultureobject.co.uk
  * Description: A framework as a plugin to enable sync of culture objects into WordPress.
  * Version: 2.0.0
  * Author: Liam Gladdy / Thirty8 Digital
