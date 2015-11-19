@@ -202,32 +202,57 @@ class CollectionSpace extends \CultureObject\Provider {
 		//$this->import_organizations_taxonomy();
 		echo "Imported Organization Taxonomies\r\n";
 		
-		$url = $host.'/collectionobjects/?pgSz=0&wf_deleted=false';
-		$import = $this->perform_request($url, $this->generate_stream_context($user,$pass));
-
+		$page = 0;
+			
 		$created = 0;
 		$updated = 0;
+		$current_objects = array();
 		
-		$number_of_objects = count($import['list-item']);
-		if ($number_of_objects > 0) {
-			foreach($import['list-item'] as $doc) {
-				$object_exists = $this->object_exists($doc['csid']);
-				
-				if (!$object_exists) {
-					$current_objects[] = $this->create_object($doc);
-					$import_status[] = "Created initial object: ".$doc['csid'];
-					echo "Created initial object: ".$doc['csid']."\r\n";
-					$created++;
-				} else {
-					$current_objects[] = $this->update_object($doc);
-					$import_status[] = "Updated initial object: ".$doc['csid'];
-					echo "Updated initial object: ".$doc['csid']."\r\n";
-					$updated++;
+		$import_complete = false;
+			
+		
+		while(!$import_complete) {
+		
+			$url = $host.'/collectionobjects/?pgSz=250&wf_deleted=false&pgNum='.$page;
+			$import = $this->perform_request($url, $this->generate_stream_context($user,$pass));			
+			
+			$number_of_objects = count($import['list-item']);
+			
+			if ($number_of_objects > 0) {
+				foreach($import['list-item'] as $doc) {
+					$object_exists = $this->object_exists($doc['csid']);
+					
+					if (!$object_exists) {
+						$current_objects[] = $this->create_object($doc);
+						$import_status[] = "Created initial object: ".$doc['csid'];
+						echo "Created initial object: ".$doc['csid']."\r\n";
+						$created++;
+					} else {
+						$current_objects[] = $this->update_object($doc);
+						$import_status[] = "Updated initial object: ".$doc['csid'];
+						echo "Updated initial object: ".$doc['csid']."\r\n";
+						$updated++;
+					}
+					
 				}
-				
 			}
-			$deleted = $this->clean_objects($current_objects,$previous_posts);
+			
+			$imported_count = ($import['pageNum'] + 1) * $import['pageSize'];
+			
+			if ($imported_count > $import['totalItems']) {
+				$import_complete = true;
+				echo "Imported final page (".($page+1)."), ".$import['totalItems']." objects.\r\n";
+			} else {
+				echo "Imported page ".($page+1).". [Objects ".(($import['pageNum'] + 1) * $import['pageSize'])."/".$import['totalItems']."]\r\n";
+			}
+			
+			$page++;
+			
+			flush();
+			
 		}
+		
+		$deleted = $this->clean_objects($current_objects,$previous_posts);
 		
 		//Now we need to get a list of new items.
 		$args = array(
@@ -267,6 +292,8 @@ class CollectionSpace extends \CultureObject\Provider {
 				$import_status[] = "Updated details for object ".$post->ID;
 				echo "Updated details for object ".$post->ID."\r\n";
 			}
+			
+			flush();
 			
 		}
 		
