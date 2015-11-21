@@ -8,7 +8,8 @@ class AdLib extends \CultureObject\Provider {
 		'name' => 'AdLib',
 		'version' => '1.0',
 		'developer' => 'Thirty8 Digital',
-		'cron' => false
+		'cron' => false,
+		'no_options' => true
 	);
 	
 	function get_provider_information() {
