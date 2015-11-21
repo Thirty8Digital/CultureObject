@@ -9,6 +9,7 @@ class CSV extends \CultureObject\Provider {
 		'version' => '1.0',
 		'developer' => 'Thirty8 Digital',
 		'cron' => false,
+		'supports_remap' => false,
 		'no_options' => true
 	);
 	
@@ -239,7 +240,7 @@ class CSV extends \CultureObject\Provider {
 	function existing_object_id($id) {
 		$post = get_page_by_title($id, ARRAY_A, 'object');
 		if (empty($post)) throw new Exception("BUG: called existing_object_id for an object that doesn't exist.");
-		return $posts->ID;
+		return $post['ID'];
 	}
 	
 	
