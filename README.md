@@ -1,4 +1,4 @@
-CultureObject v2.0.0
+CultureObject v2.1.0
 ====================
 
 Welcome
@@ -48,6 +48,10 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 2.1.0
+* **Change:** Move provider settings into it's own submenu
+* **New:** CSV Provider
 
 ####Version 2.0.0
 * **Change:** Change menu option to a standalone utility menu item, rather than putting it inside the general settings
