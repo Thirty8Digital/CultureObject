@@ -6,7 +6,7 @@
     <?php delete_transient('cos_message'); ?>
   <?php } ?>
 
-  <?php $plugin_data = get_plugin_data(__DIR__.'/../culture-object.php'); ?>
+  <?php $plugin_data = get_plugin_data(__DIR__.'/../CultureObject.php'); ?>
   <h2>Culture Object Settings <small>Version <?php echo $plugin_data['Version']; ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
   
   <?php

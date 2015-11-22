@@ -5,6 +5,7 @@
  * Description: A framework as a plugin to enable sync of culture objects into WordPress.
  * Version: 2.1.0
  * Author: Liam Gladdy / Thirty8 Digital
+ * Text Domain: culture-object
  * Author URI: https://github.com/lgladdy
  * GitHub Plugin URI: Thirty8Digital/CultureObject
  * GitHub Branch: master
