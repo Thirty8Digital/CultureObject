@@ -26,15 +26,6 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 
 == Changelog ==
 
-= 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
-
-== Upgrade Notice ==
-
 = 2.1.1 =
 Fix: A bug with view files trying to load a file that didn't exist.
 
