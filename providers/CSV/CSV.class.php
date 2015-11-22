@@ -10,7 +10,8 @@ class CSV extends \CultureObject\Provider {
 		'developer' => 'Thirty8 Digital',
 		'cron' => false,
 		'supports_remap' => false,
-		'no_options' => true
+		'no_options' => true,
+		'text_domain' => 'co-provider-csv'
 	);
 	
 	function get_provider_information() {

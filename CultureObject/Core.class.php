@@ -16,7 +16,7 @@ abstract class Core {
 
 	function find_providers() {
 		$valid_providers = array();
-		foreach (glob(__DIR__.'/../providers/*/*.class.php') as $filename) {
+		foreach (glob(realpath(__DIR__.'/..').'/providers/*/*.class.php') as $filename) {
 			$classes = $this->file_get_php_classes($filename);
 			foreach($classes as $class) {
 				$is_exception = substr(strtolower($class),-9);
