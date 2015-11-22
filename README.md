@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 CultureObject v3.0.0-alpha.1
+=======
+CultureObject v2.1.1
+>>>>>>> master
 ====================
 
 Welcome
@@ -36,9 +40,6 @@ We're currently building CultureObject into an expandable framework that will be
 
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
-###A note of caution
-If you're looking to go into a production environment in the near term and developing your own provider, we'd recommend building against CultureObject 2.1, which we will continue to support until 3.0 is released. Our API might change as we proceed into support more field mapping requirements for different provider and could introduce breaking changes (which we will automatically update our current providers for)
-
 Todo in 3.0
 ---------------------
 
@@ -46,8 +47,6 @@ Todo in 3.0
 * Internationalisation
 * Dublin Core field mappings
 * Multiple Image Importing
-
-
 
 Developers
 ---------------------
@@ -58,6 +57,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 2.1.1
+* **Fix:** A bug with view files trying to load a file that didn't exist.
 
 ####Version 2.1.0
 * **Change:** Move provider settings into it's own submenu
