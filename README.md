@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 CultureObject v3.0.0-alpha.1
-=======
-CultureObject v2.1.1
->>>>>>> master
 ====================
 
 Welcome
