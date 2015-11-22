@@ -41,8 +41,19 @@ class CultureGrid extends \CultureObject\Provider {
 			$url = "http://www.culturegrid.org.uk/index/select?fl=*&wt=json&rows=1&indent=on&q=authority:".$authority."&start=0";
 			$result = $this->perform_request($url);
 			$number_of_objects = $result['response']['numFound'];
-			echo "<p>There are ".number_format($number_of_objects)." objects currently available to sync from CultureGrid based on your current authority.</p>";
-			echo "<p>Based on this number, you should expect a sync to take approximately ".round($number_of_objects/420)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
+			echo "<p>";
+			printf(
+				__('There are %d objects currently available to sync from CultureGrid based on your current authority.'),
+				number_format($number_of_objects)
+			);
+			echo "</p><p>";
+			printf(
+				__("Based on this number, you should expect a sync to take approximately %d minutes to complete."),
+				round($number_of_objects/420)
+			);
+			echo '<br /><small>';
+			_e('This number can vary significantly on the speed on your network, server, and database.','culture-object');
+			echo "</small></p>";
 			if ($number_of_objects > 100000) echo "<p>".__('CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.')."</p>";
 		}
 		
@@ -55,10 +66,10 @@ class CultureGrid extends \CultureObject\Provider {
 			if (isset($data['response'])) {
 				return $data;
 			} else {
-				throw new CultureGridException(__("CultureGrid returned an invalid JSON response",'culture-object'));
+				throw new CultureGridException(sprintf(__("%s returned an invalid JSON response", 'culture-object'), 'CultureGrid'));
 			}
 		} else {
-			throw new CultureGridException(__("CultureGrid returned an invalid response: ",'culture-object').$json);
+			throw new CultureGridException(sprintf(__("%s returned an invalid response: ", 'culture-object').$json, 'CultureGrid'));
 		}
 	}
 	

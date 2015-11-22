@@ -161,11 +161,22 @@ class CollectionSpace extends \CultureObject\Provider {
 			$result = $this->perform_request($url, $this->generate_stream_context($user,$pass));
 			if ($result) {
 				$number_of_objects = $result['totalItems'];
-				echo "<p>There are ".number_format($number_of_objects)." objects currently available to sync from CollectionSpace.</p>";
-				echo "<p>Based on this number, you should expect a sync to take approximately ".ceil(($number_of_objects/30)+2)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
-				if ($number_of_objects > 100000) echo "<p>CollectionSpace sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.</p>";
+				echo "<p>";
+				printf(
+					__('There are %d objects currently available to sync from CollectionSpace.'),
+					number_format($number_of_objects)
+				);
+				echo "</p><p>";
+				echo "<p>";
+				printf(
+					__("Based on this number, you should expect a sync to take approximately %d minutes to complete."),
+					ceil(($number_of_objects/30)+2)
+				);
+				echo '<br /><small>';
+				_e('This number can vary significantly on the speed on your network, server, and database.','culture-object');
+				echo "</small></p>";
 			} else {
-				echo "<p>We couldn't connect to CollectionSpace. Please check the details below and try again.</p>";
+				echo "<p>".__("We couldn't connect to CollectionSpace. Please check the details below and try again.",'culture-object')."</p>";
 			}
 		}
 		

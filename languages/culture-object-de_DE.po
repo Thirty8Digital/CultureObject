@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Culture Object 3.0.0-alpha.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/CultureObject\n"
-"POT-Creation-Date: 2015-11-22 17:20+0000\n"
-"PO-Revision-Date: 2015-11-22 17:23+0000\n"
+"POT-Creation-Date: 2015-11-22 17:38+0000\n"
+"PO-Revision-Date: 2015-11-22 17:38+0000\n"
 "Last-Translator: Liam Gladdy <liam@gladdy.co.uk>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -199,6 +199,7 @@ msgstr ""
 "dies tut."
 
 #: providers/AdLib/AdLib.class.php:24 providers/CSV/CSV.class.php:25
+#: providers/Emu/Emu.class.php:24
 msgid "Security Violation."
 msgstr ""
 
@@ -224,15 +225,18 @@ msgid "Import AdLib Dump"
 msgstr ""
 
 #: providers/AdLib/AdLib.class.php:85 providers/CSV/CSV.class.php:94
+#: providers/Emu/Emu.class.php:89
 msgid "Importing... This may take some time..."
 msgstr "Importieren… Dieser Vorgang kann einige Zeit dauern..."
 
 #. Translators: %s: The numeric error code PHP reported for an upload failure
 #: providers/AdLib/AdLib.class.php:111 providers/CSV/CSV.class.php:121
+#: providers/Emu/Emu.class.php:115
 msgid "Unable to import. PHP reported an error code: %s"
 msgstr "Nicht in der Lage zu importieren. PHP hat einen Fehler-Code: %s"
 
 #: providers/AdLib/AdLib.class.php:118 providers/CSV/CSV.class.php:128
+#: providers/Emu/Emu.class.php:122
 msgid "Unable to import: File upload corrupt"
 msgstr "Nicht in der Lage zu importieren: Datei-Upload-korrupten"
 
@@ -241,14 +245,14 @@ msgid "Unable to import. This file appears to be incompatible."
 msgstr ""
 
 #: providers/AdLib/AdLib.class.php:146 providers/CSV/CSV.class.php:180
-#: providers/CultureGrid/CultureGrid.class.php:94
-#: providers/Emu/Emu.class.php:133 providers/RAMM/RAMM.class.php:93
+#: providers/CultureGrid/CultureGrid.class.php:105
+#: providers/Emu/Emu.class.php:141 providers/RAMM/RAMM.class.php:93
 msgid "Created object"
 msgstr ""
 
 #: providers/AdLib/AdLib.class.php:150 providers/CSV/CSV.class.php:184
-#: providers/CultureGrid/CultureGrid.class.php:97
-#: providers/Emu/Emu.class.php:137 providers/RAMM/RAMM.class.php:96
+#: providers/CultureGrid/CultureGrid.class.php:108
+#: providers/Emu/Emu.class.php:145 providers/RAMM/RAMM.class.php:96
 msgid "Updated object"
 msgstr ""
 
@@ -257,7 +261,8 @@ msgstr ""
 #. of deleted objects. 5: The number of seconds the whole process took to
 #. complete
 #: providers/AdLib/AdLib.class.php:164 providers/CSV/CSV.class.php:198
-#: providers/Emu/Emu.class.php:151
+#: providers/CollectionSpace/CollectionSpace.class.php:332
+#: providers/Emu/Emu.class.php:159
 msgid ""
 "%1$s import completed with %2$d objects created, %3$d updated and %4$d "
 "deleted in %5$d seconds."
@@ -266,29 +271,29 @@ msgstr ""
 #. Translators: 1: A WordPress Post ID 2: The type of file or the provider name
 #. (CSV, AdLib, etc)
 #: providers/AdLib/AdLib.class.php:197 providers/CSV/CSV.class.php:231
-#: providers/CollectionSpace/CollectionSpace.class.php:646
-#: providers/CultureGrid/CultureGrid.class.php:129
-#: providers/Emu/Emu.class.php:184 providers/RAMM/RAMM.class.php:128
+#: providers/CollectionSpace/CollectionSpace.class.php:669
+#: providers/CultureGrid/CultureGrid.class.php:140
+#: providers/Emu/Emu.class.php:192 providers/RAMM/RAMM.class.php:128
 msgid ""
 "Removed Post ID %1$d as it is no longer in the exported list of objects from "
 "%2$s"
 msgstr ""
 
 #: providers/AdLib/AdLib.class.php:273 providers/CSV/CSV.class.php:284
-#: providers/CollectionSpace/CollectionSpace.class.php:712
-#: providers/CultureGrid/CultureGrid.class.php:185
-#: providers/Emu/Emu.class.php:252 providers/RAMM/RAMM.class.php:197
+#: providers/CollectionSpace/CollectionSpace.class.php:735
+#: providers/CultureGrid/CultureGrid.class.php:196
+#: providers/Emu/Emu.class.php:260 providers/RAMM/RAMM.class.php:197
 msgid ""
 "Called existing_object_id for an object that doesn't exist. This is likely a "
 "bug in your provider plugin, but because it is probably unsafe to continue "
 "the import, it has been aborted."
 msgstr ""
 
-#: providers/CSV/CSV.class.php:51
+#: providers/CSV/CSV.class.php:51 providers/Emu/Emu.class.php:50
 msgid "Your CSV import was successful"
 msgstr "CSV-Import erfolgreich war"
 
-#: providers/CSV/CSV.class.php:55
+#: providers/CSV/CSV.class.php:55 providers/Emu/Emu.class.php:54
 msgid "Show Log"
 msgstr "Protokoll anzeigen"
 
@@ -402,29 +407,97 @@ msgstr ""
 msgid "New Organization Name"
 msgstr ""
 
+#: providers/CollectionSpace/CollectionSpace.class.php:166
+msgid "There are %d objects currently available to sync from CollectionSpace."
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:172
+#: providers/CultureGrid/CultureGrid.class.php:51
+msgid ""
+"Based on this number, you should expect a sync to take approximately %d "
+"minutes to complete."
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:176
+#: providers/CultureGrid/CultureGrid.class.php:55
+msgid ""
+"This number can vary significantly on the speed on your network, server, and "
+"database."
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:179
+msgid ""
+"We couldn't connect to CollectionSpace. Please check the details below and "
+"try again."
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:218
+#: providers/CollectionSpace/CollectionSpace.class.php:353
+#: providers/CollectionSpace/CollectionSpace.class.php:434
+msgid "Host, Username or Password is not defined"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:221
+msgid "Imported People Taxonomies"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:223
+msgid "Imported Organization Taxonomies"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:247
+msgid "Created initial object: %s"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:253
+msgid "Updated initial object: %s"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:300
+msgid "Saved image for object %d"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:312
+msgid "Completed initial detail import for object %d"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:316
+msgid "Updated details for object %d"
+msgstr ""
+
 #: providers/CultureGrid/CultureGrid.class.php:46
+msgid ""
+"There are %d objects currently available to sync from CultureGrid based on "
+"your current authority."
+msgstr ""
+
+#: providers/CultureGrid/CultureGrid.class.php:57
 msgid ""
 "CultureGrid sync only supports 100,000 objects maximum for the sake of "
 "performance. Only the first 100,000 objects will sync."
 msgstr ""
 
-#: providers/CultureGrid/CultureGrid.class.php:58
+#: providers/CultureGrid/CultureGrid.class.php:69
 msgid "CultureGrid returned an invalid JSON response"
 msgstr ""
 
-#: providers/CultureGrid/CultureGrid.class.php:61
+#: providers/CultureGrid/CultureGrid.class.php:72
 msgid "CultureGrid returned an invalid response: "
 msgstr ""
 
-#: providers/CultureGrid/CultureGrid.class.php:79
+#: providers/CultureGrid/CultureGrid.class.php:90
 msgid ""
 "You haven't yet configured a search authority in the Culture Object Sync "
 "settings"
 msgstr ""
 
-#: providers/CultureGrid/CultureGrid.class.php:106
+#: providers/CultureGrid/CultureGrid.class.php:117
 #: providers/RAMM/RAMM.class.php:105
 msgid "Sync Complete in %d seconds"
+msgstr ""
+
+#: providers/Emu/Emu.class.php:80
+msgid "You need to upload the JSON export file from emu in order to import."
 msgstr ""
 
 #: providers/RAMM/RAMM.class.php:41

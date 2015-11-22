@@ -50,10 +50,10 @@ class RAMM extends \CultureObject\Provider {
 			if (isset($data[0]['Id'])) {
 				return $data;
 			} else {
-				throw new RAMMException(__("RAMM returned an invalid JSON response", 'culture-object'));
+				throw new RAMMException(sprintf(__("%s returned an invalid JSON response", 'culture-object'), 'RAMM'));
 			}
 		} else {
-			throw new RAMMException(__("RAMM returned an invalid response: ", 'culture-object').$json);
+			throw new RAMMException(sprintf(__("%s returned an invalid response: ", 'culture-object').$json, 'RAMM'));
 		}
 	}
 	
