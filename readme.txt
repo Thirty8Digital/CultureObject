@@ -3,7 +3,7 @@ Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 4.1
 Tested up to: 4.4
-Stable tag: 2.1
+Stable tag: 2.1.2
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -25,6 +25,9 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 2.1.2 =
+Fix: Remove debug-disablement of taxonomy imports for CultureObject.
 
 = 2.1.1 =
 Fix: A bug with view files trying to load a file that didn't exist.

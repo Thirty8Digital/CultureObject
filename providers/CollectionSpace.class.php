@@ -197,9 +197,9 @@ class CollectionSpace extends \CultureObject\Provider {
 		
 		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
 
-		//$this->import_people_taxonomy();
+		$this->import_people_taxonomy();
 		echo "Imported People Taxonomies\r\n";
-		//$this->import_organizations_taxonomy();
+		$this->import_organizations_taxonomy();
 		echo "Imported Organization Taxonomies\r\n";
 		
 		$page = 0;
