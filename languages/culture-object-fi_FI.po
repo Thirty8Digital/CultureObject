@@ -10,136 +10,136 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2015-11-22 15:16-0500\n"
 "Last-Translator: lgladdy <liam@gladdy.co.uk>\n"
-"Language-Team: German\n"
+"Language-Team: Finnish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: culture-object\n"
-"X-Crowdin-Language: de\n"
+"X-Crowdin-Language: fi\n"
 "X-Crowdin-File: culture-object.pot\n"
-"Language: de_DE\n"
+"Language: fi_FI\n"
 
 #: CultureObject/CultureObject.class.php:43
 msgid "Plugin Activation Error"
-msgstr "Plugin Aktivierungsfehler"
+msgstr ""
 
 #. Translators: 1: Either WordPress or PHP, depending on the version mismatch
 #. 2: Required version number
 #: CultureObject/CultureObject.class.php:46
 msgid "Culture Object requires %1$s version %2$s or greater."
-msgstr "Culture Object braucht %1$s Version %2$s oder höher."
+msgstr ""
 
 #. Translators: %s: is the name of the provider.
 #: CultureObject/CultureObject.class.php:70
 msgid "Culture Object provider (%s) does not support automated sync."
-msgstr "Culture Object Anbieter (%s) ünterstützt keine automatische Synchronisierung."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:77
 msgid "A sync exception occurred during sync"
-msgstr "Ein Problem ist aufgetreten während der Synchronisierung"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:80
 msgid "An unknown exception occurred during sync"
-msgstr "Ein unbekanntes Problem ist während der Synchronisierung aufgetreten"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:95
 msgid "Deleted all COS objects."
-msgstr "Alle COS-Objekte gelöscht."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:103
 msgid "Objects"
-msgstr "Objekte"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:104
 msgid "Object"
-msgstr "Objekt"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:105
 msgid "Add new object"
-msgstr "Neues Objekt hinzufügen"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:106
 msgid "Edit object"
-msgstr "Objekt bearbeiten"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:107
 msgid "New object"
-msgstr "Neues Objekt"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:108
 #: CultureObject/CultureObject.class.php:130
 #: CultureObject/CultureObject.class.php:135
 msgid "View object"
-msgstr "Objekt ansehen"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:109
 msgid "Search objects"
-msgstr "Objekte durchsuchen"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:110
 msgid "No objects found"
-msgstr "Keine Objekte gefunden"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:111
 msgid "No objects found in the trash"
-msgstr "Keine Objekte in dem Papierkorb gefunden"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:130
 #: CultureObject/CultureObject.class.php:133
 msgid "Object updated."
-msgstr "Objekt aktualisiert."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:131
 msgid "Custom field updated."
-msgstr "Benutzerdefiniertes Feld aktualisiert."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:132
 msgid "Custom field deleted."
-msgstr "Benutzerdefiniertes Feld gelöscht."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:134
 msgid "Object restored to revision from %s"
-msgstr "Objekt zur Revision von %s wiederhergestellt"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:135
 msgid "Object published."
-msgstr "Objekt veröffentlicht."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:136
 msgid "Object saved."
-msgstr "Objekt gespeichert."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:137
 msgid "Object submitted."
-msgstr "Objekt eingereicht."
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:137
 #: CultureObject/CultureObject.class.php:139
 msgid "Preview object"
-msgstr "Objekt Vorschau"
+msgstr ""
 
 #: CultureObject/CultureObject.class.php:139
 msgid "Object draft updated."
-msgstr "Entwurf aktualisiert."
+msgstr ""
 
 #: CultureObject/Exception/Exception.class.php:12
 msgid "This functionality is not yet implemented"
-msgstr "Diese Funktionalität ist noch nicht implementiert"
+msgstr ""
 
 #: CultureObject/Settings.class.php:22 CultureObject/Settings.class.php:78
 msgid "Main Settings"
-msgstr "Haupteinstellungen"
+msgstr ""
 
 #: CultureObject/Settings.class.php:28
 msgid "Sync Provider"
-msgstr "Synchronisierungs Anbieter"
+msgstr ""
 
 #: CultureObject/Settings.class.php:30
 msgid "Sync Key"
-msgstr "Synchronisierungsschlüssel"
+msgstr ""
 
 #: CultureObject/Settings.class.php:32
 msgid "Import Images"
-msgstr "Bilder importieren"
+msgstr ""
 
 #. Translators: %s: The name of the provider developer
 #: CultureObject/Settings.class.php:47
