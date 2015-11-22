@@ -54,6 +54,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 Change Log
 ---------------------
 
+####Version 2.1.2
+* **Fix:** Remove debug-disablement of taxonomy imports for CultureObject.
+
 ####Version 2.1.1
 * **Fix:** A bug with view files trying to load a file that didn't exist.
 
