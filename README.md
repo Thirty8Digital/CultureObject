@@ -1,4 +1,4 @@
-CultureObject v2.1.0
+CultureObject v3.0.0-alpha.1
 ====================
 
 Welcome
@@ -37,12 +37,22 @@ We're currently building CultureObject into an expandable framework that will be
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
 ###A note of caution
-If you're looking to go into a production environment in the near term and developing your own provider, we'd recommend building against CultureObject 1.1, which we will continue to support until 2.0 is released. Our API might change as we proceed into support more field mapping requirements for different provider and could introduce breaking changes (which we will automatically update our current providers for)
+If you're looking to go into a production environment in the near term and developing your own provider, we'd recommend building against CultureObject 2.1, which we will continue to support until 3.0 is released. Our API might change as we proceed into support more field mapping requirements for different provider and could introduce breaking changes (which we will automatically update our current providers for)
+
+Todo in 3.0
+---------------------
+
+* "Schema" learning support: CultureObject will learn about your data architecture and offer appropriate mappings automatically.
+* Internationalisation
+* Dublin Core field mappings
+* Multiple Image Importing
+
 
 
 Developers
 ---------------------
-Version 2 adds support for image importing and field mapping. At the moment, only the CollectionSpace provider supports this functionality.
+
+Version 2 added support for image importing and field mapping. At the moment, only the CollectionSpace provider supports this functionality.
 
 In order to enable field mapping, your theme must declare support for 'cos-remaps' using WordPress's [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support), from there you then use cos_get_remapped_field_name(<field_key>), or cos_remapped_field_name(<field_key>) to return, or output either the default, or remapped human-readable field name.
 
@@ -61,3 +71,4 @@ Change Log
 * **API New:** Support for providers to automatically import images into the WordPress media library (currently only supported by CollectionSpace, but coming to other providers soon!)
 * **API New:** Support for field remapping. (currently only supported by CollectionSpace, but coming to other providers soon!)
 	* Providers can now provide a list of fields which are available to be remapped. If enabled, and the theme declares support for "cos-remaps" via [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support) a list of all fields will be shown in the Culture Object settings page, and can be overridden by the user. As a theme developer, you should use cos_get_remapped_field_name('key') in order to get the remapped name for a field.
+
