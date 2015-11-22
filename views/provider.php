@@ -7,7 +7,7 @@
   <?php } ?>
 
   <?php $plugin_data = get_plugin_data(__DIR__.'/../CultureObject.php'); ?>
-  <h2>Culture Object Settings <small>Version <?php echo $plugin_data['Version']; ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
+  <h2><?php _e('Culture Object Settings','culture-object'); ?> <small><?php printf( /* Translators: 1 Version Number */ __('Version %s','culture-object'), $plugin_data['Version']); ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
   
   <?php
 		$show_settings = true;

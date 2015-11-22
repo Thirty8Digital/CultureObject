@@ -6,6 +6,7 @@ class AdLib extends \CultureObject\Provider {
 	
 	private $provider = array(
 		'name' => 'AdLib',
+		'text_domain' => 'co-provider-adlib',
 		'version' => '1.0',
 		'developer' => 'Thirty8 Digital',
 		'cron' => false,
@@ -32,7 +33,7 @@ class AdLib extends \CultureObject\Provider {
 	
 	function generate_settings_outside_form_html() {
 	
-		echo "<h3>Provider Settings</h3>";
+		echo "<h3>".__('Provider Settings','co-provider-adlib')."</h3>";
 		
 		echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
 		

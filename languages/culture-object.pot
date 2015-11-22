@@ -1,0 +1,182 @@
+# Copyright (C) 2015 Culture Object
+# This file is distributed under the same license as the Culture Object package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Culture Object 3.0.0-alpha.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/CultureObject\n"
+"POT-Creation-Date: 2015-11-22 10:02:27+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: CultureObject/CultureObject.class.php:96
+msgid "Object updated. <a href=\"%s\">View object</a>"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:97
+msgid "Custom field updated."
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:98
+msgid "Custom field deleted."
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:99
+msgid "Object updated."
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:100
+msgid "Object restored to revision from %s"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:101
+msgid "Object published. <a href=\"%s\">View object</a>"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:102
+msgid "Object saved."
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:103
+msgid "Object submitted. <a target=\"_blank\" href=\"%s\">Preview object</a>"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:104
+msgid ""
+"Object scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s"
+"\">Preview object</a>"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:104
+msgid "M j, Y @ G:i"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:105
+msgid ""
+"Object draft updated. <a target=\"_blank\" href=\"%s\">Preview object</a>"
+msgstr ""
+
+#: CultureObject.php:29
+msgid "Plugin Activation Error"
+msgstr ""
+
+#. translators: 1: Either WordPress or PHP, depending on the version mismatch
+#. 2: Required version number
+#: CultureObject.php:32
+msgid "Culture Object requires %1$s version %2$s or greater."
+msgstr ""
+
+#: providers/CollectionSpace.class.php:64
+#: providers/CollectionSpace.class.php:74
+msgid "People"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:65
+msgid "Person"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:66
+msgid "Search People"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:67
+msgid "All People"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:68
+msgid "Parent Person"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:69
+msgid "Parent Person:"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:70
+msgid "Edit Person"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:71
+msgid "Update Person"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:72
+msgid "Add New Person"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:73
+msgid "New Person Name"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:90
+#: providers/CollectionSpace.class.php:100
+msgid "Organizations"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:91
+msgid "Organization"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:92
+msgid "Search Organizations"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:93
+msgid "All Organizations"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:94
+msgid "Parent Organization"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:95
+msgid "Parent Organization:"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:96
+msgid "Edit Organization"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:97
+msgid "Update Organization"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:98
+msgid "Add New Organization"
+msgstr ""
+
+#: providers/CollectionSpace.class.php:99
+msgid "New Organization Name"
+msgstr ""
+
+#: views/provider.php:10 views/settings.php:10
+msgid "Culture Object Settings"
+msgstr ""
+
+#. Translators: 1 Version Number
+#: views/provider.php:10 views/settings.php:10
+msgid "Version %s"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Culture Object"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://cultureobject.co.uk"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"A framework as a plugin to enable sync of culture objects into WordPress."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Liam Gladdy / Thirty8 Digital"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/lgladdy"
+msgstr ""

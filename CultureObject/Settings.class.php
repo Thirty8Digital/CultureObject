@@ -128,9 +128,9 @@ dashicons-update');
 				break;
 			case 'cos_remaps':
 				if (current_theme_supports('cos-remaps')) {
-					$message = 'Your plugin provider supports remappable fields. You can override the default display name for each field imported.';
+					$message = __('Your plugin provider supports remappable fields. You can override the default display name for each field imported.','culture-object');
 				} else {
-					$message = 'Your plugin provider supports remappable fields, but your theme does not declare support. If you are a theme developer, see the CultureObject documentation for more details.';
+					$message = __('Your plugin provider supports remappable fields, but your theme does not declare support. If you are a theme developer, see the CultureObject documentation for more details.','culture-object');
 				}
 				break;
 			default:

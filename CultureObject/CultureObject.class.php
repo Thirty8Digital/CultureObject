@@ -18,9 +18,39 @@ class CultureObject extends Core {
 		add_action('init', array($this, 'wordpress_init'));
 		add_action('parse_request', array($this, 'should_sync'));
 		add_action('init', array($this, 'purge_objects'));
+		add_action('plugins_loaded', array($this, 'load_co_languages'));
 		register_activation_hook(__FILE__, array($this, 'regenerate_permalinks'));
+		register_activation_hook(__FILE__, array($this, 'check_versions'));
 		register_deactivation_hook(__FILE__, array($this, 'regenerate_permalinks'));
 	}
+	
+	function load_co_languages() {
+		load_plugin_textdomain('culture-object', FALSE, basename(dirname( __FILE__ )).'/languages/');
+	}
+	
+	function check_versions() {
+		global $wp_version;
+		$wp = '4.1';
+		$php = '5.3';
+		if (version_compare(PHP_VERSION, $php, '<')) {
+			$flag = 'PHP';
+		} elseif (version_compare($wp_version, $wp, '<')) {
+			$flag = 'WordPress';
+		} else return;
+		$version = 'PHP' == $flag ? $php : $wp;
+		deactivate_plugins(basename( __FILE__ ));
+		
+		$error_type = __('Plugin Activation Error', 'culture-object');
+		$error_string = sprintf(
+			/* translators: 1: Either WordPress or PHP, depending on the version mismatch 2: Required version number */
+			__('Culture Object requires %1$s version %2$s or greater.', 'culture-object'),
+			$flag,
+			$version
+		);
+		
+		wp_die('<p>'.$error_string.'</p>', $error_type,  array('response'=>200, 'back_link'=>TRUE));
+	}
+
 	
 	function regenerate_permalinks() {
 		flush_rewrite_rules();
