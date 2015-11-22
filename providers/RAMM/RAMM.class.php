@@ -16,11 +16,11 @@ class RAMM extends \CultureObject\Provider {
 	}
 	
 	function register_settings() {
-		add_settings_section('cos_provider_settings','Provider Settings',array($this,'generate_settings_group_content'),'cos_provider_settings');
+		add_settings_section('cos_provider_settings',__('Provider Settings','culture-object'),array($this,'generate_settings_group_content'),'cos_provider_settings');
 	
 		register_setting('cos_provider_settings', 'cos_provider_feed_url');
 		
-		add_settings_field('cos_provider_feed_url', 'RAMM Feed URL', array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_feed_url'));
+		add_settings_field('cos_provider_feed_url', __('RAMM Feed URL','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_feed_url'));
 	}
 	
 	function generate_settings_group_content() {
