@@ -36,9 +36,6 @@ We're currently building CultureObject into an expandable framework that will be
 
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
-###A note of caution
-If you're looking to go into a production environment in the near term and developing your own provider, we'd recommend building against CultureObject 1.1, which we will continue to support until 2.0 is released. Our API might change as we proceed into support more field mapping requirements for different provider and could introduce breaking changes (which we will automatically update our current providers for)
-
 
 Developers
 ---------------------
