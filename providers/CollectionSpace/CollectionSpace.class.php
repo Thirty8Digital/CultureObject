@@ -140,7 +140,16 @@ class CollectionSpace extends \CultureObject\Provider {
 	}
 	
 	function generate_settings_group_content() {
-		echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
+		
+		echo '<p>';
+		printf(
+			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
+			__('You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object'),
+			$this->provider['version'],
+			$this->provider['name'],
+			$this->provider['developer']
+		);
+		echo '</p>';
 		
 		
 		$host = get_option('cos_provider_collectionspace_host_uri');
@@ -195,12 +204,12 @@ class CollectionSpace extends \CultureObject\Provider {
 		$user = get_option('cos_provider_collectionspace_username');
 		$pass = get_option('cos_provider_collectionspace_password');
 		
-		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
+		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException(__('Host, Username or Password is not defined','culture-object'));
 
-		//$this->import_people_taxonomy();
-		echo "Imported People Taxonomies\r\n";
-		//$this->import_organizations_taxonomy();
-		echo "Imported Organization Taxonomies\r\n";
+		$this->import_people_taxonomy();
+		echo __('Imported People Taxonomies','culture-object')."\r\n";
+		$this->import_organizations_taxonomy();
+		echo __('Imported Organization Taxonomies','culture-object')."\r\n";
 		
 		$page = 0;
 			
@@ -224,13 +233,15 @@ class CollectionSpace extends \CultureObject\Provider {
 					
 					if (!$object_exists) {
 						$current_objects[] = $this->create_object($doc);
-						$import_status[] = "Created initial object: ".$doc['csid'];
-						echo "Created initial object: ".$doc['csid']."\r\n";
+						$ttext = __("Created initial object: %s",$doc['csid']);
+						$import_status[] = $ttext;
+						echo $ttext;
 						$created++;
 					} else {
 						$current_objects[] = $this->update_object($doc);
-						$import_status[] = "Updated initial object: ".$doc['csid'];
-						echo "Updated initial object: ".$doc['csid']."\r\n";
+						$ttext = __("Updated initial object: %s",$doc['csid']);
+						$import_status[] = $ttext;
+						echo $ttext;
 						$updated++;
 					}
 					
@@ -275,8 +286,9 @@ class CollectionSpace extends \CultureObject\Provider {
 			
 			$saved_image = $this->check_for_image($post);
 			if ($saved_image) {
-				$import_status[] = "Saved image for object ".$post->ID;
-				echo "Saved image for object ".$post->ID."\r\n";
+				$ttext = sprintf(__("Saved image for object %d",'culture-object'),$post->ID);
+				$import_status[] = $ttext;
+				echo $ttext."\r\n";
 			}
 			
 			update_post_meta($post->ID,'cos_init',1);
@@ -286,11 +298,13 @@ class CollectionSpace extends \CultureObject\Provider {
 					'post_status'	=> 'publish'
 				);
 				wp_update_post($update_post);
-				$import_status[] = "Completed initial detail import for object ".$post->ID;
-				echo "Completed initial detail import for object ".$post->ID."\r\n";
+				$ttext = sprintf(__("Completed initial detail import for object %d",'culture-object'),$post->ID);
+				$import_status[] = $ttext;
+				echo $ttext."\r\n";
 			} else {
-				$import_status[] = "Updated details for object ".$post->ID;
-				echo "Updated details for object ".$post->ID."\r\n";
+				$ttext = sprintf(__("Updated details for object %d",'culture-object'),$post->ID);
+				$import_status[] = $ttext;
+				echo $ttext."\r\n";
 			}
 			
 			flush();
@@ -301,9 +315,16 @@ class CollectionSpace extends \CultureObject\Provider {
 		$end = microtime(true);
 		
 		$import_duration = $end-$start;
-
 		
-		set_transient('cos_message', "CollectionSpace import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
+		set_transient('cos_message', sprintf(
+			/* Translators: 1: The name/type of import - usually the provider name. 2: The number of created objects. 3: The number of updated objects. 4: The number of deleted objects. 5: The number of seconds the whole process took to complete */
+			__('%1$s import completed with %2$d objects created, %3$d updated and %4$d deleted in %5$d seconds.', 'culture-object'),
+			'CollectionSpace',
+			$created,
+			$updated,
+			$deleted,
+			round($import_duration, 2)
+		), 0);
 		
 		set_transient('cos_collectionspace_show_message', true, 0);
 		set_transient('cos_collectionspace_status', $import_status, 0);
@@ -318,7 +339,7 @@ class CollectionSpace extends \CultureObject\Provider {
 		$user = get_option('cos_provider_collectionspace_username');
 		$pass = get_option('cos_provider_collectionspace_password');
 		
-		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
+		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException(__('Host, Username or Password is not defined','culture-object'));
 
 		$uri = $host.'/'.$cspace_path;
 		
@@ -399,7 +420,7 @@ class CollectionSpace extends \CultureObject\Provider {
 		$user = get_option('cos_provider_collectionspace_username');
 		$pass = get_option('cos_provider_collectionspace_password');
 		
-		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException('Host, Username or Password is not defined');
+		if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException(__('Host, Username or Password is not defined','culture-object'));
 
 		$uri = $host.'/'.$cspace_path;
 		
@@ -632,7 +653,12 @@ class CollectionSpace extends \CultureObject\Provider {
 		
 		foreach($to_remove as $remove_id) {
 			wp_delete_post($remove_id,true);
-			$import_delete[] = "Removed Post ID $remove_id as it is no longer in the exported list of objects from CollectionSpace";
+			$import_delete[] = sprintf(
+				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
+				__('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
+				$remove_id,
+				'CollectionSpace'
+			);
 			$deleted++;
 		}
 		
@@ -695,7 +721,7 @@ class CollectionSpace extends \CultureObject\Provider {
 			'meta_value' => $id
 		);
 		$posts = get_posts($args);
-		if (count($posts) == 0) throw new Exception("BUG: called existing_object_id for an object that doesn't exist.");
+		if (count($posts) == 0) throw new Exception(__("Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.",'culture-object'));
 		return $posts[0]->ID;
 	}
 	

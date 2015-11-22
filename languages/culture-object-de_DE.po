@@ -4,99 +4,102 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Culture Object 3.0.0-alpha.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/CultureObject\n"
-"POT-Creation-Date: 2015-11-22 17:22:52+00:00\n"
+"POT-Creation-Date: 2015-11-22 17:20+0000\n"
+"PO-Revision-Date: 2015-11-22 17:23+0000\n"
+"Last-Translator: Liam Gladdy <liam@gladdy.co.uk>\n"
+"Language-Team: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 1.8.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: CultureObject/CultureObject.class.php:43
 msgid "Plugin Activation Error"
-msgstr ""
+msgstr "Plugin Aktivierungsfehler"
 
 #. Translators: 1: Either WordPress or PHP, depending on the version mismatch
 #. 2: Required version number
 #: CultureObject/CultureObject.class.php:46
 msgid "Culture Object requires %1$s version %2$s or greater."
-msgstr ""
+msgstr "Culture Object benötigt %1$s version %2$s oder höher."
 
 #. Translators: %s: is the name of the provider.
 #: CultureObject/CultureObject.class.php:70
 msgid "Culture Object provider (%s) does not support automated sync."
-msgstr ""
+msgstr "Culture Object (%s) unterstützt keine automatische Synchronisierung."
 
 #: CultureObject/CultureObject.class.php:77
 msgid "A sync exception occurred during sync"
-msgstr ""
+msgstr "Ein Sync-Ausnahme während der Synchronisierung aufgetreten"
 
 #: CultureObject/CultureObject.class.php:80
 msgid "An unknown exception occurred during sync"
-msgstr ""
+msgstr "Eine unbekannte Ausnahme während der Synchronisierung aufgetreten"
 
 #: CultureObject/CultureObject.class.php:95
 msgid "Deleted all COS objects."
-msgstr ""
+msgstr "Gelöschte alle Culture Object Objekte."
 
 #: CultureObject/CultureObject.class.php:103
 msgid "Objects"
-msgstr ""
+msgstr "Gegenstände"
 
 #: CultureObject/CultureObject.class.php:104
 msgid "Object"
-msgstr ""
+msgstr "Objekt"
 
 #: CultureObject/CultureObject.class.php:105
 msgid "Add new object"
-msgstr ""
+msgstr "Neues Objekt hinzufügen"
 
 #: CultureObject/CultureObject.class.php:106
 msgid "Edit object"
-msgstr ""
+msgstr "Objekt bearbeiten"
 
 #: CultureObject/CultureObject.class.php:107
 msgid "New object"
-msgstr ""
+msgstr "neues Objekt"
 
 #: CultureObject/CultureObject.class.php:108
 #: CultureObject/CultureObject.class.php:130
 #: CultureObject/CultureObject.class.php:135
 msgid "View object"
-msgstr ""
+msgstr "Objektsicht"
 
 #: CultureObject/CultureObject.class.php:109
 msgid "Search objects"
-msgstr ""
+msgstr "Suche nach Objekten"
 
 #: CultureObject/CultureObject.class.php:110
 msgid "No objects found"
-msgstr ""
+msgstr "Keine Objekte gefunden"
 
 #: CultureObject/CultureObject.class.php:111
 msgid "No objects found in the trash"
-msgstr ""
+msgstr "Keine Objekte in den Papierkorb gefunden"
 
 #: CultureObject/CultureObject.class.php:130
 #: CultureObject/CultureObject.class.php:133
 msgid "Object updated."
-msgstr ""
+msgstr "Objekt aktualisiert."
 
 #: CultureObject/CultureObject.class.php:131
 msgid "Custom field updated."
-msgstr ""
+msgstr "Benutzerdefinierte Feld aktualisiert."
 
 #: CultureObject/CultureObject.class.php:132
 msgid "Custom field deleted."
-msgstr ""
+msgstr "Benutzerdefinierte Feld gelöscht."
 
 #: CultureObject/CultureObject.class.php:134
 msgid "Object restored to revision from %s"
-msgstr ""
+msgstr "Objekt aus %a Revision wieder hergestellt"
 
 #: CultureObject/CultureObject.class.php:135
 msgid "Object published."
-msgstr ""
+msgstr "Object veröffentlicht."
 
 #: CultureObject/CultureObject.class.php:136
 msgid "Object saved."
@@ -117,23 +120,23 @@ msgstr ""
 
 #: CultureObject/Exception/Exception.class.php:12
 msgid "This functionality is not yet implemented"
-msgstr ""
+msgstr "Diese Funktionalität ist noch nicht implementiert"
 
 #: CultureObject/Settings.class.php:22 CultureObject/Settings.class.php:78
 msgid "Main Settings"
-msgstr ""
+msgstr "Haupteinstellungen"
 
 #: CultureObject/Settings.class.php:28
 msgid "Sync Provider"
-msgstr ""
+msgstr "Sync-Anbieter"
 
 #: CultureObject/Settings.class.php:30
 msgid "Sync Key"
-msgstr ""
+msgstr "Sync-Taste"
 
 #: CultureObject/Settings.class.php:32
 msgid "Import Images"
-msgstr ""
+msgstr "importieren von Bildern"
 
 #. Translators: %s: The name of the provider developer
 #: CultureObject/Settings.class.php:47
@@ -143,25 +146,34 @@ msgid ""
 "production environment. Please contact the provider developer, %s. To stop "
 "this breaking your site, the provider has been disabled."
 msgstr ""
+"Die aktivierte Anbieter Plugin behauptet, remappable Bereichen zu "
+"unterstützen, aber die Liste der remappable Feldern keine. Dies sollte nie "
+"in einer Produktionsumgebung passieren. Bitte kontaktieren Sie die Anbieter "
+"Entwickler, %s. Um dies zu stoppen, dass Sie Ihre Website, hat der Anbieter "
+"deaktiviert."
 
 #: CultureObject/Settings.class.php:76 views/settings.php:11
 msgid "Culture Object Settings"
-msgstr ""
+msgstr "Culture Object Einstellungen"
 
 #: CultureObject/Settings.class.php:80 providers/AdLib/AdLib.class.php:35
 #: providers/CSV/CSV.class.php:36 providers/Emu/Emu.class.php:35
 msgid "Provider Settings"
-msgstr ""
+msgstr "Provider-Einstellungen"
 
 #: CultureObject/Settings.class.php:133
 msgid "These settings relate to the overall plugin and how it works."
 msgstr ""
+"Diese Einstellungen beziehen sich auf die Gesamt Plugin und wie es "
+"funktioniert."
 
 #: CultureObject/Settings.class.php:137
 msgid ""
 "Your plugin provider supports remappable fields. You can override the "
 "default display name for each field imported."
 msgstr ""
+"Ihr Plugin-Provider unterstützt remappable Felder. Sie können den Standard-"
+"Anzeigename für jedes Feld importierten überschreiben."
 
 #: CultureObject/Settings.class.php:139
 msgid ""
@@ -169,19 +181,24 @@ msgid ""
 "declare support. If you are a theme developer, see the CultureObject "
 "documentation for more details."
 msgstr ""
+"Ihr Plugin-Provider unterstützt remappable Felder, aber Ihr Thema nicht "
+"Unterstützung erklären. Wenn Sie ein Thema Entwickler sind, finden Sie in "
+"der CultureObject Dokumentation für weitere Details."
 
 #: CultureObject/Settings.class.php:166
 msgid "This key forms part of the sync URL for a little bit more security."
-msgstr ""
+msgstr "Dieser Schlüssel ist Teil des Sync-URL für ein wenig mehr Sicherheit."
 
 #: CultureObject/Settings.class.php:179
 msgid ""
 "Some providers support importing images into the WordPress Media Gallery."
 "<br />Tick this box to request the provider does this."
 msgstr ""
+"Einige Provider unterstützen den Import von Bildern in das Wordpress-Media "
+"Gallery. <br /> Markieren Sie dieses Kästchen, um anzufordern der Anbieter "
+"dies tut."
 
 #: providers/AdLib/AdLib.class.php:24 providers/CSV/CSV.class.php:25
-#: providers/Emu/Emu.class.php:24
 msgid "Security Violation."
 msgstr ""
 
@@ -192,7 +209,7 @@ msgstr ""
 #: providers/CultureGrid/CultureGrid.class.php:31
 #: providers/Emu/Emu.class.php:40 providers/RAMM/RAMM.class.php:31
 msgid "You're currently using version %1$s of the %2$s sync provider by %3$s."
-msgstr ""
+msgstr "Sie sind zur Zeit als Version %1$s des %2$s-Sync-Provider von %3$s."
 
 #: providers/AdLib/AdLib.class.php:49
 msgid "Your AdLib import was successful."
@@ -207,20 +224,17 @@ msgid "Import AdLib Dump"
 msgstr ""
 
 #: providers/AdLib/AdLib.class.php:85 providers/CSV/CSV.class.php:94
-#: providers/Emu/Emu.class.php:89
 msgid "Importing... This may take some time..."
-msgstr ""
+msgstr "Importieren… Dieser Vorgang kann einige Zeit dauern..."
 
 #. Translators: %s: The numeric error code PHP reported for an upload failure
 #: providers/AdLib/AdLib.class.php:111 providers/CSV/CSV.class.php:121
-#: providers/Emu/Emu.class.php:115
 msgid "Unable to import. PHP reported an error code: %s"
-msgstr ""
+msgstr "Nicht in der Lage zu importieren. PHP hat einen Fehler-Code: %s"
 
 #: providers/AdLib/AdLib.class.php:118 providers/CSV/CSV.class.php:128
-#: providers/Emu/Emu.class.php:122
 msgid "Unable to import: File upload corrupt"
-msgstr ""
+msgstr "Nicht in der Lage zu importieren: Datei-Upload-korrupten"
 
 #: providers/AdLib/AdLib.class.php:133
 msgid "Unable to import. This file appears to be incompatible."
@@ -228,13 +242,13 @@ msgstr ""
 
 #: providers/AdLib/AdLib.class.php:146 providers/CSV/CSV.class.php:180
 #: providers/CultureGrid/CultureGrid.class.php:94
-#: providers/Emu/Emu.class.php:141 providers/RAMM/RAMM.class.php:93
+#: providers/Emu/Emu.class.php:133 providers/RAMM/RAMM.class.php:93
 msgid "Created object"
 msgstr ""
 
 #: providers/AdLib/AdLib.class.php:150 providers/CSV/CSV.class.php:184
 #: providers/CultureGrid/CultureGrid.class.php:97
-#: providers/Emu/Emu.class.php:145 providers/RAMM/RAMM.class.php:96
+#: providers/Emu/Emu.class.php:137 providers/RAMM/RAMM.class.php:96
 msgid "Updated object"
 msgstr ""
 
@@ -243,7 +257,7 @@ msgstr ""
 #. of deleted objects. 5: The number of seconds the whole process took to
 #. complete
 #: providers/AdLib/AdLib.class.php:164 providers/CSV/CSV.class.php:198
-#: providers/Emu/Emu.class.php:159
+#: providers/Emu/Emu.class.php:151
 msgid ""
 "%1$s import completed with %2$d objects created, %3$d updated and %4$d "
 "deleted in %5$d seconds."
@@ -254,7 +268,7 @@ msgstr ""
 #: providers/AdLib/AdLib.class.php:197 providers/CSV/CSV.class.php:231
 #: providers/CollectionSpace/CollectionSpace.class.php:646
 #: providers/CultureGrid/CultureGrid.class.php:129
-#: providers/Emu/Emu.class.php:192 providers/RAMM/RAMM.class.php:128
+#: providers/Emu/Emu.class.php:184 providers/RAMM/RAMM.class.php:128
 msgid ""
 "Removed Post ID %1$d as it is no longer in the exported list of objects from "
 "%2$s"
@@ -263,20 +277,20 @@ msgstr ""
 #: providers/AdLib/AdLib.class.php:273 providers/CSV/CSV.class.php:284
 #: providers/CollectionSpace/CollectionSpace.class.php:712
 #: providers/CultureGrid/CultureGrid.class.php:185
-#: providers/Emu/Emu.class.php:260 providers/RAMM/RAMM.class.php:197
+#: providers/Emu/Emu.class.php:252 providers/RAMM/RAMM.class.php:197
 msgid ""
 "Called existing_object_id for an object that doesn't exist. This is likely a "
 "bug in your provider plugin, but because it is probably unsafe to continue "
 "the import, it has been aborted."
 msgstr ""
 
-#: providers/CSV/CSV.class.php:51 providers/Emu/Emu.class.php:50
+#: providers/CSV/CSV.class.php:51
 msgid "Your CSV import was successful"
-msgstr ""
+msgstr "CSV-Import erfolgreich war"
 
-#: providers/CSV/CSV.class.php:55 providers/Emu/Emu.class.php:54
+#: providers/CSV/CSV.class.php:55
 msgid "Show Log"
-msgstr ""
+msgstr "Protokoll anzeigen"
 
 #: providers/CSV/CSV.class.php:82
 msgid ""
@@ -284,16 +298,21 @@ msgid ""
 "lines must equal the number of labels from that row. The first row of the "
 "CSV must be a unique identifier."
 msgstr ""
+"Laden Sie ein CSV importieren. Linie 1 der CSV müssen Feldnamen sein. Alle "
+"anderen Zeilen müssen die Anzahl der Etiketten aus dieser Reihe entsprechen. "
+"Die erste Zeile der CSV muss eine eindeutige Kennung darstellen."
 
 #: providers/CSV/CSV.class.php:89
 msgid "Import CSV File"
-msgstr ""
+msgstr "CSV-Datei importieren"
 
 #: providers/CSV/CSV.class.php:137
 msgid ""
 "Unable to import. This file appears to be incompatible. It appears there is "
 "only one row of data in the file."
 msgstr ""
+"Nicht in der Lage zu importieren. Diese Datei scheint unvereinbar. Es "
+"scheint, gibt es nur eine Zeile von Daten in der Datei."
 
 #: providers/CSV/CSV.class.php:158
 msgid ""
@@ -408,10 +427,6 @@ msgstr ""
 msgid "Sync Complete in %d seconds"
 msgstr ""
 
-#: providers/Emu/Emu.class.php:80
-msgid "You need to upload the JSON export file from emu in order to import."
-msgstr ""
-
 #: providers/RAMM/RAMM.class.php:41
 msgid ""
 "RAMM's JSON data takes a while to generate, so we're unable to show a "
@@ -436,19 +451,22 @@ msgstr ""
 
 #: views/provider.php:11
 msgid "Culture Object Provider Settings"
-msgstr ""
+msgstr "Culture Object Provider-Einstellungen"
 
 #. Translators: %s: Version Number
 #. Translators: 1 Version Number
 #: views/provider.php:11 views/settings.php:11
 msgid "Version %s"
-msgstr ""
+msgstr "Version %s"
 
 #: views/settings.php:26
 msgid ""
 "Your current provider, %s, doesn't support automated import by cron. You do "
 "not need to create a cronjob for this provider."
 msgstr ""
+"Ihrem derzeitigen Anbieter, %s, hat automatische Import nicht unterstützt "
+"durch cron. Sie brauchen nicht, um einen Cronjob für diesen Anbieter "
+"erstellen."
 
 #. Plugin Name of the plugin/theme
 msgid "Culture Object"

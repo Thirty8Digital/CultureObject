@@ -24,7 +24,16 @@ class CultureGrid extends \CultureObject\Provider {
 	}
 	
 	function generate_settings_group_content() {
-		echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
+		
+		echo '<p>';
+		printf(
+			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
+			__('You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object'),
+			$this->provider['version'],
+			$this->provider['name'],
+			$this->provider['developer']
+		);
+		echo '</p>';
 		
 		
 		$authority = get_option('cos_provider_search_authority');
@@ -34,7 +43,7 @@ class CultureGrid extends \CultureObject\Provider {
 			$number_of_objects = $result['response']['numFound'];
 			echo "<p>There are ".number_format($number_of_objects)." objects currently available to sync from CultureGrid based on your current authority.</p>";
 			echo "<p>Based on this number, you should expect a sync to take approximately ".round($number_of_objects/420)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
-			if ($number_of_objects > 100000) echo "<p>CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.</p>";
+			if ($number_of_objects > 100000) echo "<p>".__('CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.')."</p>";
 		}
 		
 	}
@@ -46,10 +55,10 @@ class CultureGrid extends \CultureObject\Provider {
 			if (isset($data['response'])) {
 				return $data;
 			} else {
-				throw new CultureGridException("CultureGrid returned an invalid JSON response");
+				throw new CultureGridException(__("CultureGrid returned an invalid JSON response",'culture-object'));
 			}
 		} else {
-			throw new CultureGridException("CultureGrid returned an invalid response: ".$json);
+			throw new CultureGridException(__("CultureGrid returned an invalid response: ",'culture-object').$json);
 		}
 	}
 	
@@ -67,7 +76,7 @@ class CultureGrid extends \CultureObject\Provider {
 		
 		$authority = get_option('cos_provider_search_authority');
 		if (empty($authority)) {
-			throw new CultureGridException("You haven't yet configured a search authority in the Culture Object Sync settings");
+			throw new CultureGridException(__("You haven't yet configured a search authority in the Culture Object Sync settings",'culture-object'));
 		}
 		
 		$previous_posts = $this->get_current_object_ids();
@@ -82,10 +91,10 @@ class CultureGrid extends \CultureObject\Provider {
 				$object_exists = $this->object_exists($doc['dc.identifier']);
 				if (!$object_exists) {
 					$current_objects[] = $this->create_object($doc);
-					echo "Created object ".$doc['dc.title'][0]."<br />\r\n";
+					echo __("Created object",'culture-object').": ".$doc['dc.title'][0]."<br />\r\n";
 				} else {
 					$current_objects[] = $this->update_object($doc);
-					echo "Updated object ".$doc['dc.title'][0]."<br />\r\n";
+					echo __("Updated object",'culture-object').": ".$doc['dc.title'][0]."<br />\r\n";
 				}
 			}
 			$this->clean_objects($current_objects,$previous_posts);
@@ -93,7 +102,10 @@ class CultureGrid extends \CultureObject\Provider {
 			
 		$end = microtime(true);
 		
-		echo "Sync Complete in ".($end-$start)." seconds\r\n";
+		printf(
+			__("Sync Complete in %d seconds",'culture-object')."\r\n",
+			($end-$start)
+		);
 		
 	}
 	
@@ -112,7 +124,12 @@ class CultureGrid extends \CultureObject\Provider {
 		
 		foreach($to_remove as $remove_id) {
 			wp_delete_post($remove_id,true);
-			echo "Removed Post ID $remove_id as it is no longer in the list of objects from CultureGrid<br />";
+			printf(
+				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
+				__('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
+				$remove_id,
+				'CultureGrid'
+			)."<br />";
 		}
 		
 	}
@@ -165,7 +182,7 @@ class CultureGrid extends \CultureObject\Provider {
 			'meta_value' => $id
 		);
 		$posts = get_posts($args);
-		if (count($posts) == 0) throw new Exception("BUG: called existing_object_id for an object that doesn't exist.");
+		if (count($posts) == 0) throw new Exception(__("Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.",'culture-object'));
 		return $posts[0]->ID;
 	}
 	

@@ -19,17 +19,17 @@ class Settings extends Core {
 	
 	function register_settings() {
 		
-		add_settings_section('cos_core_settings','Main Settings',array($this,'generate_settings_group_content'),'cos_settings');
+		add_settings_section('cos_core_settings',__('Main Settings', 'culture-object'),array($this,'generate_settings_group_content'),'cos_settings');
 	
 		register_setting('cos_settings', 'cos_core_sync_provider');
 		register_setting('cos_settings', 'cos_core_sync_key');
 		register_setting('cos_settings', 'cos_core_import_images');
 		
-		add_settings_field('cos_core_sync_provider', 'Sync Provider', array($this,'generate_settings_sync_providers_input'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_provider'));
+		add_settings_field('cos_core_sync_provider', __('Sync Provider', 'culture-object'), array($this,'generate_settings_sync_providers_input'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_provider'));
 		
-		add_settings_field('cos_core_sync_key', 'Sync Key', array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_key'));
+		add_settings_field('cos_core_sync_key', __('Sync Key', 'culture-object'), array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_key'));
 		
-		add_settings_field('cos_core_import_images', 'Import Images', array($this,'generate_settings_field_input_checkbox'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_import_images'));
+		add_settings_field('cos_core_import_images', __('Import Images', 'culture-object'), array($this,'generate_settings_field_input_checkbox'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_import_images'));
 	
 		$provider = $this->get_sync_provider();
 		if ($provider) {
@@ -42,7 +42,11 @@ class Settings extends Core {
 			if (isset($info['supports_remap']) && $info['supports_remap']) {
 				if (!method_exists($provider_class, 'register_remappable_fields')) {
 					update_option('cos_core_sync_provider', false);
-					throw new Exception\ProviderException('The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the plugin developer, '.$info['developer'].'. To stop this breaking your site, the provider has been disabled.');
+					throw new Exception\ProviderException(sprintf(
+						/* Translators: %s: The name of the provider developer */
+						__('The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the provider developer, %s. To stop this breaking your site, the provider has been disabled.', 'culture-object'),
+						$info['developer']
+					));
 				} else {
 					$fields = $provider_class->register_remappable_fields();
 					add_settings_section('cos_remaps', 'Field Mappings', array($this,'generate_settings_group_content'), 'cos_provider_settings');
@@ -69,9 +73,11 @@ class Settings extends Core {
 	}
 	
 	function add_menu_item() {
-		$options_page = add_utility_page('Culture Object Settings', 'Culture Object', 'administrator', 'cos_settings', array($this,'generate_settings_page'), '
+		add_utility_page(__('Culture Object Settings', 'culture-object'), 'Culture Object', 'administrator', 'cos_settings', array($this,'generate_settings_page'), '
 dashicons-update');
-		$provider_page = add_submenu_page('cos_settings', 'Provider Settings', 'Provider Settings', 'administrator', 'cos_provider_settings', array($this,'generate_provider_page'));
+		$options_page = add_submenu_page('cos_settings', __('Main Settings', 'culture-object'), __('Main Settings', 'culture-object'), 'administrator', 'cos_settings', array($this,'generate_settings_page'));
+		
+		$provider_page = add_submenu_page('cos_settings', __('Provider Settings', 'culture-object'), __('Provider Settings', 'culture-object'), 'administrator', 'cos_provider_settings', array($this,'generate_provider_page'));
 		add_action('load-'.$provider_page, array($this,'provide_load_action'));
 	}
 	
@@ -124,13 +130,13 @@ dashicons-update');
 		$group_id = $group['id'];
 		switch ($group_id) {
 			case 'cos_core_settings':
-				$message = 'These settings relate to the overall plugin and how it works.';
+				$message = __('These settings relate to the overall plugin and how it works.', 'culture-object');
 				break;
 			case 'cos_remaps':
 				if (current_theme_supports('cos-remaps')) {
-					$message = __('Your plugin provider supports remappable fields. You can override the default display name for each field imported.','culture-object');
+					$message = __('Your plugin provider supports remappable fields. You can override the default display name for each field imported.', 'culture-object');
 				} else {
-					$message = __('Your plugin provider supports remappable fields, but your theme does not declare support. If you are a theme developer, see the CultureObject documentation for more details.','culture-object');
+					$message = __('Your plugin provider supports remappable fields, but your theme does not declare support. If you are a theme developer, see the CultureObject documentation for more details.', 'culture-object');
 				}
 				break;
 			default:
@@ -157,7 +163,7 @@ dashicons-update');
 		$value = get_option($field);
 		if (empty($value) && isset($args['default'])) $value = $args['default'];
 		echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
-		if ($field == "cos_core_sync_key") echo '<br /><small>This key forms part of the sync URL for a little bit more security.</small>';
+		if ($field == "cos_core_sync_key") echo '<br /><small>'.__('This key forms part of the sync URL for a little bit more security.', 'culture-object').'</small>';
 		
 	}
 	
@@ -170,7 +176,7 @@ dashicons-update');
 		} else {
 			echo sprintf('<input type="checkbox" name="%s" value="1" id="%s" />', $field, $field);
 		}
-		if ($field == "cos_core_import_images") echo '<br /><small>Some providers support importing images into the WordPress Media Gallery.<br />Tick this box to request the provider does this.</small>';
+		if ($field == "cos_core_import_images") echo '<br /><small>'.__('Some providers support importing images into the WordPress Media Gallery.<br />Tick this box to request the provider does this.','culture-object').'</small>';
 		
 	}
 	

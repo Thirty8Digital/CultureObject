@@ -1,5 +1,5 @@
 <?php
-	
+
 namespace CultureObject;
 
 require_once('Core.class.php');
@@ -42,7 +42,7 @@ class CultureObject extends Core {
 		
 		$error_type = __('Plugin Activation Error', 'culture-object');
 		$error_string = sprintf(
-			/* translators: 1: Either WordPress or PHP, depending on the version mismatch 2: Required version number */
+			/* Translators: 1: Either WordPress or PHP, depending on the version mismatch 2: Required version number */
 			__('Culture Object requires %1$s version %2$s or greater.', 'culture-object'),
 			$flag,
 			$version
@@ -57,7 +57,7 @@ class CultureObject extends Core {
 	}
 	
 	function should_sync() {
-		if (isset($_GET['perform_culture_object_sync']) && isset($_GET['key'])) {
+		if (isset($_GET['perform_culture-object']) && isset($_GET['key'])) {
 			if (get_option('cos_core_sync_key') == $_GET['key']) {
 				$provider = $this->get_sync_provider();
 				if ($provider) {
@@ -65,15 +65,19 @@ class CultureObject extends Core {
 					$provider_class = new $provider['class'];
 					$info = $provider_class->get_provider_information();
 					
-					if (!$info['cron']) die("Culture Object Sync Provider (".$info['name'].") does not support automated sync.");
+					if (!$info['cron']) die(sprintf(
+						/* Translators: %s: is the name of the provider. */
+						__("Culture Object provider (%s) does not support automated sync.", 'culture-object'),
+						$info['name']
+					));
 					
 					try {
 						$provider_class->perform_sync();
 					} catch (ProviderException $e) {
-						echo "A sync exception occurred during sync:<br />";
+						echo __("A sync exception occurred during sync", 'culture-object').":<br />";
 						echo $e->getMessage();
 					} catch (Exception $e) {
-						echo "An unknown exception occurred during sync:<br />";
+						echo __("An unknown exception occurred during sync", 'culture-object').":<br />";
 						echo $e->getMessage();
 					}
 					exit();
@@ -88,7 +92,7 @@ class CultureObject extends Core {
 			foreach($all_objects as $obj) {
 				wp_delete_post($obj->ID,true);
 			}
-			die("Deleted all COS objects.");
+			wp_die(__("Deleted all COS objects.", 'culture-object'));
 		}
 	}
 	
@@ -96,15 +100,15 @@ class CultureObject extends Core {
 			
 		register_post_type('object', array(
 			'labels' => array(
-					"name" => "Objects",
-					"singular_name" => "Object",
-					"add_new_item" => "Add new object",
-					"edit_item" => "Edit object",
-					"new_item" => "New object",
-					"view_item" => "View object",
-					"search_items" => "Search objects",
-					"not_found" => "No objects found",
-					"not_found_in_trash" => "No objects found in the trash"
+					"name" => __("Objects", 'culture-object'),
+					"singular_name" => __("Object", 'culture-object'),
+					"add_new_item" => __("Add new object", 'culture-object'),
+					"edit_item" => __("Edit object", 'culture-object'),
+					"new_item" => __("New object", 'culture-object'),
+					"view_item" => __("View object", 'culture-object'),
+					"search_items" => __("Search objects", 'culture-object'),
+					"not_found" => __("No objects found", 'culture-object'),
+					"not_found_in_trash" => __("No objects found in the trash", 'culture-object')
 				),
 			'public' => true,
 			'has_archive' => true,
@@ -123,16 +127,16 @@ class CultureObject extends Core {
 	
 		$messages['object'] = array(
 			0 => '',
-			1 => sprintf( __('Object updated. <a href="%s">View object</a>', 'culture_object_sync'), esc_url( get_permalink($post_ID) ) ),
-			2 => __('Custom field updated.', 'culture_object_sync'),
-			3 => __('Custom field deleted.', 'culture_object_sync'),
-			4 => __('Object updated.', 'culture_object_sync'),
-			5 => isset($_GET['revision']) ? sprintf( __('Object restored to revision from %s', 'culture_object_sync'), wp_post_revision_title( (int) $_GET['revision'], false)) : false,
-			6 => sprintf(__('Object published. <a href="%s">View object</a>', 'culture_object_sync'), esc_url( get_permalink($post_ID) ) ),
-			7 => __('Object saved.', 'culture_object_sync'),
-			8 => sprintf(__('Object submitted. <a target="_blank" href="%s">Preview object</a>', 'culture_object_sync'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID)))),
-			9 => sprintf(__('Object scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview object</a>', 'culture_object_sync'), date_i18n(__('M j, Y @ G:i'), strtotime($post->post_date)), esc_url(get_permalink($post_ID))),
-			10 => sprintf(__('Object draft updated. <a target="_blank" href="%s">Preview object</a>', 'culture_object_sync'), esc_url(add_query_arg('preview', 'true', get_permalink($post_ID)))),
+			1 => sprintf( __('Object updated.', 'culture-object').' <a href="%s">'.__('View object', 'culture-object').'</a>', esc_url( get_permalink($post_ID) ) ),
+			2 => __('Custom field updated.', 'culture-object'),
+			3 => __('Custom field deleted.', 'culture-object'),
+			4 => __('Object updated.', 'culture-object'),
+			5 => isset($_GET['revision']) ? sprintf( __('Object restored to revision from %s', 'culture-object'), wp_post_revision_title( (int) $_GET['revision'], false)) : false,
+			6 => sprintf(__('Object published.', 'culture-object').' <a href="%s">'.__('View object', 'culture-object').'</a>', esc_url( get_permalink($post_ID) ) ),
+			7 => __('Object saved.', 'culture-object'),
+			8 => sprintf(__('Object submitted.', 'culture-object').' <a target="_blank" href="%s">'.__('Preview object', 'culture-object').'</a>', esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID)))),
+			9 => sprintf(__('Object scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">'.__('Preview object', 'culture-object').'</a>', date_i18n(__('M j, Y @ G:i'), strtotime($post->post_date)), esc_url(get_permalink($post_ID)))),
+			10 => sprintf(__('Object draft updated.', 'culture-object').' <a target="_blank" href="%s">'.__('Preview object', 'culture-object').'</a>', esc_url(add_query_arg('preview', 'true', get_permalink($post_ID)))),
 		);
 	
 		return $messages;

@@ -20,7 +20,14 @@
 
   
   <?php if (isset($provider_info) && $provider_info && !$provider_info['cron']) { ?>
-    <p><strong>Your current provider, <?php echo $provider_info['name']; ?>, doesn't support automated import by cron. You do not need to create a cronjob for this provider.</strong></p>
+    <p><strong>
+	  <?php
+	    printf(
+	    	__('Your current provider, %s, doesn\'t support automated import by cron. You do not need to create a cronjob for this provider.', 'culture-object'),
+	    	$provider_info['name']
+	    );
+	  ?>
+	  </strong></p>
   <?php } else { ?>
   
     <p>The Culture Object plugin requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.</p>

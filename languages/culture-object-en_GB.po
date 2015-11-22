@@ -4,164 +4,298 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Culture Object 3.0.0-alpha.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/CultureObject\n"
-"POT-Creation-Date: 2015-11-22 10:04+0000\n"
+"POT-Creation-Date: 2015-11-22 15:44+0000\n"
+"PO-Revision-Date: 2015-11-22 15:44+0000\n"
+"Last-Translator: Liam Gladdy <liam@gladdy.co.uk>\n"
+"Language-Team: Liam Gladdy <liam@gladdy.co.uk>\n"
+"Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-11-22 10:05+0000\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.8.6\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: en_GB\n"
 
-#: CultureObject/CultureObject.class.php:96
-msgid "Object updated. <a href=\"%s\">View object</a>"
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:97
-msgid "Custom field updated."
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:98
-msgid "Custom field deleted."
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:99
-msgid "Object updated."
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:100
-msgid "Object restored to revision from %s"
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:101
-msgid "Object published. <a href=\"%s\">View object</a>"
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:102
-msgid "Object saved."
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:103
-msgid "Object submitted. <a target=\"_blank\" href=\"%s\">Preview object</a>"
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:104
-msgid ""
-"Object scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s"
-"\">Preview object</a>"
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:104
-msgid "M j, Y @ G:i"
-msgstr ""
-
-#: CultureObject/CultureObject.class.php:105
-msgid ""
-"Object draft updated. <a target=\"_blank\" href=\"%s\">Preview object</a>"
-msgstr ""
-
-#: CultureObject.php:29
+#: CultureObject/CultureObject.class.php:43
 msgid "Plugin Activation Error"
 msgstr ""
 
-#. translators: 1: Either WordPress or PHP, depending on the version mismatch
+#. Translators: 1: Either WordPress or PHP, depending on the version mismatch
 #. 2: Required version number
-#: CultureObject.php:32
+#: CultureObject/CultureObject.class.php:46
 msgid "Culture Object requires %1$s version %2$s or greater."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:64
-#: providers/CollectionSpace.class.php:74
-msgid "People"
+#. Translators: %s: is the name of the provider.
+#: CultureObject/CultureObject.class.php:70
+msgid "Culture Object provider (%s) does not support automated sync."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:65
-msgid "Person"
+#: CultureObject/CultureObject.class.php:77
+msgid "A sync exception occurred during sync"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:66
-msgid "Search People"
+#: CultureObject/CultureObject.class.php:80
+msgid "An unknown exception occurred during sync"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:67
-msgid "All People"
+#: CultureObject/CultureObject.class.php:95
+msgid "Deleted all COS objects."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:68
-msgid "Parent Person"
+#: CultureObject/CultureObject.class.php:103
+msgid "Objects"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:69
-msgid "Parent Person:"
+#: CultureObject/CultureObject.class.php:104
+msgid "Object"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:70
-msgid "Edit Person"
+#: CultureObject/CultureObject.class.php:105
+msgid "Add new object"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:71
-msgid "Update Person"
+#: CultureObject/CultureObject.class.php:106
+msgid "Edit object"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:72
-msgid "Add New Person"
+#: CultureObject/CultureObject.class.php:107
+msgid "New object"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:73
-msgid "New Person Name"
+#: CultureObject/CultureObject.class.php:108
+#: CultureObject/CultureObject.class.php:130
+#: CultureObject/CultureObject.class.php:135
+msgid "View object"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:90
-#: providers/CollectionSpace.class.php:100
-msgid "Organizations"
+#: CultureObject/CultureObject.class.php:109
+msgid "Search objects"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:91
-msgid "Organization"
+#: CultureObject/CultureObject.class.php:110
+msgid "No objects found"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:92
-msgid "Search Organizations"
+#: CultureObject/CultureObject.class.php:111
+msgid "No objects found in the trash"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:93
-msgid "All Organizations"
+#: CultureObject/CultureObject.class.php:130
+#: CultureObject/CultureObject.class.php:133
+msgid "Object updated."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:94
-msgid "Parent Organization"
+#: CultureObject/CultureObject.class.php:131
+msgid "Custom field updated."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:95
-msgid "Parent Organization:"
+#: CultureObject/CultureObject.class.php:132
+msgid "Custom field deleted."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:96
-msgid "Edit Organization"
+#: CultureObject/CultureObject.class.php:134
+msgid "Object restored to revision from %s"
 msgstr ""
 
-#: providers/CollectionSpace.class.php:97
-msgid "Update Organization"
+#: CultureObject/CultureObject.class.php:135
+msgid "Object published."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:98
-msgid "Add New Organization"
+#: CultureObject/CultureObject.class.php:136
+msgid "Object saved."
 msgstr ""
 
-#: providers/CollectionSpace.class.php:99
-msgid "New Organization Name"
+#: CultureObject/CultureObject.class.php:137
+msgid "Object submitted."
 msgstr ""
 
-#: views/provider.php:10 views/settings.php:10
+#: CultureObject/CultureObject.class.php:137
+#: CultureObject/CultureObject.class.php:139
+msgid "Preview object"
+msgstr ""
+
+#: CultureObject/CultureObject.class.php:139
+msgid "Object draft updated."
+msgstr ""
+
+#: CultureObject/Exception/Exception.class.php:12
+msgid "This functionality is not yet implemented"
+msgstr ""
+
+#. Translators: %s: The name of the provider developer
+#: CultureObject/Settings.class.php:47
+msgid ""
+"The activated provider plugin claims to support remappable fields, but "
+"doesn't provide the list of remappable fields. This should never happen in a "
+"production environment. Please contact the provider developer, %s. To stop "
+"this breaking your site, the provider has been disabled."
+msgstr ""
+
+#: CultureObject/Settings.class.php:76 views/settings.php:11
 msgid "Culture Object Settings"
 msgstr ""
 
+#: CultureObject/Settings.class.php:78
+msgid "Main Settings"
+msgstr ""
+
+#: CultureObject/Settings.class.php:80 providers/AdLib/AdLib.class.php:36
+#: providers/CSV/CSV.class.php:37 providers/Emu/Emu.class.php:35
+msgid "Provider Settings"
+msgstr ""
+
+#: CultureObject/Settings.class.php:137
+msgid ""
+"Your plugin provider supports remappable fields. You can override the "
+"default display name for each field imported."
+msgstr ""
+
+#: CultureObject/Settings.class.php:139
+msgid ""
+"Your plugin provider supports remappable fields, but your theme does not "
+"declare support. If you are a theme developer, see the CultureObject "
+"documentation for more details."
+msgstr ""
+
+#: CultureObject/Settings.class.php:166
+msgid "This key forms part of the sync URL for a little bit more security."
+msgstr ""
+
+#: CultureObject/Settings.class.php:179
+msgid ""
+"Some providers support importing images into the WordPress Media Gallery."
+"<br />Tick this box to request the provider does this."
+msgstr ""
+
+#. Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider
+#. Developer
+#: providers/CSV/CSV.class.php:42
+msgid "You're currently using version %1$s of the %2$s sync provider by %3$s."
+msgstr ""
+
+#: providers/CSV/CSV.class.php:52
+msgid "Your CSV import was successful"
+msgstr ""
+
+#: providers/CSV/CSV.class.php:56
+msgid "Show Log"
+msgstr ""
+
+#: providers/CSV/CSV.class.php:83
+msgid ""
+"Upload a CSV to import. Line 1 of the CSV must be field names. All other "
+"lines must equal the number of labels from that row. The first row of the "
+"CSV must be a unique identifier."
+msgstr ""
+
+#: providers/CSV/CSV.class.php:90
+msgid "Import CSV File"
+msgstr ""
+
+#: providers/CSV/CSV.class.php:96
+msgid "Importing... This may take some time..."
+msgstr ""
+
+#. Translators: %s: The numeric error code PHP reported for an upload failure
+#: providers/CSV/CSV.class.php:124
+msgid "Unable to import. PHP reported an error code: %s"
+msgstr ""
+
+#: providers/CSV/CSV.class.php:131
+msgid "Unable to import: File upload corrupt"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:64
+#: providers/CollectionSpace/CollectionSpace.class.php:74
+msgid "People"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:65
+msgid "Person"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:66
+msgid "Search People"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:67
+msgid "All People"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:68
+msgid "Parent Person"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:69
+msgid "Parent Person:"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:70
+msgid "Edit Person"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:71
+msgid "Update Person"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:72
+msgid "Add New Person"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:73
+msgid "New Person Name"
+msgstr ""
+
+#: providers/CollectionSpace/CollectionSpace.class.php:90
+#: providers/CollectionSpace/CollectionSpace.class.php:100
+msgid "Organizations"
+msgstr "Organisations"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:91
+msgid "Organization"
+msgstr "Organisation"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:92
+msgid "Search Organizations"
+msgstr "Search Organisations"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:93
+msgid "All Organizations"
+msgstr "All Organisations"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:94
+msgid "Parent Organization"
+msgstr "Parent Organisation"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:95
+msgid "Parent Organization:"
+msgstr "Parent Organisation:"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:96
+msgid "Edit Organization"
+msgstr "Edit Organisation"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:97
+msgid "Update Organization"
+msgstr "Update Organisation"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:98
+msgid "Add New Organization"
+msgstr "Add New Organisation"
+
+#: providers/CollectionSpace/CollectionSpace.class.php:99
+msgid "New Organization Name"
+msgstr "New Organisation Name"
+
+#: views/provider.php:11
+msgid "Culture Object Provider Settings"
+msgstr ""
+
+#. Translators: %s: Version Number
 #. Translators: 1 Version Number
-#: views/provider.php:10 views/settings.php:10
+#: views/provider.php:11 views/settings.php:11
 msgid "Version %s"
-msgstr "Release %s"
+msgstr "Version %s"
 
 #. Plugin Name of the plugin/theme
 msgid "Culture Object"

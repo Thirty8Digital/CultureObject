@@ -24,12 +24,21 @@ class RAMM extends \CultureObject\Provider {
 	}
 	
 	function generate_settings_group_content() {
-		echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
+		
+		echo '<p>';
+		printf(
+			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
+			__('You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object'),
+			$this->provider['version'],
+			$this->provider['name'],
+			$this->provider['developer']
+		);
+		echo '</p>';
 		
 		
 		$authority = get_option('cos_provider_feed_url');
 		if (!empty($authority)) {
-			echo "<p>RAMM's JSON data takes a while to generate, so we're unable to show a preview here, and import could take a very long time.</p>";
+			echo "<p>".__('RAMM\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.','culture-object')."</p>";
 		}
 		
 	}
@@ -41,10 +50,10 @@ class RAMM extends \CultureObject\Provider {
 			if (isset($data[0]['Id'])) {
 				return $data;
 			} else {
-				throw new RAMMException("RAMM returned an invalid JSON response");
+				throw new RAMMException(__("RAMM returned an invalid JSON response", 'culture-object'));
 			}
 		} else {
-			throw new RAMMException("RAMM returned an invalid response: ".$json);
+			throw new RAMMException(__("RAMM returned an invalid response: ", 'culture-object').$json);
 		}
 	}
 	
@@ -62,7 +71,7 @@ class RAMM extends \CultureObject\Provider {
 		
 		$url = get_option('cos_provider_feed_url');
 		if (empty($url)) {
-			throw new RAMMException("You haven't yet configured a URL in the Culture Object Sync settings");
+			throw new RAMMException(__("You haven't yet configured a URL in the Culture Object Sync settings",'culture-object'));
 		}
 		
 		$previous_posts = $this->get_current_object_ids();
@@ -70,7 +79,10 @@ class RAMM extends \CultureObject\Provider {
 		$result = $this->perform_request($url);
 		
 		$number_of_objects = count($result);
-		echo "Importing ".$number_of_objects." objects.<br />\r\n";
+		printf(
+			__("Importing %d objects.",'culture-object')."<br />\r\n",
+			$number_of_objects
+		);
 		if ($number_of_objects > 0) {
 			foreach($result as $doc) {
 				$doc['identifier'] = $doc['Id'];
@@ -78,10 +90,10 @@ class RAMM extends \CultureObject\Provider {
 				$object_exists = $this->object_exists($doc['identifier']);
 				if (!$object_exists) {
 					$current_objects[] = $this->create_object($doc);
-					echo "Created object ".$doc['Title']."<br />\r\n";
+					echo __("Created object",'culture-object').": ".$doc['Title']."<br />\r\n";
 				} else {
 					$current_objects[] = $this->update_object($doc);
-					echo "Updated object ".$doc['Title']."<br />\r\n";
+					echo __("Updated object",'culture-object').": ".$doc['Title']."<br />\r\n";
 				}
 			}
 			$this->clean_objects($current_objects,$previous_posts);
@@ -89,7 +101,10 @@ class RAMM extends \CultureObject\Provider {
 			
 		$end = microtime(true);
 		
-		echo "Sync Complete in ".($end-$start)." seconds\r\n";
+		printf(
+			__("Sync Complete in %d seconds",'culture-object')."\r\n",
+			($end-$start)
+		);
 		
 	}
 	
@@ -108,7 +123,12 @@ class RAMM extends \CultureObject\Provider {
 		
 		foreach($to_remove as $remove_id) {
 			wp_delete_post($remove_id,true);
-			echo "Removed Post ID $remove_id as it is no longer in the list of objects from RAMM<br />";
+			printf(
+				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
+				__('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
+				$remove_id,
+				'RAMM'
+			)."<br />";
 		}
 		
 	}
@@ -174,7 +194,7 @@ class RAMM extends \CultureObject\Provider {
 			'meta_value' => $id
 		);
 		$posts = get_posts($args);
-		if (count($posts) == 0) throw new Exception("BUG: called existing_object_id for an object that doesn't exist.");
+		if (count($posts) == 0) throw new Exception(__("Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.",'culture-object'));
 		return $posts[0]->ID;
 	}
 	

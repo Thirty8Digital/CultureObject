@@ -6,7 +6,6 @@ class AdLib extends \CultureObject\Provider {
 	
 	private $provider = array(
 		'name' => 'AdLib',
-		'text_domain' => 'co-provider-adlib',
 		'version' => '1.0',
 		'developer' => 'Thirty8 Digital',
 		'cron' => false,
@@ -22,7 +21,7 @@ class AdLib extends \CultureObject\Provider {
 			if (wp_verify_nonce($_POST['cos_adlib_nonce'], 'cos_adlib_import')) {
 				$this->perform_sync();
 			} else {
-				die("Security Violation.");
+				wp_die(__("Security Violation.", 'culture-object'));
 			}
 		}
 	}
@@ -33,13 +32,21 @@ class AdLib extends \CultureObject\Provider {
 	
 	function generate_settings_outside_form_html() {
 	
-		echo "<h3>".__('Provider Settings','co-provider-adlib')."</h3>";
+		echo "<h3>".__('Provider Settings','culture-object')."</h3>";
 		
-		echo "<p>You're currently using version ".$this->provider['version']." of the ".$this->provider['name']." sync provider by ".$this->provider['developer'].".</p>";
+		echo '<p>';
+		printf(
+			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
+			__('You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object'),
+			$this->provider['version'],
+			$this->provider['name'],
+			$this->provider['developer']
+		);
+		echo '</p>';
 		
 		$show_message = get_transient('cos_adlib_show_message');
 		if ($show_message) {
-			echo "<p><strong>Your AdLib import was successful.</strong></p>";
+			echo "<p><strong>".__('Your AdLib import was successful.', 'culture-object')."</strong></p>";
 			
 			echo '<a href="#" id="show_adlib_import_log">Show Log</a>';
 			
@@ -66,16 +73,16 @@ class AdLib extends \CultureObject\Provider {
 			
 			
 		} else {		
-			echo "<p>You need to upload an xml export file from AdLib in order to import.</p>";
+			echo "<p>".__("You need to upload an xml export file from AdLib in order to import.",'culture-object')."</p>";
 			
 			echo '<form id="adlib_import_form" method="post" action="" enctype="multipart/form-data">';
 				echo '<input type="file" name="cos_adlib_import_file" />';
 				echo '<input type="hidden" name="cos_adlib_nonce" value="'.wp_create_nonce('cos_adlib_import').'" /><br /><br />';
-				echo '<input id="adlib_import_submit" type="button" class="button button-primary" value="Import AdLib Dump" />';
+				echo '<input id="adlib_import_submit" type="button" class="button button-primary" value="'.__('Import AdLib Dump','culture-object').'" />';
 			echo '</form>';
 			echo '<script>
 			jQuery("#adlib_import_submit").click(function(e) {
-				jQuery("#adlib_import_submit").val("Importing... This may take some time...");
+				jQuery("#adlib_import_submit").val("'.esc_html__('Importing... This may take some time...','culture-object').'");
 				jQuery("#adlib_import_submit").addClass("button-disabled");
 				window.setTimeout(\'jQuery("#adlib_import_form").submit();\',100);
 			});
@@ -99,12 +106,16 @@ class AdLib extends \CultureObject\Provider {
 		
 		$file = $_FILES['cos_adlib_import_file'];
 		if ($file['error'] !== 0) {
-			throw new Exception("Unable to import. PHP reported an error code ".$file['error']);
+			throw new Exception(sprintf(
+				/* Translators: %s: The numeric error code PHP reported for an upload failure */
+				__("Unable to import. PHP reported an error code: %s", 'culture-object'),
+				$file['error']
+			));
 			return;
 		}
 		$data = file_get_contents($file['tmp_name']);
 		if (!$data) {
-			throw new Exception("Unable to import: File upload corrupt");
+			throw new Exception(__("Unable to import: File upload corrupt", 'culture-object'));
 			return;
 		}
 		$result = json_decode(json_encode((array)simplexml_load_string($data)),1);
@@ -119,7 +130,7 @@ class AdLib extends \CultureObject\Provider {
 		} else if (isset($result['record'])) {
 			$import = $result['record'];
 		} else {
-			throw new Exception("Unable to import. This file appears to be incompatible.");
+			throw new Exception(__("Unable to import. This file appears to be incompatible.",'culture-object'));
 			return;
 		}
 		
@@ -132,11 +143,11 @@ class AdLib extends \CultureObject\Provider {
 				
 				if (!$object_exists) {
 					$current_objects[] = $this->create_object($doc);
-					$import_status[] = "Created object: ".$doc['title'];
+					$import_status[] = __("Created object", 'culture-object').': '.$doc['title'];
 					$created++;
 				} else {
 					$current_objects[] = $this->update_object($doc);
-					$import_status[] = "Updated object: ".$doc['title'];
+					$import_status[] = __("Updated object", 'culture-object').': '.$doc['title'];
 					$updated++;
 				}
 				
@@ -148,7 +159,15 @@ class AdLib extends \CultureObject\Provider {
 		
 		$import_duration = $end-$start;
 		
-		set_transient('cos_message', "AdLib import completed with ".$created." objects created, ".$updated." updated and ".$deleted." deleted in ".round($import_duration, 2)." seconds.", 0);
+		set_transient('cos_message', sprintf(
+			/* Translators: 1: The name/type of import - usually the provider name. 2: The number of created objects. 3: The number of updated objects. 4: The number of deleted objects. 5: The number of seconds the whole process took to complete */
+			__('%1$s import completed with %2$d objects created, %3$d updated and %4$d deleted in %5$d seconds.', 'culture-object'),
+			'AdLib',
+			$created,
+			$updated,
+			$deleted,
+			round($import_duration, 2)
+		), 0);
 		
 		set_transient('cos_adlib_show_message', true, 0);
 		set_transient('cos_adlib_status', $import_status, 0);
@@ -173,7 +192,12 @@ class AdLib extends \CultureObject\Provider {
 		
 		foreach($to_remove as $remove_id) {
 			wp_delete_post($remove_id,true);
-			$import_delete[] = "Removed Post ID $remove_id as it is no longer in the exported list of objects from AdLib";
+			$import_delete[] = sprintf(
+				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
+				__('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
+				$remove_id,
+				'CSV'
+			);
 			$deleted++;
 		}
 		
@@ -246,7 +270,7 @@ class AdLib extends \CultureObject\Provider {
 			'meta_value' => $id
 		);
 		$posts = get_posts($args);
-		if (count($posts) == 0) throw new Exception("BUG: called existing_object_id for an object that doesn't exist.");
+		if (count($posts) == 0) throw new Exception(__("Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.",'culture-object'));
 		return $posts[0]->ID;
 	}
 	
