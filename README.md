@@ -1,4 +1,4 @@
-CultureObject v2.1.2
+CultureObject v2.1.3
 ====================
 
 Welcome
@@ -28,7 +28,7 @@ The plugin is built to be extensible so that when other providers are added to t
 
 Usage Instructions
 ---------------------
-We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.0.0)
+We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.1.3)
 
 Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
@@ -46,8 +46,11 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 Change Log
 ---------------------
 
+####Version 2.1.3
+* **Fix:** Revert to old PHP syntax so we work on PHP 5.3 (but please, please upgrade to PHP 5.6 or PHP 7)
+
 ####Version 2.1.2
-* **Fix:** Remove debug-disablement of taxonomy imports for CultureObject.
+* **Fix:** Remove debug-disablement of taxonomy imports for CollectionSpace.
 
 ####Version 2.1.1
 * **Fix:** A bug with view files trying to load a file that didn't exist.

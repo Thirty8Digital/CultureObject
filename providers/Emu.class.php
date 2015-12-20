@@ -232,11 +232,11 @@ class Emu extends CultureObject\Provider {
 		return $posts[0]->ID;
 	}
 	
-	function flattenWithKeys(array $array, array $path = []) {
-		$result = [];
+	function flattenWithKeys(array $array, array $path = array()) {
+		$result = array();
 
 		foreach ($array as $key => $value) {
-			$currentPath = array_merge($path, [$key]);
+			$currentPath = array_merge($path, array($key));
 
 			if (is_array($value)) {
 					$result = array_merge($result, $this->flattenWithKeys($value, $currentPath));
