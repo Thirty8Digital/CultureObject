@@ -77,9 +77,9 @@ class CSV extends \CultureObject\Provider {
 			delete_transient('cos_csv_deleted');
 			
 			
-		} else {		
+		} else {
 			echo '<p>';
-			_e('Upload a CSV to import. Line 1 of the CSV must be field names. All other lines must equal the number of labels from that row. The first row of the CSV must be a unique identifier.', 'culture-object');
+			_e('Upload a CSV to import. Line 1 of the CSV must be field names. All other lines must equal the number of labels from that row. The first column of the CSV must be a unique identifier.', 'culture-object');
 			echo '</p>';
 			
 			echo '<form id="csv_import_form" method="post" action="" enctype="multipart/form-data">';
