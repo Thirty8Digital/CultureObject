@@ -6,7 +6,7 @@ class CollectionSpace extends \CultureObject\Provider {
 	
 	private $provider = array(
 		'name' => 'CollectionSpace',
-		'version' => '1.0',
+		'version' => '1.1',
 		'developer' => 'Thirty8 Digital',
 		'cron' => true,
 		'supports_remap' => true
@@ -156,7 +156,7 @@ class CollectionSpace extends \CultureObject\Provider {
 				echo "<p>Based on this number, you should expect a sync to take approximately ".ceil(($number_of_objects/30)+2)." minutes to complete. <br /><small>This number can vary significantly on the speed on your network, server, and database.</small></p>";
 				if ($number_of_objects > 100000) echo "<p>CollectionSpace sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.</p>";
 			} else {
-				echo "<p>We couldn't connect to CollectionSpace. Please check the details below and try again.</p>";
+				echo "<p style='color:#c00'>We couldn't connect to CollectionSpace with the credentials provided. Please check the details below and try again.<br />We tried to use the URL '".$url."'</p>";
 			}
 		}
 		
@@ -217,6 +217,8 @@ class CollectionSpace extends \CultureObject\Provider {
 			$import = $this->perform_request($url, $this->generate_stream_context($user,$pass));			
 			
 			$number_of_objects = count($import['list-item']);
+
+			if (!$import) die("FATAL: Import request failed.");
 			
 			if ($number_of_objects > 0) {
 				foreach($import['list-item'] as $doc) {
@@ -323,6 +325,8 @@ class CollectionSpace extends \CultureObject\Provider {
 		$uri = $host.'/'.$cspace_path;
 		
 		$req = $this->perform_request($uri.'?pgSz=0', $this->generate_stream_context($user,$pass), true);
+
+		if (!$req) die("Taxonomy Import Request Failed");
 		
 		if ($req['list-item']) {
 			$parents = array();
@@ -404,6 +408,8 @@ class CollectionSpace extends \CultureObject\Provider {
 		$uri = $host.'/'.$cspace_path;
 		
 		$req = $this->perform_request($uri.'?pgSz=0', $this->generate_stream_context($user,$pass), true);
+
+		if (!$req) die("Taxonomy Import Request Failed");
 		
 		if ($req['list-item']) {
 			$parents = array();
