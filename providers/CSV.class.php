@@ -66,7 +66,7 @@ class CSV extends \CultureObject\Provider {
 			
 			
 		} else {		
-			echo "<p>Upload a CSV to import. Line 1 of the CSV must be field names. All other lines must equal the number of labels from that row. The first column of the CSV must be a unique identifier.</p>";
+			echo "<p>Upload a CSV to import. Line 1 of the CSV must be field names. All other lines must equal the number of labels from that row. The first column of the CSV must be a unique identifier. The second column should be the title of the object and will be imported into the title field.</p>";
 			
 			echo '<form id="csv_import_form" method="post" action="" enctype="multipart/form-data">';
 				echo '<input type="file" name="cos_csv_import_file" />';
@@ -201,7 +201,7 @@ class CSV extends \CultureObject\Provider {
 	
 	function create_object($doc, $fields) {
 		$post = array(
-			'post_title'				=> $doc[0],
+			'post_title'				=> $doc[1],
 			'post_type'				 => 'object',
 			'post_status'			 => 'publish',
 		);
