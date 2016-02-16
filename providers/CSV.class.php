@@ -156,6 +156,11 @@ class CSV extends \CultureObject\Provider {
 					$updated++;
 				}
 				
+				//Send a space and a flush with every object import. This might overcome FastCGI's timeout. Worth a shot.
+				echo ' ';
+				flush();
+				ob_flush();
+				
 			}
 			$deleted = $this->clean_objects($current_objects,$previous_posts);
 		}
