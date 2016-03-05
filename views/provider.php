@@ -11,13 +11,13 @@
   <h2><?php _e('Culture Object Provider Settings', 'culture-object'); ?> <small><?php printf( /* Translators: %s: Version Number */ __('Version %s','culture-object'), $plugin_data['Version']); ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
   
   <?php
-		$show_settings = true;
-		if (isset($provider_class)) {
-			$info = $provider_class->get_provider_information();
-			if (isset($info['no_options']) && $info['no_options']) $show_settings = false;
-		}
-	?>
-	<?php if ($show_settings) { ?>
+        $show_settings = true;
+        if (isset($provider_class)) {
+            $info = $provider_class->get_provider_information();
+            if (isset($info['no_options']) && $info['no_options']) $show_settings = false;
+        }
+    ?>
+    <?php if ($show_settings) { ?>
   <form method="POST" action="options.php">
     <?php 
       settings_fields('cos_provider_settings');

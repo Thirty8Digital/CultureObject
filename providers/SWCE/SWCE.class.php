@@ -1,14 +1,15 @@
 <?php
 
-class RAMMException extends \CultureObject\Exception\ProviderException { }
+class SWCEException extends \CultureObject\Exception\ProviderException { }
 
-class RAMM extends \CultureObject\Provider {
+class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
-        'name' => 'RAMM',
+        'name' => 'SWCE',
         'version' => '1.0',
         'developer' => 'Thirty8 Digital',
-        'cron' => true
+        'cron' => false,
+        'ajax' => true
     );
     
     function get_provider_information() {
@@ -20,7 +21,7 @@ class RAMM extends \CultureObject\Provider {
     
         register_setting('cos_provider_settings', 'cos_provider_feed_url');
         
-        add_settings_field('cos_provider_feed_url', __('RAMM Feed URL','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_feed_url'));
+        add_settings_field('cos_provider_feed_url', __('SWCE Feed URL','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_feed_url'));
     }
     
     function generate_settings_group_content() {
@@ -38,7 +39,7 @@ class RAMM extends \CultureObject\Provider {
         
         $authority = get_option('cos_provider_feed_url');
         if (!empty($authority)) {
-            echo "<p>".__('RAMM\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.','culture-object')."</p>";
+            echo "<p>".__('SWCE\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.','culture-object')."</p>";
         }
         
     }
@@ -50,10 +51,10 @@ class RAMM extends \CultureObject\Provider {
             if (isset($data[0]['Id'])) {
                 return $data;
             } else {
-                throw new RAMMException(sprintf(__("%s returned an invalid JSON response", 'culture-object'), 'RAMM'));
+                throw new SWCEException(sprintf(__("%s returned an invalid JSON response", 'culture-object'), 'SWCE'));
             }
         } else {
-            throw new RAMMException(sprintf(__("%s returned an invalid response: ", 'culture-object').$json, 'RAMM'));
+            throw new SWCEException(sprintf(__("%s returned an invalid response: ", 'culture-object').$json, 'SWCE'));
         }
     }
     
@@ -64,47 +65,6 @@ class RAMM extends \CultureObject\Provider {
     }
     
     function perform_sync() {
-        set_time_limit(0);
-        ini_set('memory_limit','768M');
-        
-        $start = microtime(true);
-        
-        $url = get_option('cos_provider_feed_url');
-        if (empty($url)) {
-            throw new RAMMException(__("You haven't yet configured a URL in the Culture Object Sync settings",'culture-object'));
-        }
-        
-        $previous_posts = $this->get_current_object_ids();
-        
-        $result = $this->perform_request($url);
-        
-        $number_of_objects = count($result);
-        printf(
-            __("Importing %d objects.",'culture-object')."<br />\r\n",
-            $number_of_objects
-        );
-        if ($number_of_objects > 0) {
-            foreach($result as $doc) {
-                $doc['identifier'] = $doc['Id'];
-                unset($doc['Id']);
-                $object_exists = $this->object_exists($doc['identifier']);
-                if (!$object_exists) {
-                    $current_objects[] = $this->create_object($doc);
-                    echo __("Created object",'culture-object').": ".$doc['Title']."<br />\r\n";
-                } else {
-                    $current_objects[] = $this->update_object($doc);
-                    echo __("Updated object",'culture-object').": ".$doc['Title']."<br />\r\n";
-                }
-            }
-            $this->clean_objects($current_objects,$previous_posts);
-        }
-            
-        $end = microtime(true);
-        
-        printf(
-            __("Sync Complete in %d seconds",'culture-object')."\r\n",
-            ($end-$start)
-        );
         
     }
     
@@ -127,7 +87,7 @@ class RAMM extends \CultureObject\Provider {
                 /* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
                 __('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
                 $remove_id,
-                'RAMM'
+                'SWCE'
             )."<br />";
         }
         
@@ -135,9 +95,9 @@ class RAMM extends \CultureObject\Provider {
     
     function create_object($doc) {
         $post = array(
-            'post_title'                => $doc['Title'],
-            'post_type'              => 'object',
-            'post_status'            => 'publish',
+            'post_title'            => $doc['Title'],
+            'post_type'                 => 'object',
+            'post_status'             => 'publish',
         );
         $post_id = wp_insert_post($post);
         $this->update_object_meta($post_id,$doc);
@@ -150,8 +110,8 @@ class RAMM extends \CultureObject\Provider {
         $post = array(
             'ID'                                => $existing_id,
             'post_title'                => $doc['Title'],
-            'post_type'              => 'object',
-            'post_status'            => 'publish',
+            'post_type'                 => 'object',
+            'post_status'             => 'publish',
         );
         $post_id = wp_update_post($post);
         $this->update_object_meta($post_id,$doc);
