@@ -17,6 +17,7 @@ class CultureObject extends Core {
         $this->helper = new Helper();
         add_action('init', array($this, 'wordpress_init'));
         add_action('parse_request', array($this, 'should_sync'));
+        add_action('wp_ajax_cos_sync', array($this, 'should_ajax_sync'));
         add_action('init', array($this, 'purge_objects'));
         add_action('plugins_loaded', array($this, 'load_co_languages'));
         register_activation_hook(__FILE__, array($this, 'regenerate_permalinks'));
@@ -84,6 +85,11 @@ class CultureObject extends Core {
                 }
             }
         }
+    }
+    
+    function should_ajax_sync() {
+        echo json_encode(array('state'=>'not yet implemented'));
+    	wp_die();
     }
     
     function purge_objects() {

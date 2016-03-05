@@ -19,9 +19,12 @@ class SWCE extends \CultureObject\Provider {
     function register_settings() {
         add_settings_section('cos_provider_settings',__('Provider Settings','culture-object'),array($this,'generate_settings_group_content'),'cos_provider_settings');
     
-        register_setting('cos_provider_settings', 'cos_provider_feed_url');
+        register_setting('cos_provider_settings', 'cos_provider_site_id');
+        register_setting('cos_provider_settings', 'cos_provider_api_token');
         
-        add_settings_field('cos_provider_feed_url', __('SWCE Feed URL','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_feed_url'));
+        add_settings_field('cos_provider_site_id', __('SWCE Site ID','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_site_id'));
+        
+        add_settings_field('cos_provider_api_token', __('SWCE API Token','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_api_token'));
     }
     
     function generate_settings_group_content() {
