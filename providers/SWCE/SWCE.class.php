@@ -8,7 +8,7 @@ class SWCE extends \CultureObject\Provider {
         'name' => 'SWCE',
         'version' => '1.0',
         'developer' => 'Thirty8 Digital',
-        'cron' => false,
+        'cron' => true,
         'ajax' => true
     );
     
@@ -68,6 +68,8 @@ class SWCE extends \CultureObject\Provider {
     }
     
     function perform_sync() {
+        
+        wp_die();
         
     }
     

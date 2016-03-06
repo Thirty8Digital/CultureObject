@@ -58,7 +58,7 @@ class CultureObject extends Core {
     }
     
     function should_sync() {
-        if (isset($_GET['perform_culture-object']) && isset($_GET['key'])) {
+        if (isset($_GET['perform_culture_object_sync']) && isset($_GET['key'])) {
             if (get_option('cos_core_sync_key') == $_GET['key']) {
                 $provider = $this->get_sync_provider();
                 if ($provider) {
