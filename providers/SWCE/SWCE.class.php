@@ -6,7 +6,7 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.0',
+        'version' => '1.0-alpha.1',
         'developer' => 'Thirty8 Digital',
         'cron' => true,
         'ajax' => true
@@ -51,7 +51,7 @@ class SWCE extends \CultureObject\Provider {
         $json = file_get_contents($url);
         $data = json_decode($json,true);
         if ($data) {
-            if (isset($data[0]['Id'])) {
+            if (isset($data['total'])) {
                 return $data;
             } else {
                 throw new SWCEException(sprintf(__("%s returned an invalid JSON response", 'culture-object'), 'SWCE'));
@@ -69,7 +69,73 @@ class SWCE extends \CultureObject\Provider {
     
     function perform_sync() {
         
-        wp_die();
+        
+        set_time_limit(0);
+        ini_set('memory_limit','768M');
+        
+        $start = microtime(true);
+        
+        /*$site = get_option('cos_provider_site_id');
+        if (empty($site)) {
+            throw new SWCEException(__("You haven't yet configured a URL in the Culture Object Sync settings",'culture-object'));
+        }*/
+        
+        $token = get_option('cos_provider_api_token');
+        if (empty($token)) {
+            throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
+        }
+        
+        $previous_posts = $this->get_current_object_ids();
+        
+        $url = 'https://swce.herokuapp.com/api/v1/object?api_token='.$token;
+        $result = $this->perform_request($url);
+        
+        $number_of_objects = $result['total'];
+        
+        printf(
+            __("Importing %d objects.",'culture-object')."<br />\r\n",
+            $number_of_objects
+        );
+        if ($number_of_objects > 0) {
+            
+            $first = true;
+            while($result['next_page_url']) {
+                @ob_flush(); @flush();
+                if (!$first) {
+                    $result = $this->perform_request($result['next_page_url']."&api_token=".$token);
+                } else {
+                    $first = false;
+                }
+                printf(
+                    /* Translators: 1: The current page 2: The last page */
+                    __('Loading Page %1$d of %2$d','culture-object')."<br />\r\n",
+                    $result['current_page'],
+                    $result['last_page']
+                );
+                foreach($result['data'] as $doc) {
+                    $object_exists = $this->object_exists($doc['accession-loan-no']);
+                    if (!$object_exists) {
+                        $current_objects[] = $this->create_object($doc);
+                        echo __("Created object",'culture-object').": ".$doc['accession-loan-no']."<br />\r\n";
+                    } else {
+                        $current_objects[] = $this->update_object($doc);
+                        echo __("Updated object",'culture-object').": ".$doc['accession-loan-no']."<br />\r\n";
+                    }
+                }
+            }
+            
+            
+            $this->clean_objects($current_objects,$previous_posts);
+        }
+            
+        $end = microtime(true);
+        
+        printf(
+            __("Sync Complete in %d seconds",'culture-object')."\r\n",
+            ($end-$start)
+        );
+        
+        die();
         
     }
     
@@ -100,9 +166,9 @@ class SWCE extends \CultureObject\Provider {
     
     function create_object($doc) {
         $post = array(
-            'post_title'            => $doc['Title'],
-            'post_type'                 => 'object',
-            'post_status'             => 'publish',
+            'post_title'    => $doc['simple-name'],
+            'post_type'     => 'object',
+            'post_status'   => 'publish',
         );
         $post_id = wp_insert_post($post);
         $this->update_object_meta($post_id,$doc);
@@ -111,12 +177,12 @@ class SWCE extends \CultureObject\Provider {
     
     
     function update_object($doc) {
-        $existing_id = $this->existing_object_id($doc['identifier']);
+        $existing_id = $this->existing_object_id($doc['accession-loan-no']);
         $post = array(
-            'ID'                                => $existing_id,
-            'post_title'                => $doc['Title'],
-            'post_type'                 => 'object',
-            'post_status'             => 'publish',
+            'ID'            => $existing_id,
+            'post_title'    => $doc['simple-name'],
+            'post_type'     => 'object',
+            'post_status'   => 'publish',
         );
         $post_id = wp_update_post($post);
         $this->update_object_meta($post_id,$doc);
@@ -127,26 +193,14 @@ class SWCE extends \CultureObject\Provider {
         foreach($doc as $key => $value) {
             if (empty($value)) continue;
             $key = strtolower($key);
-            if (is_array($value) && $key == "data") {
-                foreach($value as $single_value) {
-                    $key = $this->slugify_key($single_value['Name']);
-                    update_post_meta($post_id,'data_'.$key,$single_value['Value']);
-                }
-            } else if (is_array($value) && $key == "comments") {
-                foreach($value as $key => $single_value) {
-                    $key = $this->slugify_key($key);
-                    update_post_meta($post_id,'comments_'.$key,$single_value);
-                }
-            } else {
-                update_post_meta($post_id,$key,$value);
-            }
+            update_post_meta($post_id,$key,$value);
         }
     }
     
     function object_exists($id) {
         $args = array(
             'post_type' => 'object',
-            'meta_key' => 'identifier',
+            'meta_key' => 'accession-loan-no',
             'meta_value' => $id,
         );
         return (count(get_posts($args)) > 0) ? true : false;
@@ -155,7 +209,7 @@ class SWCE extends \CultureObject\Provider {
     function existing_object_id($id) {
         $args = array(
             'post_type' => 'object',
-            'meta_key' => 'identifier',
+            'meta_key' => 'accession-loan-no',
             'meta_value' => $id
         );
         $posts = get_posts($args);
