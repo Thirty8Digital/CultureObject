@@ -8,7 +8,7 @@
  * Text Domain: culture-object
  * Author URI: https://github.com/lgladdy
  * GitHub Plugin URI: Thirty8Digital/CultureObject
- * GitHub Branch: master
+ * GitHub Branch: schemas
  * License: Apache 2 License
  */
 
