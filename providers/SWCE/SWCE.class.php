@@ -88,6 +88,7 @@ class SWCE extends \CultureObject\Provider {
         $previous_posts = $this->get_current_object_ids();
         
         $url = 'https://swce.herokuapp.com/api/v1/object?api_token='.$token;
+        if (isset($_GET['page'])) $url .= "&page=".intval($_GET['page']);
         $result = $this->perform_request($url);
         
         $number_of_objects = $result['total'];
