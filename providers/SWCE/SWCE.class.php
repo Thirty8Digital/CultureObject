@@ -47,6 +47,33 @@ class SWCE extends \CultureObject\Provider {
         
     }
     
+    function execute_init_action() {
+        $labels = array(
+    		'name'              => _x('Object Categories', 'taxonomy general name'),
+    		'singular_name'     => _x('Object Category', 'taxonomy singular name'),
+    		'search_items'      => __('Search Object Categories'),
+    		'all_items'         => __('All Object Categories'),
+    		'parent_item'       => __('Parent Object Category'),
+    		'parent_item_colon' => __('Parent Object Category:'),
+    		'edit_item'         => __('Edit Object Category'),
+    		'update_item'       => __('Update Object Category'),
+    		'add_new_item'      => __('Add New Object Category'),
+    		'new_item_name'     => __('New Object Category Name'),
+    		'menu_name'         => __('Object Category'),
+    	);
+    
+    	$args = array(
+    		'hierarchical'      => true,
+    		'labels'            => $labels,
+    		'show_ui'           => true,
+    		'show_admin_column' => true,
+    		'query_var'         => true,
+    		'rewrite'           => array('slug' => 'object_category'),
+    	);
+    
+    	register_taxonomy('object_category', array('object'), $args);
+    }
+    
     function perform_request($url) {
         $json = file_get_contents($url);
         $data = json_decode($json,true);
@@ -67,8 +94,66 @@ class SWCE extends \CultureObject\Provider {
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
-    function perform_sync() {
+    function perform_ajax_sync() {
         
+        set_time_limit(0);
+        ini_set('memory_limit','768M');
+        
+        $token = get_option('cos_provider_api_token');
+        if (empty($token)) {
+            $result['state'] = 'error';
+            $result['message'] = urlencode("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object');
+            echo json_encode($result);
+            wp_die();
+        }
+        
+        $site = get_option('cos_provider_site_id');
+        if (empty($site)) {
+            $result['state'] = 'error';
+            $result['message'] = urlencode("You haven't yet configured the SWCE site ID in the Culture Object Sync settings",'culture-object');
+            echo json_encode($result);
+            wp_die();
+        }
+        
+        $result = array();
+        
+        if (isset($_POST['phase'])) {
+            if ($_POST['phase'] == "init") {
+                $result['state'] = 'ok';
+                $result['next_phase'] = 'page';
+                $result['next_page'] = '1';
+                
+                $url = 'https://swce.herokuapp.com/api/v1/objects?api_token='.$token;
+                $dr = $this->perform_request($url);
+                
+                $result['result'] = array();
+                $result['result']['total'] = $dr['total'];
+                $result['result']['current_page'] = $dr['current_page'];
+                $result['result']['last_page'] = $dr['last_page'];
+                
+                $result['existing_ids'] = $this->get_current_object_ids();
+                
+                
+            } else if ($_POST['phase'] == "page") {
+                
+            } else if ($_POST['phase'] == "clean") {
+                
+            } else {
+                $result['state'] = 'error';
+                $result['message'] = 'Invalid AJAX request phase';
+            }
+        } else {
+            $result['state'] = 'error';
+            $result['message'] = 'Invalid AJAX request';
+        }
+        
+        echo json_encode($result);
+        wp_die();
+        
+        
+    }
+    
+    function perform_sync() {
         
         set_time_limit(0);
         ini_set('memory_limit','768M');
@@ -85,9 +170,14 @@ class SWCE extends \CultureObject\Provider {
             throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
         }
         
+        $site = get_option('cos_provider_site_id');
+        if (empty($site)) {
+            throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
+        }
+        
         $previous_posts = $this->get_current_object_ids();
         
-        $url = 'https://swce.herokuapp.com/api/v1/object?api_token='.$token;
+        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.$token.'&site='.$site;
         if (isset($_GET['page'])) $url .= "&page=".intval($_GET['page']);
         $result = $this->perform_request($url);
         
@@ -103,7 +193,7 @@ class SWCE extends \CultureObject\Provider {
             while($result['next_page_url']) {
                 @ob_flush(); @flush();
                 if (!$first) {
-                    $result = $this->perform_request($result['next_page_url']."&api_token=".$token);
+                    $result = $this->perform_request($result['next_page_url']."&per_page=100&api_token=".$token.'&site='.$site);
                 } else {
                     $first = false;
                 }
@@ -190,7 +280,22 @@ class SWCE extends \CultureObject\Provider {
         return $post_id;
     }
     
+    function set_category($post_id, $category_array) {
+        //Check if the category already exists.
+        $term = term_exists($category_array['name'],'object_category');
+        if (!$term) {
+            $term = wp_insert_term($category_array['name'],'object_category');
+        }
+        wp_set_post_terms($post_id, $term, 'object_category');
+    }
+    
     function update_object_meta($post_id,$doc) {
+        unset($doc['site']);
+        
+        //process the category.
+        $this->set_category($post_id,$doc['category']);
+        unset($doc['category']);
+        
         foreach($doc as $key => $value) {
             if (empty($value)) continue;
             $key = strtolower($key);

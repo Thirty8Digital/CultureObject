@@ -58,6 +58,7 @@ class CultureObject extends Core {
     }
     
     function should_sync() {
+        
         if (isset($_GET['perform_culture_object_sync']) && isset($_GET['key'])) {
             if (get_option('cos_core_sync_key') == $_GET['key']) {
                 $provider = $this->get_sync_provider();
@@ -88,7 +89,42 @@ class CultureObject extends Core {
     }
     
     function should_ajax_sync() {
-        echo json_encode(array('state'=>'not yet implemented'));
+        
+        if (isset($_POST['key'])) {
+            if (get_option('cos_core_sync_key') == $_POST['key']) {
+                $provider = $this->get_sync_provider();
+                if ($provider) {
+                    if (!class_exists($provider['class'])) include_once($provider['file']);
+                    $provider_class = new $provider['class'];
+                    $info = $provider_class->get_provider_information();
+                    
+                    if (!$info['ajax']) die(sprintf(
+                        /* Translators: %s: is the name of the provider. */
+                        __("Culture Object provider (%s) does not support AJAX sync.", 'culture-object'),
+                        $info['name']
+                    ));
+                    
+                    try {
+                        $provider_class->perform_ajax_sync();
+                    } catch (ProviderException $e) {
+                        $result = array();
+                        $result['state'] = 'error';
+                        $result['message'] = urlencode(__("A sync exception occurred during sync", 'culture-object'));
+                        $result['detail'] = urlencode($e->getMessage());
+                        echo json_encode($result);
+                        wp_die();
+                    } catch (Exception $e) {
+                        $result = array();
+                        $result['state'] = 'error';
+                        $result['message'] = urlencode(__("An unknown exception occurred during sync", 'culture-object'));
+                        $result['detail'] = urlencode($e->getMessage());
+                        echo json_encode($result);
+                        wp_die();
+                    }
+                }
+            }
+        }
+        
     	wp_die();
     }
     

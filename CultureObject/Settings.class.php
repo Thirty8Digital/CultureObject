@@ -67,7 +67,7 @@ class Settings extends Core {
         if ($page == 'toplevel_page_cos_settings' || $page == 'culture-object_page_cos_provider_settings') {
             wp_register_style('cos_admin_css', $this->plugin_url . '/css/culture-object-sync.css', false, '1.0.0');
             wp_enqueue_style('cos_admin_css');
-            wp_register_script('cos_admin_js', $this->plugin_url . '/js/culture-object-sync.js', array('jquery','jquery.qtip.js'), '1.0.0', true);
+            wp_register_script('cos_admin_js', $this->plugin_url . '/js/culture-object-sync.js', array('jquery'), '1.0.0', true);
             wp_enqueue_script('cos_admin_js');
         }
     }
