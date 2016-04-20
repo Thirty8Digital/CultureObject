@@ -177,7 +177,7 @@ class CultureObject extends Core {
             6 => sprintf(__('Object published.', 'culture-object').' <a href="%s">'.__('View object', 'culture-object').'</a>', esc_url( get_permalink($post_ID) ) ),
             7 => __('Object saved.', 'culture-object'),
             8 => sprintf(__('Object submitted.', 'culture-object').' <a target="_blank" href="%s">'.__('Preview object', 'culture-object').'</a>', esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID)))),
-            9 => sprintf(__('Object scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">'.__('Preview object', 'culture-object').'</a>', date_i18n(__('M j, Y @ G:i'), strtotime($post->post_date)), esc_url(get_permalink($post_ID)))),
+            9 => sprintf(__('Object scheduled for', 'culture-object').': <strong>%1$s</strong>. <a target="_blank" href="%2$s">'.__('Preview object', 'culture-object').'</a>', date_i18n(__('M j, Y @ G:i', 'culture-object'), strtotime($post->post_date)), esc_url(get_permalink($post_ID))),
             10 => sprintf(__('Object draft updated.', 'culture-object').' <a target="_blank" href="%s">'.__('Preview object', 'culture-object').'</a>', esc_url(add_query_arg('preview', 'true', get_permalink($post_ID)))),
         );
     

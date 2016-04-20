@@ -86,9 +86,9 @@ class Emu extends CultureObject\Provider {
             echo '</form>';
             echo '<script>
             jQuery("#emu_import_submit").click(function(e) {
-                jQuery("#csv_import_submit").val("'.esc_html__('Importing... This may take some time...', 'culture-object').'");
-                jQuery("#emu_import_submit").addClass("button-disabled");
-                window.setTimeout(\'jQuery("#emu_import_form").submit();\',100);
+                $("#csv_import_submit").val("'.esc_html__('Importing... This may take some time...', 'culture-object').'");
+                $("#emu_import_submit").addClass("button-disabled");
+                window.setTimeout(\'$("#emu_import_form").submit();\',100);
             });
             </script>';
         }
@@ -129,6 +129,7 @@ class Emu extends CultureObject\Provider {
         $number_of_objects = 0;
         
         foreach($data as $dataset) {
+            if (!isset($dataset['rows']) && isset($dataset[0]['rows'])) $dataset = $dataset[0];
             $number_of_objects = $number_of_objects + count($dataset['rows']);
             foreach($dataset['rows'] as $doc) {
                 
@@ -163,7 +164,6 @@ class Emu extends CultureObject\Provider {
             $deleted,
             round($import_duration, 2)
         ), 0);
-        
         set_transient('cos_emu_show_message', true, 0);
         set_transient('cos_emu_status', $import_status, 0);
     }
