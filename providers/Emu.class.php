@@ -113,6 +113,7 @@ class Emu extends CultureObject\Provider {
 		$number_of_objects = 0;
 		
 		foreach($data as $dataset) {
+            if (!isset($dataset['rows']) && isset($dataset[0]['rows'])) $dataset = $dataset[0];
 			$number_of_objects = $number_of_objects + count($dataset['rows']);
 			foreach($dataset['rows'] as $doc) {
 				

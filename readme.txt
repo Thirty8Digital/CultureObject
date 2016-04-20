@@ -2,8 +2,8 @@
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 4.1
-Tested up to: 4.4
-Stable tag: 2.1.3
+Tested up to: 4.5
+Stable tag: 2.2.0
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -25,6 +25,10 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 2.2.0 =
+Fix: Support WordPress 4.5
+Fix an issue with EMU imports with some JSON files
 
 = 2.1.3 =
 Revert to old PHP syntax so we work on PHP 5.3 (but please, please upgrade to PHP 5.6 or PHP 7)

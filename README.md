@@ -1,4 +1,4 @@
-CultureObject v2.1.3
+CultureObject v2.2.0
 ====================
 
 Welcome
@@ -45,6 +45,10 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 2.2.0
+* **Fix:** Support WordPress 4.5
+* **Fix:** Fix an issue with EMU imports with some JSON files
 
 ####Version 2.1.3
 * **Fix:** Revert to old PHP syntax so we work on PHP 5.3 (but please, please upgrade to PHP 5.6 or PHP 7)

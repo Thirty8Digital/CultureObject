@@ -69,7 +69,7 @@ class Settings extends Core {
 	}
 	
 	function add_menu_item() {
-		$options_page = add_utility_page('Culture Object Settings', 'Culture Object', 'administrator', 'cos_settings', array($this,'generate_settings_page'), '
+		$options_page = add_menu_page('Culture Object Settings', 'Culture Object', 'administrator', 'cos_settings', array($this,'generate_settings_page'), '
 dashicons-update');
 		$provider_page = add_submenu_page('cos_settings', 'Provider Settings', 'Provider Settings', 'administrator', 'cos_provider_settings', array($this,'generate_provider_page'));
 		add_action('load-'.$provider_page, array($this,'provide_load_action'));
