@@ -1,0 +1,15 @@
+{
+    "name": "lgladdy/culture-object-csv",
+    "description": "The second release of the CSV provider for the Culture Object WordPress plugin.",
+    "require": {
+        "phpoffice/phpexcel": "^1.8"
+    },
+    "license": "Apache 2.0",
+    "authors": [
+        {
+            "name": "Liam Gladdy",
+            "email": "liam@gladdy.co.uk"
+        }
+    ],
+    "minimum-stability": "stable"
+}
