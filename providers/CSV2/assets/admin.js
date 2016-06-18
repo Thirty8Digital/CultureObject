@@ -41,11 +41,11 @@ function importChunk(start, sync_key, nonce, id_field, title_field) {
         function(response) {
             if (response.complete) {
                 $("#csv_import_progressbar").progressbar({value: 100});
-                $("#csv_import_progressbar .progress-label").html('Imported Complete. '+response.total_rows+' objects imported');
+                $("#csv_import_progressbar .progress-label").html(strings.import_complete+' '+response.total_rows+' '+strings.objects_imported);
                 $("#csv_import_detail").prepend(response.import_status.join("<br />")+"<br />");
             } else {
                 $("#csv_import_progressbar").progressbar({value: response.percentage});
-                $("#csv_import_progressbar .progress-label").html('Imported '+(response.next_start-1)+'/'+response.total_rows+' objects');
+                $("#csv_import_progressbar .progress-label").html(strings.imported+' '+(response.next_start-1)+'/'+response.total_rows+' '+strings.objects);
                 $("#csv_import_detail").prepend(response.import_status.join("<br />")+"<br />");
                 importChunk(response.next_start, sync_key, response.next_nonce, id_field, title_field);
             }

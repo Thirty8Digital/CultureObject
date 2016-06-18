@@ -232,6 +232,10 @@ class CSV2 extends \CultureObject\Provider {
         strings = {};
         strings.uploading_please_wait = "'.esc_html__('Uploading... This may take some time...', 'culture-object').'";
         strings.importing_please_wait = "'.esc_html__('Importing... This may take some time...', 'culture-object').'";
+        strings.imported = "'.esc_html__('Imported', 'culture-object').'";
+        strings.object = "'.esc_html__('objects', 'culture-object').'";
+        strings.objects_imported = "'.esc_html__('objects imported', 'culture-object').'";
+        strings.import_complete = "'.esc_html__('Imported Complete.', 'culture-object').'";
         </script>';
     }
     
