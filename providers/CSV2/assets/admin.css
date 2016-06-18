@@ -20,5 +20,7 @@
 }
 #id_field, #title_field {
     margin-bottom: 20px;
-    display: block;
+}
+fieldset {
+    margin-bottom: 20px;
 }

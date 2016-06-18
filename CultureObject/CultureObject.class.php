@@ -91,44 +91,54 @@ class CultureObject extends Core {
     function should_ajax_sync() {
         
         if (isset($_POST['key'])) {
-            if (get_option('cos_core_sync_key') == $_POST['key'] && wp_verify_nonce($_POST['nonce'], 'cos_ajax_import_request')) {
-                $provider = $this->get_sync_provider();
-                if ($provider) {
-                    if (!class_exists($provider['class'])) include_once($provider['file']);
-                    $provider_class = new $provider['class'];
-                    $info = $provider_class->get_provider_information();
-                    
-                    if (!$info['ajax']) die(sprintf(
-                        /* Translators: %s: is the name of the provider. */
-                        __("Culture Object provider (%s) does not support AJAX sync.", 'culture-object'),
-                        $info['name']
-                    ));
-                    
-                    try {
-                        $result = $provider_class->perform_ajax_sync();
-                        echo json_encode($result);
-                        wp_die();
-                    } catch (ProviderException $e) {
-                        $result = array();
-                        $result['state'] = 'error';
-                        $result['message'] = urlencode(__("A sync exception occurred during sync", 'culture-object'));
-                        $result['detail'] = urlencode($e->getMessage());
-                        echo json_encode($result);
-                        wp_die();
-                    } catch (Exception $e) {
-                        $result = array();
-                        $result['state'] = 'error';
-                        $result['message'] = urlencode(__("An unknown exception occurred during sync", 'culture-object'));
-                        $result['detail'] = urlencode($e->getMessage());
-                        echo json_encode($result);
-                        wp_die();
+            if (get_option('cos_core_sync_key') == $_POST['key']) {
+                if (wp_verify_nonce($_POST['nonce'], 'cos_ajax_import_request')) {
+                    $provider = $this->get_sync_provider();
+                    if ($provider) {
+                        if (!class_exists($provider['class'])) include_once($provider['file']);
+                        $provider_class = new $provider['class'];
+                        $info = $provider_class->get_provider_information();
+                        
+                        if (!$info['ajax']) die(sprintf(
+                            /* Translators: %s: is the name of the provider. */
+                            __("Culture Object provider (%s) does not support AJAX sync.", 'culture-object'),
+                            $info['name']
+                        ));
+                        
+                        try {
+                            $result = $provider_class->perform_ajax_sync();
+                            echo json_encode($result);
+                            wp_die();
+                        } catch (ProviderException $e) {
+                            $result = array();
+                            $result['state'] = 'error';
+                            $result['message'] = urlencode(__("A sync exception occurred during sync", 'culture-object'));
+                            $result['detail'] = urlencode($e->getMessage());
+                            echo json_encode($result);
+                            wp_die();
+                        } catch (Exception $e) {
+                            $result = array();
+                            $result['state'] = 'error';
+                            $result['message'] = urlencode(__("An unknown exception occurred during sync", 'culture-object'));
+                            $result['detail'] = urlencode($e->getMessage());
+                            echo json_encode($result);
+                            wp_die();
+                        }
                     }
+                } else {
+                    var_dump($_POST);
+                    $result = array();
+                    $result['state'] = 'error';
+                    $result['message'] = __("Security Violation", 'culture-object');
+                    $result['detail'] = __('Nonce verification failed: '.$_POST['nonce'], 'culture-object');
+                    echo json_encode($result);
+                    wp_die();
                 }
             } else {
                 $result = array();
                 $result['state'] = 'error';
-                $result['message'] = urlencode(__("Security Violation.", 'culture-object'));
-                $result['detail'] = __('A security violation occurred during import.', 'culture-object');
+                $result['message'] = __("Security Violation", 'culture-object');
+                $result['detail'] = __('Invalid Sync Key', 'culture-object');
                 echo json_encode($result);
                 wp_die();
             }

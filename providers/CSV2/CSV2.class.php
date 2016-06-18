@@ -23,6 +23,8 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     function add_provider_assets() {
+        $screen = get_current_screen();
+        if ($screen->base != 'culture-object_page_cos_provider_settings') return;
         $js_url = plugins_url('/assets/admin.js?nc='.time(), __FILE__);
         wp_enqueue_script('jquery-ui');
         wp_enqueue_script('jquery-ui-core');
@@ -88,9 +90,11 @@ class CSV2 extends \CultureObject\Provider {
         $headers = $this->get_csv_chunk($path,1,1);
         $data = $this->get_csv_data($path);
         
+        echo '<div id="hide-on-import">';
+        
         echo '<p>';
         printf(
-            /* Translators: 1: CSV File Name 2: Number of columns in the CSV 3: Provider Developer */
+            /* Translators: 1: CSV File Name 2: Number of columns in the CSV 3: Numer of rows in the CSV */
             __('Your uploaded CSV "%1$s" contains %2$d columns and %3$d rows.', 'culture-object'),
             basename($path),
             $data[0]['totalColumns'],
@@ -103,23 +107,47 @@ class CSV2 extends \CultureObject\Provider {
         
         echo '<p>'.__('To begin the import, click the button below.', 'culture-object').'</p>';
         
+        
+        $id_field = get_site_option('cos_csv2_id_field');
+        
+        echo '<div class="select_field">';
         echo '<select id="id_field">';
-        echo '<option value="0">'.__('Select a field to use as the object ID', 'culture-object').'</object>';
+        echo '<option value="0">'.esc_attr__('Select a field to use as the object ID', 'culture-object').'</object>';
         foreach($headers[0] as $key => $header) {
-            echo '<option value="'.$key.'">'.$header.'</option>';
+            echo '<option value="'.$key.'" '.selected($id_field, $key, false).'>'.$header.'</option>';
         }
         echo '</select>';
+        echo '<span class="description"> ';
+        esc_attr_e('Select the column that contains the unique ID for the objects in your dataset', 'culture-object');
+        echo '</span>';
+        echo '</div>';
         
+        $title_field = get_site_option('cos_csv2_title_field');
+        
+        echo '<div class="select_field">';
         echo '<select id="title_field">';
-        echo '<option value="0">'.__('Select a field to use as the object title', 'culture-object').'</object>';
+        echo '<option value="0">'.esc_attr__('Select a field to use as the object title', 'culture-object').'</object>';
         foreach($headers[0] as $key => $header) {
-            echo '<option value="'.$key.'">'.$header.'</option>';
+            echo '<option value="'.$key.'" '.selected($title_field, $key, false).'>'.$header.'</option>';
         }
         echo '</select>';
+        echo '<span class="description"> ';
+        esc_attr_e('Select the column that contains the title for the objects in your dataset', 'culture-object');
+        echo '</span>';
+        echo '</div>';
         
-        echo '<input id="csv_perform_ajax_import" data-sync-key="'.get_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
+        echo '<fieldset>
+            	<label for="perform_cleanup">
+            		<input name="perform_cleanup" type="checkbox" id="perform_cleanup" value="1" />
+            		<span>'.esc_attr__('Delete existing objects not in this import?', 'culture-object').'</span>
+            	</label>
+            </fieldset>';
+        
+        echo '<input id="csv_perform_ajax_import" data-import-id="'.uniqid('', true).'" data-sync-key="'.get_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
         _e('Process Import', 'culture-object');
         echo '" />';
+        
+        echo '</div>';
         
         echo '<div id="csv_import_progressbar"><div class="progress-label">Starting Import...</div></div>';
         echo '<div id="csv_import_detail"></div>';
@@ -148,29 +176,55 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     function perform_ajax_sync() {
-    	if (!isset($_POST['start']) || !isset($_POST['id_field']) || !isset($_POST['title_field'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
+    	if (!isset($_POST['start']) || !isset($_POST['import_id'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
     	
     	$start = $_POST['start'];
-    	$id_field = $_POST['id_field'];
-    	$title_field = $_POST['title_field'];
+    	$import_id = $_POST['import_id'];
     	
-    	$count = 50;
-    	if ($path = $this->has_uploaded_file()) {
-        	$info = $this->get_csv_data($path);
-            $data = $this->get_csv_chunk($path, $start, $count);
-            $result = $this->import_chunk($data, $id_field, $title_field);
-            $result['total_rows'] = $info[0]['totalRows'];
-            if ($start + $count < $result['total_rows']) {
-                $result['next_start'] = $start + $count;
-                $result['complete'] = false;
-                $result['percentage'] = round((100/$info[0]['totalRows'])*($start+$count));
+    	if ($start == "cleanup") {
+        	
+            ini_set('memory_limit','2048M');
+            
+            $objects = get_site_option('cos_csv2_import_'.$import_id, array());
+            $previous_posts = $this->get_current_object_ids();
+            delete_site_option('cos_csv2_import_'.$import_id, array());
+            return $this->clean_objects($objects,$previous_posts);
+            
+    	} else {
+        	
+        	if (!isset($_POST['id_field']) || !isset($_POST['title_field'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
+        	$id_field = $_POST['id_field'];
+        	$title_field = $_POST['title_field'];
+        	
+        	update_site_option('cos_csv2_id_field', $id_field);
+        	update_site_option('cos_csv2_title_field', $title_field);
+        	
+        	$cleanup = isset($_POST['perform_cleanup']) && $_POST['perform_cleanup'];
+        	
+        	$count = 50;
+        	if ($path = $this->has_uploaded_file()) {
+            	$info = $this->get_csv_data($path);
+                $data = $this->get_csv_chunk($path, $start, $count);
+                $result = $this->import_chunk($data, $id_field, $title_field);
+                $result['total_rows'] = $info[0]['totalRows'];
+                if ($start + $count < $result['total_rows']) {
+                    $result['next_start'] = $start + $count;
+                    $result['complete'] = false;
+                    $result['percentage'] = round((100/$info[0]['totalRows'])*($start+$count));
+                } else {
+                    $result['complete'] = true;
+                    $result['percentage'] = 100;
+                }
                 $result['next_nonce'] = wp_create_nonce('cos_ajax_import_request');
-            } else {
-                $result['complete'] = true;
-                $result['percentage'] = 100;
-            }
-            return $result;
-        } else throw new CSV2Exception(__('Attempted to import without a file uploaded.', 'culture-object'));
+                
+                if ($cleanup) {
+                    $objects = get_site_option('cos_csv2_import_'.$import_id, array());
+                    update_site_option('cos_csv2_import_'.$import_id, array_merge($objects, $result['chunk_objects']));
+                }
+                
+                return $result;
+            } else throw new CSV2Exception(__('Attempted to import without a file uploaded.', 'culture-object'));
+        }
     }
     
     function import_chunk($data, $id_field = 0, $title_field = 0) {
@@ -233,9 +287,11 @@ class CSV2 extends \CultureObject\Provider {
         strings.uploading_please_wait = "'.esc_html__('Uploading... This may take some time...', 'culture-object').'";
         strings.importing_please_wait = "'.esc_html__('Importing... This may take some time...', 'culture-object').'";
         strings.imported = "'.esc_html__('Imported', 'culture-object').'";
-        strings.object = "'.esc_html__('objects', 'culture-object').'";
+        strings.objects = "'.esc_html__('objects', 'culture-object').'";
         strings.objects_imported = "'.esc_html__('objects imported', 'culture-object').'";
+        strings.objects_deleted = "'.esc_html__('objects deleted', 'culture-object').'";
         strings.import_complete = "'.esc_html__('Imported Complete.', 'culture-object').'";
+        strings.performing_cleanup = "'.esc_html__('Performing cleanup, please wait... This can take a long time if you have deleted a lot of objects.', 'culture-object').'";
         </script>';
     }
     
@@ -356,28 +412,63 @@ class CSV2 extends \CultureObject\Provider {
     
     function object_exists($id) {
         
-        $post = get_pages(array(
+        $post = get_posts(array(
            'meta_key' => 'cos_object_id',
            'meta_value' => $id,
            'post_type' => 'object'
         ));
-        
-        $post = array_shift($post);
-        return (!empty($post)) ? true : false;
+        return $post ? true : false;
     }
     
     function existing_object_id($id) {
         
-        $post = get_pages(array(
+        $post = get_posts(array(
            'meta_key' => 'cos_object_id',
            'meta_value' => $id,
            'post_type' => 'object'
         ));
         
-        $post = array_shift($post);
-        
         if (empty($post)) throw new Exception(__("Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.",'culture-object'));
-        return $post['ID'];
+        
+        $post = array_shift($post);
+        return $post->ID;
+    }
+    
+    function get_current_object_ids() {
+        $args = array('post_type'=>'object','posts_per_page'=>-1);
+        $posts = get_posts($args);
+        $current_posts = array();
+        foreach($posts as $post) {
+            $current_posts[] = $post->ID;
+        }
+        return $current_posts;
+    }
+    
+    
+    function clean_objects($current_objects,$previous_objects) {
+        $to_remove = array_diff($previous_objects, $current_objects);
+        
+        $import_delete = array();
+        
+        $deleted = 0;
+        
+        foreach($to_remove as $remove_id) {
+            wp_delete_post($remove_id,true);
+            $import_delete[] = sprintf(
+                /* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
+                __('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
+                $remove_id,
+                'CSV'
+            );
+            $deleted++;
+        }
+        
+        set_transient('cos_csv_deleted', $import_delete, 0);
+        
+        $return = [];
+        $return['deleted_count'] = $deleted;
+        $return['deleted_status'] = $import_delete;
+        return $return;
     }
 
     function perform_sync() {
