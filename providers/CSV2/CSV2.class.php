@@ -103,6 +103,20 @@ class CSV2 extends \CultureObject\Provider {
         
         echo '<p>'.__('To begin the import, click the button below.', 'culture-object').'</p>';
         
+        echo '<select id="id_field">';
+        echo '<option value="0">'.__('Select a field to use as the object ID', 'culture-object').'</object>';
+        foreach($headers[0] as $key => $header) {
+            echo '<option value="'.$key.'">'.$header.'</option>';
+        }
+        echo '</select>';
+        
+        echo '<select id="title_field">';
+        echo '<option value="0">'.__('Select a field to use as the object title', 'culture-object').'</object>';
+        foreach($headers[0] as $key => $header) {
+            echo '<option value="'.$key.'">'.$header.'</option>';
+        }
+        echo '</select>';
+        
         echo '<input id="csv_perform_ajax_import" data-sync-key="'.get_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
         _e('Process Import', 'culture-object');
         echo '" />';
@@ -134,12 +148,17 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     function perform_ajax_sync() {
+    	if (!isset($_POST['start']) || !isset($_POST['id_field']) || !isset($_POST['title_field'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
+    	
     	$start = $_POST['start'];
+    	$id_field = $_POST['id_field'];
+    	$title_field = $_POST['title_field'];
+    	
     	$count = 50;
     	if ($path = $this->has_uploaded_file()) {
         	$info = $this->get_csv_data($path);
             $data = $this->get_csv_chunk($path, $start, $count);
-            $result = $this->import_chunk($data);
+            $result = $this->import_chunk($data, $id_field, $title_field);
             $result['total_rows'] = $info[0]['totalRows'];
             if ($start + $count < $result['total_rows']) {
                 $result['next_start'] = $start + $count;
@@ -154,7 +173,7 @@ class CSV2 extends \CultureObject\Provider {
         } else throw new CSV2Exception(__('Attempted to import without a file uploaded.', 'culture-object'));
     }
     
-    function import_chunk($data) {
+    function import_chunk($data, $id_field = 0, $title_field = 0) {
         $fields = array_shift($data);
         $number_of_fields = count($fields);
         
@@ -177,18 +196,22 @@ class CSV2 extends \CultureObject\Provider {
         }
         
         $number_of_objects = count($data_array);
+        $fields[] = 'cos_object_id';
+        
         if ($number_of_objects > 0) {
             foreach($data_array as $doc) {
                 
-                $object_exists = $this->object_exists($doc[0]);
+                $doc[] = $doc[$id_field];
+                
+                $object_exists = $this->object_exists($doc[$id_field]);
                 
                 if (!$object_exists) {
-                    $current_objects[] = $this->create_object($doc, $fields);
-                    $import_status[] = __("Created object", 'culture-object').': '.$doc[0];
+                    $current_objects[] = $this->create_object($doc, $fields, $id_field, $title_field);
+                    $import_status[] = __("Created object", 'culture-object').': '.$doc[$title_field];
                     $created++;
                 } else {
-                    $current_objects[] = $this->update_object($doc, $fields);
-                    $import_status[] = __("Updated object", 'culture-object').': '.$doc[0];
+                    $current_objects[] = $this->update_object($doc, $fields, $id_field, $title_field);
+                    $import_status[] = __("Updated object", 'culture-object').': '.$doc[$title_field];
                     $updated++;
                 }
             }
@@ -292,11 +315,12 @@ class CSV2 extends \CultureObject\Provider {
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
-    function create_object($doc, $fields) {
+    function create_object($doc, $fields, $id_field, $title_field) {
         $post = array(
-            'post_title'             => $doc[0],
-            'post_type'              => 'object',
-            'post_status'            => 'publish',
+            'post_title'                => $doc[$title_field],
+            'post_type'                 => 'object',
+            'post_status'               => 'publish',
+            'post_name'                 => $doc[$id_field]
         );
         $post_id = wp_insert_post($post);
         $this->update_object_meta($post_id,$doc,$fields);
@@ -304,13 +328,14 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     
-    function update_object($doc, $fields) {
-        $existing_id = $this->existing_object_id($doc[0]);
+    function update_object($doc, $fields, $id_field, $title_field) {
+        $existing_id = $this->existing_object_id($doc[$id_field]);
         $post = array(
-            'ID'                     => $existing_id,
-            'post_title'             => $doc[0],
-            'post_type'              => 'object',
-            'post_status'            => 'publish',
+            'ID'                        => $existing_id,
+            'post_title'                => $doc[$title_field],
+            'post_name'                 => $doc[$id_field],
+            'post_type'                 => 'object',
+            'post_status'               => 'publish'
         );
         $post_id = wp_update_post($post);
         $this->update_object_meta($post_id,$doc,$fields);
@@ -326,12 +351,27 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     function object_exists($id) {
-        $post = get_page_by_title($id, ARRAY_A, 'object');
+        
+        $post = get_pages(array(
+           'meta_key' => 'cos_object_id',
+           'meta_value' => $id,
+           'post_type' => 'object'
+        ));
+        
+        $post = array_shift($post);
         return (!empty($post)) ? true : false;
     }
     
     function existing_object_id($id) {
-        $post = get_page_by_title($id, ARRAY_A, 'object');
+        
+        $post = get_pages(array(
+           'meta_key' => 'cos_object_id',
+           'meta_value' => $id,
+           'post_type' => 'object'
+        ));
+        
+        $post = array_shift($post);
+        
         if (empty($post)) throw new Exception(__("Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.",'culture-object'));
         return $post['ID'];
     }

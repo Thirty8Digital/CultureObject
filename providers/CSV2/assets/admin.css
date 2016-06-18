@@ -18,3 +18,7 @@
     font-weight: bold;
     text-shadow: 1px 1px 0 #fff;
 }
+#id_field, #title_field {
+    margin-bottom: 20px;
+    display: block;
+}
