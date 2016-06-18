@@ -26,9 +26,10 @@ abstract class Core {
                     
                     if (!class_exists($class)) include_once($filename);
                     $provider_class = new $class;
-                    $provider['info'] = $provider_class->get_provider_information();
-                    
-                    $valid_providers[] = $provider;
+                    if (method_exists($provider_class, 'get_provider_information')) {
+                        $provider['info'] = $provider_class->get_provider_information();
+                        $valid_providers[] = $provider;
+                    }
                 }
             }
         }

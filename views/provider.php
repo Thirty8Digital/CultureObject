@@ -28,7 +28,9 @@
         </form>
     <?php } ?>
     
-    <?php if (isset($provider_info) && $provider_info && (isset($provider_info['ajax']) && $provider_info['ajax'])) { ?>
+    <?php if (isset($provider_class) && method_exists($provider_class, 'generate_settings_outside_form_html')) $provider_class->generate_settings_outside_form_html(); ?>
+    
+    <?php if (false && isset($provider_info) && $provider_info && (isset($provider_info['ajax']) && $provider_info['ajax'])) { //Disable this while we figure out how AJAX will work. ?>
     
         <p>Once you've completed the settings above and saved, click perform sync to initiate the sync</p>
         <input type="submit" name="perform_ajax_sync" id="perform_ajax_sync" data-sync-key="<?php echo get_option('cos_core_sync_key'); ?>" class="button button-primary" value="<?php _e('Perform Sync','culture-object'); ?>">
@@ -38,8 +40,5 @@
         </div>
     
     <?php } ?>
-    
-    
-    <?php if (isset($provider_class) && method_exists($provider_class, 'generate_settings_outside_form_html')) $provider_class->generate_settings_outside_form_html(); ?>
 
 </div>

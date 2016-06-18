@@ -1,4 +1,4 @@
-$ = jQuery.noConflict(true);
+$ = jQuery.noConflict();
 $(document).ready(function() {
     $('#perform_ajax_sync').click(function() {
         $('#ajax_output').css('display','block');

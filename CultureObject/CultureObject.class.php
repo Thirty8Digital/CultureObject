@@ -91,7 +91,7 @@ class CultureObject extends Core {
     function should_ajax_sync() {
         
         if (isset($_POST['key'])) {
-            if (get_option('cos_core_sync_key') == $_POST['key']) {
+            if (get_option('cos_core_sync_key') == $_POST['key'] && wp_verify_nonce($_POST['nonce'], 'cos_ajax_import_request')) {
                 $provider = $this->get_sync_provider();
                 if ($provider) {
                     if (!class_exists($provider['class'])) include_once($provider['file']);
@@ -105,7 +105,9 @@ class CultureObject extends Core {
                     ));
                     
                     try {
-                        $provider_class->perform_ajax_sync();
+                        $result = $provider_class->perform_ajax_sync();
+                        echo json_encode($result);
+                        wp_die();
                     } catch (ProviderException $e) {
                         $result = array();
                         $result['state'] = 'error';
@@ -122,10 +124,24 @@ class CultureObject extends Core {
                         wp_die();
                     }
                 }
+            } else {
+                $result = array();
+                $result['state'] = 'error';
+                $result['message'] = urlencode(__("Security Violation.", 'culture-object'));
+                $result['detail'] = __('A security violation occurred during import.', 'culture-object');
+                echo json_encode($result);
+                wp_die();
             }
+        
+            
         }
         
-    	wp_die();
+        $result = array();
+        $result['state'] = 'error';
+        $result['message'] = urlencode(__("An unknown error occurred during AJAX sync", 'culture-object'));
+        $result['detail'] = __('An unknown error occurred during AJAX sync', 'culture-object');
+        echo json_encode($result);
+        wp_die();
     }
     
     function purge_objects() {
