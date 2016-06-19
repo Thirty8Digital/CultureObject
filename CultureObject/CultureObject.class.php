@@ -31,8 +31,8 @@ class CultureObject extends Core {
     
     function check_versions() {
         global $wp_version;
-        $wp = '4.1';
-        $php = '5.3';
+        $wp = '4.5';
+        $php = '5.5';
         if (version_compare(PHP_VERSION, $php, '<')) {
             $flag = 'PHP';
         } elseif (version_compare($wp_version, $wp, '<')) {
