@@ -1,4 +1,4 @@
-CultureObject v3.0.0-alpha.1
+CultureObject v3.0.0-beta.1
 ====================
 
 Welcome
@@ -28,7 +28,7 @@ The plugin is built to be extensible so that when other providers are added to t
 
 Usage Instructions
 ---------------------
-We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.1.3)
+We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.2.0)
 
 Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
@@ -53,6 +53,11 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 3.0.0-beta.1
+* **New:** CSV2 Provider (Replaces CSV) - Support field name mapping, makes cleanup optional (for partial imports) and supports AJAX import.
+* **New:** Full i18n support. If you want to contribute in your native language, [become a WordPress Translator](https://translate.wordpress.org/projects/wp-plugins/culture-object)
+* **New:** CSV2/3.0.0 moves more of the logic out of providers and into CultureObject Core, meaning Version 4 can make writing a provider much easier.
 
 ####Version 2.1.3
 * **Fix:** Revert to old PHP syntax so we work on PHP 5.3 (but please, please upgrade to PHP 5.6 or PHP 7)
