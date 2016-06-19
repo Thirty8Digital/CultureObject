@@ -1,4 +1,4 @@
-CultureObject v2.2.0
+CultureObject v3.0.0-beta.1
 ====================
 
 Welcome
@@ -28,7 +28,7 @@ The plugin is built to be extensible so that when other providers are added to t
 
 Usage Instructions
 ---------------------
-We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.1.3)
+We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.2.0)
 
 Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
@@ -36,15 +36,27 @@ We're currently building CultureObject into an expandable framework that will be
 
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
+Todo in 4.0
+---------------------
+
+* "Schema" learning support: CultureObject will learn about your data architecture and offer appropriate mappings automatically, just like CSV2 does in 3.0
+* Dublin Core field mappings
+* Multiple Image Importing
 
 Developers
 ---------------------
-Version 2 adds support for image importing and field mapping. At the moment, only the CollectionSpace provider supports this functionality.
+
+Version 2 added support for image importing and field mapping. At the moment, only the CollectionSpace provider supports this functionality.
 
 In order to enable field mapping, your theme must declare support for 'cos-remaps' using WordPress's [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support), from there you then use cos_get_remapped_field_name(<field_key>), or cos_remapped_field_name(<field_key>) to return, or output either the default, or remapped human-readable field name.
 
 Change Log
 ---------------------
+
+####Version 3.0.0
+* **New:** CSV2 Provider (Replaces CSV) - Support field name mapping, makes cleanup optional (for partial imports) and supports AJAX import.
+* **New:** Full i18n support. If you want to contribute in your native language, [become a WordPress Translator](https://translate.wordpress.org/projects/wp-plugins/culture-object)
+* **New:** CSV2/3.0.0 moves more of the logic out of providers and into CultureObject Core, meaning Version 4 can make writing a provider much easier.
 
 ####Version 2.2.0
 * **Fix:** Support WordPress 4.5
@@ -70,4 +82,5 @@ Change Log
 * **API New:** Providers can add an execute_init_action method which is attached to a WordPress [init action hook](https://codex.wordpress.org/Plugin_API/Action_Reference/init). This can be to register additional post types or taxonomies will your import process to write against, or do to additional hook registration to allow for things like nonce checks or password security functions.
 * **API New:** Support for providers to automatically import images into the WordPress media library (currently only supported by CollectionSpace, but coming to other providers soon!)
 * **API New:** Support for field remapping. (currently only supported by CollectionSpace, but coming to other providers soon!)
-	* Providers can now provide a list of fields which are available to be remapped. If enabled, and the theme declares support for "cos-remaps" via [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support) a list of all fields will be shown in the Culture Object settings page, and can be overridden by the user. As a theme developer, you should use cos_get_remapped_field_name('key') in order to get the remapped name for a field.
+    * Providers can now provide a list of fields which are available to be remapped. If enabled, and the theme declares support for "cos-remaps" via [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support) a list of all fields will be shown in the Culture Object settings page, and can be overridden by the user. As a theme developer, you should use cos_get_remapped_field_name('key') in order to get the remapped name for a field.
+

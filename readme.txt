@@ -1,9 +1,15 @@
 === Plugin Name ===
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
+<<<<<<< HEAD
+Requires at least: 4.5
+Tested up to: 4.5.2
+Stable tag: 2.1.3
+=======
 Requires at least: 4.1
 Tested up to: 4.5
 Stable tag: 2.2.0
+>>>>>>> master
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -50,4 +56,4 @@ API New: 2 new functions, cos_get_field() and cos_the_field() provide abstracted
 API New: Providers can add an execute_init_action method which is attached to a WordPress [init action hook](https://codex.wordpress.org/Plugin_API/Action_Reference/init). This can be to register additional post types or taxonomies will your import process to write against, or do to additional hook registration to allow for things like nonce checks or password security functions.
 API New: Support for providers to automatically import images into the WordPress media library (currently only supported by CollectionSpace, but coming to other providers soon!)
 API New: Support for field remapping. (currently only supported by CollectionSpace, but coming to other providers soon!)
-	* Providers can now provide a list of fields which are available to be remapped. If enabled, and the theme declares support for "cos-remaps" via [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support) a list of all fields will be shown in the Culture Object settings page, and can be overridden by the user. As a theme developer, you should use cos_get_remapped_field_name('key') in order to get the remapped name for a field.
+    * Providers can now provide a list of fields which are available to be remapped. If enabled, and the theme declares support for "cos-remaps" via [add_theme_support](http://codex.wordpress.org/Function_Reference/add_theme_support) a list of all fields will be shown in the Culture Object settings page, and can be overridden by the user. As a theme developer, you should use cos_get_remapped_field_name('key') in order to get the remapped name for a field.
