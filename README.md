@@ -36,11 +36,10 @@ We're currently building CultureObject into an expandable framework that will be
 
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
-Todo in 3.0
+Todo in 4.0
 ---------------------
 
-* "Schema" learning support: CultureObject will learn about your data architecture and offer appropriate mappings automatically.
-* Internationalisation
+* "Schema" learning support: CultureObject will learn about your data architecture and offer appropriate mappings automatically, just like CSV2 does in 3.0
 * Dublin Core field mappings
 * Multiple Image Importing
 
@@ -54,10 +53,14 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 Change Log
 ---------------------
 
-####Version 3.0.0-beta.1
+####Version 3.0.0
 * **New:** CSV2 Provider (Replaces CSV) - Support field name mapping, makes cleanup optional (for partial imports) and supports AJAX import.
 * **New:** Full i18n support. If you want to contribute in your native language, [become a WordPress Translator](https://translate.wordpress.org/projects/wp-plugins/culture-object)
 * **New:** CSV2/3.0.0 moves more of the logic out of providers and into CultureObject Core, meaning Version 4 can make writing a provider much easier.
+
+####Version 2.2.0
+* **Fix:** Support WordPress 4.5
+* **Fix:** Fix an issue with EMU imports with some JSON files
 
 ####Version 2.1.3
 * **Fix:** Revert to old PHP syntax so we work on PHP 5.3 (but please, please upgrade to PHP 5.6 or PHP 7)
