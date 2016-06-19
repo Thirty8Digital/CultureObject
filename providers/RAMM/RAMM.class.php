@@ -36,7 +36,7 @@ class RAMM extends \CultureObject\Provider {
         echo '</p>';
         
         
-        $authority = get_site_option('cos_provider_feed_url');
+        $authority = get_option('cos_provider_feed_url');
         if (!empty($authority)) {
             echo "<p>".__('RAMM\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.','culture-object')."</p>";
         }
@@ -59,7 +59,7 @@ class RAMM extends \CultureObject\Provider {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_site_option($field);
+        $value = get_option($field);
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
@@ -69,7 +69,7 @@ class RAMM extends \CultureObject\Provider {
         
         $start = microtime(true);
         
-        $url = get_site_option('cos_provider_feed_url');
+        $url = get_option('cos_provider_feed_url');
         if (empty($url)) {
             throw new RAMMException(__("You haven't yet configured a URL in the Culture Object Sync settings",'culture-object'));
         }

@@ -108,7 +108,7 @@ class CSV2 extends \CultureObject\Provider {
         echo '<p>'.__('To begin the import, click the button below.', 'culture-object').'</p>';
         
         
-        $id_field = get_site_option('cos_csv2_id_field');
+        $id_field = get_option('cos_csv2_id_field');
         
         echo '<div class="select_field">';
         echo '<select id="id_field">';
@@ -122,7 +122,7 @@ class CSV2 extends \CultureObject\Provider {
         echo '</span>';
         echo '</div>';
         
-        $title_field = get_site_option('cos_csv2_title_field');
+        $title_field = get_option('cos_csv2_title_field');
         
         echo '<div class="select_field">';
         echo '<select id="title_field">';
@@ -143,7 +143,7 @@ class CSV2 extends \CultureObject\Provider {
             	</label>
             </fieldset>';
         
-        echo '<input id="csv_perform_ajax_import" data-import-id="'.uniqid('', true).'" data-sync-key="'.get_site_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
+        echo '<input id="csv_perform_ajax_import" data-import-id="'.uniqid('', true).'" data-sync-key="'.get_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
         _e('Process Import', 'culture-object');
         echo '" />';
         
@@ -185,9 +185,9 @@ class CSV2 extends \CultureObject\Provider {
         	
             ini_set('memory_limit','2048M');
             
-            $objects = get_site_option('cos_csv2_import_'.$import_id, array());
+            $objects = get_option('cos_csv2_import_'.$import_id, array());
             $previous_posts = $this->get_current_object_ids();
-            delete_site_option('cos_csv2_import_'.$import_id, array());
+            delete_option('cos_csv2_import_'.$import_id, array());
             return $this->clean_objects($objects,$previous_posts);
             
     	} else {
@@ -196,8 +196,8 @@ class CSV2 extends \CultureObject\Provider {
         	$id_field = $_POST['id_field'];
         	$title_field = $_POST['title_field'];
         	
-        	update_site_option('cos_csv2_id_field', $id_field);
-        	update_site_option('cos_csv2_title_field', $title_field);
+        	update_option('cos_csv2_id_field', $id_field);
+        	update_option('cos_csv2_title_field', $title_field);
         	
         	$cleanup = isset($_POST['perform_cleanup']) && $_POST['perform_cleanup'];
         	
@@ -218,8 +218,8 @@ class CSV2 extends \CultureObject\Provider {
                 $result['next_nonce'] = wp_create_nonce('cos_ajax_import_request');
                 
                 if ($cleanup) {
-                    $objects = get_site_option('cos_csv2_import_'.$import_id, array());
-                    update_site_option('cos_csv2_import_'.$import_id, array_merge($objects, $result['chunk_objects']));
+                    $objects = get_option('cos_csv2_import_'.$import_id, array());
+                    update_option('cos_csv2_import_'.$import_id, array_merge($objects, $result['chunk_objects']));
                 }
                 
                 return $result;
@@ -335,13 +335,13 @@ class CSV2 extends \CultureObject\Provider {
         $current_path = $this->has_uploaded_file();
         if ($current_path && is_file($current_path)) {
             unlink($current_path);
-            delete_site_option('cos_csv2_uploaded_file_path');
+            delete_option('cos_csv2_uploaded_file_path');
         }
         
         $file_name = preg_replace('/[^A-Za-z0-9_\-.]/', '_', $file['name']);
         $full_path = $upload_dir.$file_name;
         if (move_uploaded_file($file['tmp_name'], $full_path)) {
-            update_site_option('cos_csv2_uploaded_file_path', $full_path);
+            update_option('cos_csv2_uploaded_file_path', $full_path);
             return;
         } else {
             throw new CSV2Exception(__("Unable to import. Could not write file to uploads folder.", 'culture-object'));
@@ -349,20 +349,20 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     function delete_uploaded_file() {
-        $path = get_site_option('cos_csv2_uploaded_file_path');
+        $path = get_option('cos_csv2_uploaded_file_path');
         if (is_file($path)) {
             unlink($path);
         }
-        delete_site_option('cos_csv2_uploaded_file_path');
+        delete_option('cos_csv2_uploaded_file_path');
     }
     
     function has_uploaded_file() {
-        $path = get_site_option('cos_csv2_uploaded_file_path');
+        $path = get_option('cos_csv2_uploaded_file_path');
         if ($path) {
             if (is_file($path)) {
                 return $path;
             } else {
-                delete_site_option('cos_csv2_uploaded_file_path');
+                delete_option('cos_csv2_uploaded_file_path');
                 return false;
             }
         }
@@ -371,7 +371,7 @@ class CSV2 extends \CultureObject\Provider {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_site_option($field);
+        $value = get_option($field);
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     

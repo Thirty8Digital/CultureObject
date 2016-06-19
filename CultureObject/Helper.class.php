@@ -5,7 +5,7 @@ namespace CultureObject;
 class Helper extends Core {
     
     function cos_get_remapped_field_name($key) {
-        $field_remap = get_site_option('cos_remap_'.strtolower($key));
+        $field_remap = get_option('cos_remap_'.strtolower($key));
         if (isset($field_remap) && !empty($field_remap)) return $field_remap;
         $provider = $this->get_sync_provider();
         if ($provider) {

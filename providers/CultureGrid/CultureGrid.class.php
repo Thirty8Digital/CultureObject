@@ -36,7 +36,7 @@ class CultureGrid extends \CultureObject\Provider {
         echo '</p>';
         
         
-        $authority = get_site_option('cos_provider_search_authority');
+        $authority = get_option('cos_provider_search_authority');
         if (!empty($authority)) {
             $url = "http://www.culturegrid.org.uk/index/select?fl=*&wt=json&rows=1&indent=on&q=authority:".$authority."&start=0";
             $result = $this->perform_request($url);
@@ -75,7 +75,7 @@ class CultureGrid extends \CultureObject\Provider {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_site_option($field);
+        $value = get_option($field);
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
@@ -85,7 +85,7 @@ class CultureGrid extends \CultureObject\Provider {
         
         $start = microtime(true);
         
-        $authority = get_site_option('cos_provider_search_authority');
+        $authority = get_option('cos_provider_search_authority');
         if (empty($authority)) {
             throw new CultureGridException(__("You haven't yet configured a search authority in the Culture Object Sync settings",'culture-object'));
         }

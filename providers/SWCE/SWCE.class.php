@@ -40,7 +40,7 @@ class SWCE extends \CultureObject\Provider {
         echo '</p>';
         
         
-        $authority = get_site_option('cos_provider_feed_url');
+        $authority = get_option('cos_provider_feed_url');
         if (!empty($authority)) {
             echo "<p>".__('SWCE\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.','culture-object')."</p>";
         }
@@ -90,7 +90,7 @@ class SWCE extends \CultureObject\Provider {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_site_option($field);
+        $value = get_option($field);
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
@@ -99,7 +99,7 @@ class SWCE extends \CultureObject\Provider {
         set_time_limit(0);
         ini_set('memory_limit','768M');
         
-        $token = get_site_option('cos_provider_api_token');
+        $token = get_option('cos_provider_api_token');
         if (empty($token)) {
             $result['state'] = 'error';
             $result['message'] = urlencode("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object');
@@ -107,7 +107,7 @@ class SWCE extends \CultureObject\Provider {
             wp_die();
         }
         
-        $site = get_site_option('cos_provider_site_id');
+        $site = get_option('cos_provider_site_id');
         if (empty($site)) {
             $result['state'] = 'error';
             $result['message'] = urlencode("You haven't yet configured the SWCE site ID in the Culture Object Sync settings",'culture-object');
@@ -160,17 +160,17 @@ class SWCE extends \CultureObject\Provider {
         
         $start = microtime(true);
         
-        /*$site = get_site_option('cos_provider_site_id');
+        /*$site = get_option('cos_provider_site_id');
         if (empty($site)) {
             throw new SWCEException(__("You haven't yet configured a URL in the Culture Object Sync settings",'culture-object'));
         }*/
         
-        $token = get_site_option('cos_provider_api_token');
+        $token = get_option('cos_provider_api_token');
         if (empty($token)) {
             throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
         }
         
-        $site = get_site_option('cos_provider_site_id');
+        $site = get_option('cos_provider_site_id');
         if (empty($site)) {
             throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
         }
