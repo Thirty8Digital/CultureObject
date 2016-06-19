@@ -1,15 +1,9 @@
 === Plugin Name ===
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
-<<<<<<< HEAD
 Requires at least: 4.5
 Tested up to: 4.5.2
-Stable tag: 2.1.3
-=======
-Requires at least: 4.1
-Tested up to: 4.5
 Stable tag: 2.2.0
->>>>>>> master
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -32,9 +26,17 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 
 == Changelog ==
 
+= 3.0.0 =
+
+New: CSV2 Provider (Replaces CSV) - Support field name mapping, makes cleanup optional (for partial imports) and supports AJAX import.
+New: Full i18n support. If you want to contribute in your native language, [become a WordPress Translator](https://translate.wordpress.org/projects/wp-plugins/culture-object)
+New: CSV2/3.0.0 moves more of the logic out of providers and into CultureObject Core, meaning Version 4 can make writing a provider much easier.
+Deprecated: PHP < 5.5 support. We will require at least PHP 5.5 from version 4.
+Fix: Support WordPress Multisite. If you were using < 3.0.0 on multisite (you probably weren't, as it didn't really work!), you will need to reconfigure Culture Object on each site.
+
 = 2.2.0 =
 Fix: Support WordPress 4.5
-Fix an issue with EMU imports with some JSON files
+Fix: an issue with EMU imports with some JSON files
 
 = 2.1.3 =
 Revert to old PHP syntax so we work on PHP 5.3 (but please, please upgrade to PHP 5.6 or PHP 7)

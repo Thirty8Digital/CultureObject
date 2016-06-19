@@ -1,4 +1,4 @@
-CultureObject v3.0.0-beta.1
+CultureObject v3.0.0-beta.2
 ====================
 
 Welcome
@@ -58,6 +58,7 @@ Change Log
 * **New:** Full i18n support. If you want to contribute in your native language, [become a WordPress Translator](https://translate.wordpress.org/projects/wp-plugins/culture-object)
 * **New:** CSV2/3.0.0 moves more of the logic out of providers and into CultureObject Core, meaning Version 4 can make writing a provider much easier.
 * **Deprecated:** PHP < 5.5 support. We will require at least PHP 5.5 from version 4.
+* **Fix:** Support WordPress Multisite. If you were using < 3.0.0 on multisite (you probably weren't, as it didn't really work), you will need to reconfigure Culture Object on each site.
 
 ####Version 2.2.0
 * **Fix:** Support WordPress 4.5

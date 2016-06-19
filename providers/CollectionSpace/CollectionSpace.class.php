@@ -43,7 +43,7 @@ class CollectionSpace extends \CultureObject\Provider {
     }
     
     function register_prevent_safe_password_save() {
-        add_filter( 'pre_update_option_cos_provider_collectionspace_password', array($this, 'prevent_safe_password_save'), 10, 2 );
+        add_filter( 'pre_update_site_option_cos_provider_collectionspace_password', array($this, 'prevent_safe_password_save'), 10, 2 );
     }
     
     function prevent_safe_password_save($new,$old) {
@@ -128,13 +128,13 @@ class CollectionSpace extends \CultureObject\Provider {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_option($field);
+        $value = get_site_option($field);
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
     function generate_settings_field_input_password($args) {
         $field = $args['field'];
-        $value = get_option($field);
+        $value = get_site_option($field);
         $blurred = str_repeat('*', strlen($value));
         echo sprintf('<input type="password" name="%s" id="%s" value="%s" />', $field, $field, $blurred);
     }
@@ -152,9 +152,9 @@ class CollectionSpace extends \CultureObject\Provider {
         echo '</p>';
         
         
-        $host = get_option('cos_provider_collectionspace_host_uri');
-        $user = get_option('cos_provider_collectionspace_username');
-        $pass = get_option('cos_provider_collectionspace_password');
+        $host = get_site_option('cos_provider_collectionspace_host_uri');
+        $user = get_site_option('cos_provider_collectionspace_username');
+        $pass = get_site_option('cos_provider_collectionspace_password');
         
         if (!empty($host) && !empty($user) && !empty($pass)) {
             $url = $host.'/collectionobjects/?wf_deleted=false';
@@ -211,9 +211,9 @@ class CollectionSpace extends \CultureObject\Provider {
         
         $previous_posts = $this->get_current_object_ids();
         
-        $host = get_option('cos_provider_collectionspace_host_uri');
-        $user = get_option('cos_provider_collectionspace_username');
-        $pass = get_option('cos_provider_collectionspace_password');
+        $host = get_site_option('cos_provider_collectionspace_host_uri');
+        $user = get_site_option('cos_provider_collectionspace_username');
+        $pass = get_site_option('cos_provider_collectionspace_password');
         
         if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException(__('Host, Username or Password is not defined','culture-object'));
 
@@ -346,9 +346,9 @@ class CollectionSpace extends \CultureObject\Provider {
         $taxonomy_name = 'people';
         $cspace_path = 'personauthorities';
         
-        $host = get_option('cos_provider_collectionspace_host_uri');
-        $user = get_option('cos_provider_collectionspace_username');
-        $pass = get_option('cos_provider_collectionspace_password');
+        $host = get_site_option('cos_provider_collectionspace_host_uri');
+        $user = get_site_option('cos_provider_collectionspace_username');
+        $pass = get_site_option('cos_provider_collectionspace_password');
         
         if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException(__('Host, Username or Password is not defined','culture-object'));
 
@@ -427,9 +427,9 @@ class CollectionSpace extends \CultureObject\Provider {
         $taxonomy_name = 'organizations';
         $cspace_path = 'orgauthorities';
         
-        $host = get_option('cos_provider_collectionspace_host_uri');
-        $user = get_option('cos_provider_collectionspace_username');
-        $pass = get_option('cos_provider_collectionspace_password');
+        $host = get_site_option('cos_provider_collectionspace_host_uri');
+        $user = get_site_option('cos_provider_collectionspace_username');
+        $pass = get_site_option('cos_provider_collectionspace_password');
         
         if (empty($host) || empty($user) || empty($pass)) throw new CollectionSpaceException(__('Host, Username or Password is not defined','culture-object'));
 
@@ -513,9 +513,9 @@ class CollectionSpace extends \CultureObject\Provider {
         
         $csid = get_post_meta($post->ID, 'csid', true);
         
-        $host = get_option('cos_provider_collectionspace_host_uri');
-        $user = get_option('cos_provider_collectionspace_username');
-        $pass = get_option('cos_provider_collectionspace_password');
+        $host = get_site_option('cos_provider_collectionspace_host_uri');
+        $user = get_site_option('cos_provider_collectionspace_username');
+        $pass = get_site_option('cos_provider_collectionspace_password');
         
         $uri = $host.'/relations?sbj='.$csid.'&objType=Media';
         

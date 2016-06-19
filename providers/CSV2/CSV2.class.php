@@ -143,7 +143,7 @@ class CSV2 extends \CultureObject\Provider {
             	</label>
             </fieldset>';
         
-        echo '<input id="csv_perform_ajax_import" data-import-id="'.uniqid('', true).'" data-sync-key="'.get_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
+        echo '<input id="csv_perform_ajax_import" data-import-id="'.uniqid('', true).'" data-sync-key="'.get_site_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
         _e('Process Import', 'culture-object');
         echo '" />';
         
@@ -371,7 +371,7 @@ class CSV2 extends \CultureObject\Provider {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_option($field);
+        $value = get_site_option($field);
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     

@@ -41,7 +41,7 @@ class Settings extends Core {
             //If the provider supports remapping, it must implement register_remappable_fields. Fatal if not.
             if (isset($info['supports_remap']) && $info['supports_remap']) {
                 if (!method_exists($provider_class, 'register_remappable_fields')) {
-                    update_option('cos_core_sync_provider', false);
+                    update_site_option('cos_core_sync_provider', false);
                     throw new Exception\ProviderException(sprintf(
                         /* Translators: %s: The name of the provider developer */
                         __('The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the provider developer, %s. To stop this breaking your site, the provider has been disabled.', 'culture-object'),
@@ -146,7 +146,7 @@ class Settings extends Core {
     
     function generate_settings_sync_providers_input($args) {
         $field = $args['field'];
-        $value = get_option($field);
+        $value = get_site_option($field);
         $providers = $this->find_providers();
         echo '<select name="'.$field.'" id="'.$field.'">';
         foreach($providers as $provider) {
@@ -159,7 +159,7 @@ class Settings extends Core {
     
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
-        $value = get_option($field);
+        $value = get_site_option($field);
         if (empty($value) && isset($args['default'])) $value = $args['default'];
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
         if ($field == "cos_core_sync_key") echo '<br /><small>'.__('This key forms part of the sync URL for a little bit more security.', 'culture-object').'</small>';
@@ -168,7 +168,7 @@ class Settings extends Core {
     
     function generate_settings_field_input_checkbox($args) {
         $field = $args['field'];
-        $value = get_option($field);
+        $value = get_site_option($field);
         if (empty($value) && isset($args['default'])) $value = $args['default'];
         if ($value) {
             echo sprintf('<input type="checkbox" name="%s" value="1" id="%s" checked="checked" />', $field, $field);

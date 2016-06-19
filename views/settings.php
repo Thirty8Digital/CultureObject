@@ -14,7 +14,7 @@
   $key = get_option('cos_core_sync_key');
   if (empty($key)) {
     $key = md5(time().rand(0,100000));
-    update_option('cos_core_sync_key',$key);
+    update_site_option('cos_core_sync_key',$key);
   }
   ?>
 
