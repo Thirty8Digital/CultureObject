@@ -290,7 +290,7 @@ class CSV2 extends \CultureObject\Provider {
         strings.objects = "'.esc_html__('objects', 'culture-object').'";
         strings.objects_imported = "'.esc_html__('objects imported', 'culture-object').'";
         strings.objects_deleted = "'.esc_html__('objects deleted', 'culture-object').'";
-        strings.import_complete = "'.esc_html__('Imported Complete.', 'culture-object').'";
+        strings.import_complete = "'.esc_html__('Import complete.', 'culture-object').'";
         strings.performing_cleanup = "'.esc_html__('Performing cleanup, please wait... This can take a long time if you have deleted a lot of objects.', 'culture-object').'";
         </script>';
     }
