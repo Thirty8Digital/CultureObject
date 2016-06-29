@@ -2,7 +2,7 @@
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 4.5
-Tested up to: 4.5.2
+Tested up to: 4.5.3
 Stable tag: 2.2.0
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0

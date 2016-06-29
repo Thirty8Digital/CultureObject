@@ -6,7 +6,7 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.0-alpha.1',
+        'version' => '1.0',
         'developer' => 'Thirty8 Digital',
         'cron' => true,
         'ajax' => true
@@ -171,8 +171,8 @@ class SWCE extends \CultureObject\Provider {
         }
         
         $site = get_option('cos_provider_site_id');
-        if (empty($site)) {
-            throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
+        if (empty($site) && $site !== 0) {
+            throw new SWCEException(__("You haven't yet configured your Site ID in the Culture Object Sync settings",'culture-object'));
         }
         
         $previous_posts = $this->get_current_object_ids();
