@@ -171,7 +171,7 @@ class SWCE extends \CultureObject\Provider {
         }
         
         $site = get_option('cos_provider_site_id');
-        if (empty($site) && $site !== 0) {
+        if (empty($site) && intval($site) !== 0) {
             throw new SWCEException(__("You haven't yet configured your Site ID in the Culture Object Sync settings",'culture-object'));
         }
         
