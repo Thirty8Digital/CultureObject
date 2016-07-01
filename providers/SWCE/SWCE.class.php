@@ -96,59 +96,6 @@ class SWCE extends \CultureObject\Provider {
     
     function perform_ajax_sync() {
         
-        set_time_limit(0);
-        ini_set('memory_limit','768M');
-        
-        $token = get_option('cos_provider_api_token');
-        if (empty($token)) {
-            $result['state'] = 'error';
-            $result['message'] = urlencode("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object');
-            echo json_encode($result);
-            wp_die();
-        }
-        
-        $site = get_option('cos_provider_site_id');
-        if (empty($site)) {
-            $result['state'] = 'error';
-            $result['message'] = urlencode("You haven't yet configured the SWCE site ID in the Culture Object Sync settings",'culture-object');
-            echo json_encode($result);
-            wp_die();
-        }
-        
-        $result = array();
-        
-        if (isset($_POST['phase'])) {
-            if ($_POST['phase'] == "init") {
-                $result['state'] = 'ok';
-                $result['next_phase'] = 'page';
-                $result['next_page'] = '1';
-                
-                $url = 'https://swce.herokuapp.com/api/v1/objects?api_token='.$token;
-                $dr = $this->perform_request($url);
-                
-                $result['result'] = array();
-                $result['result']['total'] = $dr['total'];
-                $result['result']['current_page'] = $dr['current_page'];
-                $result['result']['last_page'] = $dr['last_page'];
-                
-                $result['existing_ids'] = $this->get_current_object_ids();
-                
-                
-            } else if ($_POST['phase'] == "page") {
-                
-            } else if ($_POST['phase'] == "clean") {
-                
-            } else {
-                $result['state'] = 'error';
-                $result['message'] = 'Invalid AJAX request phase';
-            }
-        } else {
-            $result['state'] = 'error';
-            $result['message'] = 'Invalid AJAX request';
-        }
-        
-        echo json_encode($result);
-        wp_die();
         
         
     }
@@ -159,11 +106,6 @@ class SWCE extends \CultureObject\Provider {
         ini_set('memory_limit','768M');
         
         $start = microtime(true);
-        
-        /*$site = get_option('cos_provider_site_id');
-        if (empty($site)) {
-            throw new SWCEException(__("You haven't yet configured a URL in the Culture Object Sync settings",'culture-object'));
-        }*/
         
         $token = get_option('cos_provider_api_token');
         if (empty($token)) {
@@ -290,6 +232,8 @@ class SWCE extends \CultureObject\Provider {
     }
     
     function update_object_meta($post_id,$doc) {
+        $doc['site-name'] = $doc['site']['name'];
+        $doc['site-id'] = $doc['site']['id'];
         unset($doc['site']);
         
         //process the category.
