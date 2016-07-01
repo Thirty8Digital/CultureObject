@@ -219,16 +219,27 @@ class SWCE extends \CultureObject\Provider {
     function clean_objects($current_objects,$previous_objects) {
         $to_remove = array_diff($previous_objects, $current_objects);
         
+        $import_delete = array();
+        
+        $deleted = 0;
+        
         foreach($to_remove as $remove_id) {
             wp_delete_post($remove_id,true);
-            printf(
+            $import_delete[] = sprintf(
                 /* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
                 __('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
                 $remove_id,
-                'SWCE'
-            )."<br />";
+                'CSV'
+            );
+            $deleted++;
         }
         
+        set_transient('cos_swce_deleted', $import_delete, 0);
+        
+        $return = [];
+        $return['deleted_count'] = $deleted;
+        $return['deleted_status'] = $import_delete;
+        return $return;
     }
     
     function create_object($doc) {
