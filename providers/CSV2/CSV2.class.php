@@ -16,7 +16,7 @@ class CSV2 extends \CultureObject\Provider {
         'ajax' => true
     );
     
-    function __construct() {
+    function execute_init_action() {
         if (is_admin()) {
             add_action('admin_enqueue_scripts', array($this,'add_provider_assets'));
         }
@@ -149,7 +149,7 @@ class CSV2 extends \CultureObject\Provider {
         
         echo '</div>';
         
-        echo '<div id="csv_import_progressbar"><div class="progress-label">Starting Import...</div></div>';
+        echo '<div id="csv_import_progressbar"><div class="progress-label">'.__('Starting Import...', 'culture-object').'</div></div>';
         echo '<div id="csv_import_detail"></div>';
         
         echo '<form id="delete_uploaded_csv_form" method="post" action="">';

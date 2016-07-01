@@ -6,11 +6,24 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.0',
+        'version' => '1.1',
         'developer' => 'Thirty8 Digital',
-        'cron' => true,
+        'cron' => false,
         'ajax' => true
     );
+    
+    function add_provider_assets() {
+        $screen = get_current_screen();
+        if ($screen->base != 'culture-object_page_cos_provider_settings') return;
+        $js_url = plugins_url('/assets/admin.js?nc='.time(), __FILE__);
+        wp_enqueue_script('jquery-ui');
+        wp_enqueue_script('jquery-ui-core');
+        wp_register_script('swce_admin_js', $js_url, array('jquery','jquery-ui-core','jquery-ui-progressbar'), '1.0.0', true);
+        wp_enqueue_script('swce_admin_js');
+        
+		wp_enqueue_style('jquery-ui-css', plugin_dir_url( __FILE__ ).'assets/jquery-ui-fresh.css');
+		wp_enqueue_style('swce_admin_css', plugin_dir_url( __FILE__ ).'assets/admin.css?nc='.time());
+    }
     
     function get_provider_information() {
         return $this->provider;
@@ -72,6 +85,10 @@ class SWCE extends \CultureObject\Provider {
     	);
     
     	register_taxonomy('object_category', array('object'), $args);
+    	
+        if (is_admin()) {
+            add_action('admin_enqueue_scripts', array($this,'add_provider_assets'));
+        }
     }
     
     function perform_request($url) {
@@ -96,17 +113,49 @@ class SWCE extends \CultureObject\Provider {
     
     function perform_ajax_sync() {
         
-        
+    	if (!isset($_POST['start']) || !isset($_POST['import_id'])) throw new SWCEException(__('Invalid AJAX import request', 'culture-object'));
+    	
+    	$start = $_POST['start'];
+    	$import_id = $_POST['import_id'];
+    	$result = [];
+    	
+    	if ($start == "cleanup") {
+        	
+            ini_set('memory_limit','2048M');
+            
+            $objects = get_option('cos_swce_import_'.$import_id, array());
+            $previous_posts = $this->get_current_object_ids();
+            delete_option('cos_swce_import_'.$import_id, array());
+            return $this->clean_objects($objects,$previous_posts);
+            
+        } else {
+                    	
+        	$cleanup = isset($_POST['perform_cleanup']) && $_POST['perform_cleanup'];
+        	
+        	$result = $this->import_page($start);
+        	
+            if ($result['current_page'] != $result['last_page']) {
+                $result['complete'] = false;
+                $result['percentage'] = round((100/$result['last_page'])*$result['current_page']);
+            } else {
+                $result['complete'] = true;
+                $result['percentage'] = 100;
+            }
+            
+            $result['next_nonce'] = wp_create_nonce('cos_ajax_import_request');
+            
+            if ($cleanup) {
+                $objects = get_option('cos_swce_import_'.$import_id, array());
+                update_option('cos_swce_import_'.$import_id, array_merge($objects, $result['chunk_objects']));
+            }
+            
+            return $result;
+        }
+
         
     }
     
-    function perform_sync() {
-        
-        set_time_limit(0);
-        ini_set('memory_limit','768M');
-        
-        $start = microtime(true);
-        
+    function import_page($page) {
         $token = get_option('cos_provider_api_token');
         if (empty($token)) {
             throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
@@ -117,59 +166,44 @@ class SWCE extends \CultureObject\Provider {
             throw new SWCEException(__("You haven't yet configured your Site ID in the Culture Object Sync settings",'culture-object'));
         }
         
-        $previous_posts = $this->get_current_object_ids();
+        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.$token.'&site='.$site.'&page='.intval($page);
         
-        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.$token.'&site='.$site;
-        if (isset($_GET['page'])) $url .= "&page=".intval($_GET['page']);
+        
         $result = $this->perform_request($url);
+    
+        $current_objects = [];
+        $updated = $created = 0;
+        $number_of_objects = count($result['data']);
         
-        $number_of_objects = $result['total'];
-        
-        printf(
-            __("Importing %d objects.",'culture-object')."<br />\r\n",
-            $number_of_objects
-        );
-        if ($number_of_objects > 0) {
-            
-            $first = true;
-            while($result['next_page_url']) {
-                @ob_flush(); @flush();
-                if (!$first) {
-                    $result = $this->perform_request($result['next_page_url']."&per_page=100&api_token=".$token.'&site='.$site);
-                } else {
-                    $first = false;
-                }
-                printf(
-                    /* Translators: 1: The current page 2: The last page */
-                    __('Loading Page %1$d of %2$d','culture-object')."<br />\r\n",
-                    $result['current_page'],
-                    $result['last_page']
-                );
-                foreach($result['data'] as $doc) {
-                    $object_exists = $this->object_exists($doc['accession-loan-no']);
-                    if (!$object_exists) {
-                        $current_objects[] = $this->create_object($doc);
-                        echo __("Created object",'culture-object').": ".$doc['accession-loan-no']."<br />\r\n";
-                    } else {
-                        $current_objects[] = $this->update_object($doc);
-                        echo __("Updated object",'culture-object').": ".$doc['accession-loan-no']."<br />\r\n";
-                    }
-                }
+        foreach($result['data'] as $doc) {
+            $object_exists = $this->object_exists($doc['accession-loan-no']);
+            if (!$object_exists) {
+                $current_objects[] = $this->create_object($doc);
+                $import_status[] = __("Created object", 'culture-object').': '.$doc['accession-loan-no'];
+                $created++;
+            } else {
+                $current_objects[] = $this->update_object($doc);
+                $import_status[] = __("Updated object", 'culture-object').': '.$doc['accession-loan-no'];
+                $updated++;
             }
-            
-            
-            $this->clean_objects($current_objects,$previous_posts);
         }
-            
-        $end = microtime(true);
         
-        printf(
-            __("Sync Complete in %d seconds",'culture-object')."\r\n",
-            ($end-$start)
-        );
-        
-        die();
-        
+        $return = [];
+        $return['total_objects'] = $result['total'];
+        $return['next_start'] = $result['current_page'] + 1;
+        $return['current_page'] = $result['current_page'];
+        $return['imported_count'] = (($result['current_page']-1)*100) + $number_of_objects;
+        $return['last_page'] = $result['last_page'];
+        $return['chunk_objects'] = $current_objects;
+        $return['import_status'] = $import_status;
+        $return['processed_count'] = $number_of_objects;
+        $return['created'] = $created;
+        $return['updated'] = $updated;
+        return $return;
+    }
+    
+    function perform_sync() {
+        throw new SWCEException(__('Only AJAX sync is supported for this provider.', 'culture-object'));
     }
     
     function get_current_object_ids() {
@@ -275,6 +309,45 @@ class SWCE extends \CultureObject\Provider {
         $text = preg_replace('~[^-\w]+~', '', $text);
         if (empty($text)) return 'empty';
         return $text;
+    }
+    
+    function generate_settings_outside_form_html() {
+        
+        $this->output_js_localization();
+    
+        echo "<h3>".__('AJAX Import', 'culture-object')."</h3>";
+        
+        echo '<div id="hide-on-import">';
+        echo "<p>".__('Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object')."</p>";
+        
+        echo '<fieldset>
+        	<label for="perform_cleanup">
+        		<input name="perform_cleanup" type="checkbox" id="perform_cleanup" value="1" />
+        		<span>'.esc_attr__('Delete existing objects not in this import?', 'culture-object').'</span>
+        	</label>
+        </fieldset>';
+        
+        echo '<input id="csv_perform_ajax_import" data-import-id="'.uniqid('', true).'" data-sync-key="'.get_option('cos_core_sync_key').'" data-starting-nonce="'.wp_create_nonce('cos_ajax_import_request').'" type="button" class="button button-primary" value="';
+        _e('Begin Import', 'culture-object');
+        echo '" />';
+        echo "</div>";
+        
+        echo '<div id="csv_import_progressbar"><div class="progress-label">'.__('Starting Import...', 'culture-object').'</div></div>';
+        echo '<div id="csv_import_detail"></div>';
+    }
+    
+    function output_js_localization() {
+        echo '<script>
+        strings = {};
+        strings.uploading_please_wait = "'.esc_html__('Uploading... This may take some time...', 'culture-object').'";
+        strings.importing_please_wait = "'.esc_html__('Importing... This may take some time...', 'culture-object').'";
+        strings.imported = "'.esc_html__('Imported', 'culture-object').'";
+        strings.objects = "'.esc_html__('objects', 'culture-object').'";
+        strings.objects_imported = "'.esc_html__('objects imported', 'culture-object').'";
+        strings.objects_deleted = "'.esc_html__('objects deleted', 'culture-object').'";
+        strings.import_complete = "'.esc_html__('Import complete.', 'culture-object').'";
+        strings.performing_cleanup = "'.esc_html__('Performing cleanup, please wait... This can take a long time if you have deleted a lot of objects.', 'culture-object').'";
+        </script>';
     }
     
 }

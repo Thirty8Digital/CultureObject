@@ -1,0 +1,26 @@
+#csv_import_progressbar {
+    margin-top: 10px;
+}
+
+#csv_import_detail {
+    margin-top: 10px;
+}
+
+.ui-progressbar {
+    position: relative;
+}
+.progress-label {
+    position: absolute;
+    text-align: center;
+    display: none;
+    width: 100%;
+    top: 4px;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+}
+#id_field, #title_field {
+    margin-bottom: 20px;
+}
+fieldset {
+    margin-bottom: 20px;
+}

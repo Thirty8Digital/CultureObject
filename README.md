@@ -1,4 +1,4 @@
-CultureObject v3.0.0-beta.2
+CultureObject v3.1.0
 ====================
 
 Welcome
@@ -52,6 +52,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 3.1.0
+* **New:** Support AJAX import for SWCE.
 
 ####Version 3.0.0
 * **New:** CSV2 Provider (Replaces CSV) - Support field name mapping, makes cleanup optional (for partial imports) and supports AJAX import.
