@@ -1,9 +1,9 @@
-=== Plugin Name ===
+=== Culture Object ===
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 4.5
 Tested up to: 4.5.3
-Stable tag: 2.2.0
+Stable tag: 3.1.1
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -25,6 +25,9 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 3.1.1 =
+Minor changes to support Culture Object Display
 
 = 3.1.0 =
 New: Support AJAX import for SWCE.

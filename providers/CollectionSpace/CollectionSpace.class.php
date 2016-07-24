@@ -43,7 +43,7 @@ class CollectionSpace extends \CultureObject\Provider {
     }
     
     function register_prevent_safe_password_save() {
-        add_filter( 'pre_update_option_cos_provider_collectionspace_password', array($this, 'prevent_safe_password_save'), 10, 2 );
+        add_filter('pre_update_option_cos_provider_collectionspace_password', array($this, 'prevent_safe_password_save'), 10, 2);
     }
     
     function prevent_safe_password_save($new,$old) {

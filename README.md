@@ -1,4 +1,4 @@
-CultureObject v3.1.0
+CultureObject v3.1.1
 ====================
 
 Welcome
@@ -52,6 +52,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 3.1.1
+* Minor changes to support Culture Object Display (A new plugin that extends any theme to support objects)
 
 ####Version 3.1.0
 * **New:** Support AJAX import for SWCE.
