@@ -1,4 +1,4 @@
-CultureObject v3.1.1
+CultureObject v3.2.0
 ====================
 
 Welcome
@@ -52,6 +52,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 3.2.0
+* Support field mapping for CSV, and enable CSV support for Culture Object Display
 
 ####Version 3.1.1
 * Minor changes to support Culture Object Display (A new plugin that extends any theme to support objects)

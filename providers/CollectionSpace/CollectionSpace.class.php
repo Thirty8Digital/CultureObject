@@ -164,7 +164,7 @@ class CollectionSpace extends \CultureObject\Provider {
                 echo "<p>";
                 printf(
                     __('There are %d objects currently available to sync from CollectionSpace.'),
-                    number_format($number_of_objects)
+                    $number_of_objects
                 );
                 echo "</p><p>";
                 echo "<p>";
@@ -219,8 +219,10 @@ class CollectionSpace extends \CultureObject\Provider {
 
         $this->import_people_taxonomy();
         echo __('Imported People Taxonomies','culture-object')."\r\n";
+        flush();
         $this->import_organizations_taxonomy();
         echo __('Imported Organization Taxonomies','culture-object')."\r\n";
+        flush();
         
         $page = 0;
             
@@ -244,13 +246,13 @@ class CollectionSpace extends \CultureObject\Provider {
                     
                     if (!$object_exists) {
                         $current_objects[] = $this->create_object($doc);
-                        $ttext = __("Created initial object: %s",$doc['csid']);
+                        $ttext = sprintf(__("Created initial object: %s",'culture-object'),$doc['csid']);
                         $import_status[] = $ttext;
                         echo $ttext;
                         $created++;
                     } else {
                         $current_objects[] = $this->update_object($doc);
-                        $ttext = __("Updated initial object: %s",$doc['csid']);
+                        $ttext = sprintf(__("Updated initial object: %s",'culture-object'),$doc['csid']);
                         $import_status[] = $ttext;
                         echo $ttext;
                         $updated++;

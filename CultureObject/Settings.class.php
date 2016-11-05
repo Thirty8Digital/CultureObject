@@ -49,11 +49,11 @@ class Settings extends Core {
                     ));
                 } else {
                     $fields = $provider_class->register_remappable_fields();
-                    add_settings_section('cos_remaps', 'Field Mappings', array($this,'generate_settings_group_content'), 'cos_provider_settings');
-                    if (current_theme_supports('cos-remaps')) {
+                    add_settings_section('cos_remaps', 'Field Mappings', array($this,'generate_settings_group_content'), 'cos_remap_settings');
+                    if (current_theme_supports('cos-remaps') && $fields) {
                         foreach($fields as $field_key => $field_default) {
-                            register_setting('cos_provider_settings', 'cos_remap_'.strtolower($field_key));
-                            add_settings_field('cos_remap_'.strtolower($field_key), $field_key, array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_remaps', array('field'=>'cos_remap_'.strtolower($field_key),'default'=>$field_default));
+                            register_setting('cos_remap_settings', 'cos_remap_'.strtolower($field_key));
+                            add_settings_field('cos_remap_'.strtolower($field_key), $field_key, array($this,'generate_settings_field_input_text'), 'cos_remap_settings', 'cos_remaps', array('field'=>'cos_remap_'.strtolower($field_key),'default'=>$field_default));
                         }
                     }
                 }
@@ -78,6 +78,8 @@ class Settings extends Core {
         
         $provider_page = add_submenu_page('cos_settings', __('Provider Settings', 'culture-object'), __('Provider Settings', 'culture-object'), 'administrator', 'cos_provider_settings', array($this,'generate_provider_page'));
         add_action('load-'.$provider_page, array($this,'provide_load_action'));
+           
+        $remap_page = add_submenu_page('cos_settings', __('Field Remapping Settings', 'culture-object'), __('Field Remapping Settings', 'culture-object'), 'administrator', 'cos_remap_settings', array($this,'generate_remap_page'));
     }
     
     function provide_load_action() {
@@ -123,6 +125,18 @@ class Settings extends Core {
         }
         
         include($this->plugin_directory.'/views/provider.php');
+    }
+    
+    function generate_remap_page() {     
+        
+        $provider = $this->get_sync_provider();
+        if ($provider) {
+            if (!class_exists($provider['class'])) include_once($provider['file']);
+            $provider_class = new $provider['class'];
+            $provider_info = $provider_class->get_provider_information();
+        }
+        
+        include($this->plugin_directory.'/views/remap.php');
     }
     
     function generate_settings_group_content($group) {

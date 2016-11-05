@@ -8,13 +8,31 @@ class CSV2 extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'CSV2',
-        'version' => '2.0',
+        'version' => '3.0',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
-        'supports_remap' => false,
+        'supports_remap' => true,
         'no_options' => true,
         'ajax' => true
     );
+    
+    function register_remappable_fields() {
+        if ($path = $this->has_uploaded_file()) {
+            if (is_file($path)) {
+                $headers = $this->get_csv_chunk($path,1,0);
+                $headers = $headers[0];
+                $return = [];
+                foreach($headers as $header) {
+                    $return[$header] = $header;
+                }
+                return $return;
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
     
     function execute_init_action() {
         if (is_admin()) {
@@ -87,7 +105,7 @@ class CSV2 extends \CultureObject\Provider {
     function parse_uploaded_file($path) {
         if (!is_file($path)) throw new CSV2Exception(__("An error occurred when trying to parse the CSV.", 'culture-object'));
 
-        $headers = $this->get_csv_chunk($path,1,1);
+        $headers = $this->get_csv_chunk($path,1,0);
         $data = $this->get_csv_data($path);
         
         echo '<div id="hide-on-import">';
