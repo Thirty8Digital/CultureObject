@@ -28,8 +28,6 @@ class Settings extends Core {
         add_settings_field('cos_core_sync_provider', __('Sync Provider', 'culture-object'), array($this,'generate_settings_sync_providers_input'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_provider'));
         
         add_settings_field('cos_core_sync_key', __('Sync Key', 'culture-object'), array($this,'generate_settings_field_input_text'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_sync_key'));
-        
-        add_settings_field('cos_core_import_images', __('Import Images', 'culture-object'), array($this,'generate_settings_field_input_checkbox'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_import_images'));
     
         $provider = $this->get_sync_provider();
         if ($provider) {
@@ -37,6 +35,10 @@ class Settings extends Core {
             $provider_class = new $provider['class'];
             $info = $provider_class->get_provider_information();
             $provider_class->register_settings();
+            
+            if (isset($info['supports_images']) && $info['supports_images']) {
+                add_settings_field('cos_core_import_images', __('Import Images', 'culture-object'), array($this,'generate_settings_field_input_checkbox'), 'cos_settings', 'cos_core_settings', array('field'=>'cos_core_import_images'));
+            }
             
             //If the provider supports remapping, it must implement register_remappable_fields. Fatal if not.
             if (isset($info['supports_remap']) && $info['supports_remap']) {
@@ -201,7 +203,7 @@ class Settings extends Core {
         } else {
             echo sprintf('<input type="checkbox" name="%s" value="1" id="%s" />', $field, $field);
         }
-        if ($field == "cos_core_import_images") echo '<br /><small>'.__('Some providers support importing images into the WordPress Media Gallery.<br />Tick this box to request the provider does this.','culture-object').'</small>';
+        if ($field == "cos_core_import_images") echo '<br /><small>'.__('Your provider supports automatic importing of images to the WordPress Media Library.<br />Would you like to enable this?','culture-object').'</small>';
         
     }
     

@@ -12,8 +12,9 @@ class CSV2 extends \CultureObject\Provider {
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
+        'supports_images' => true,
         'no_options' => true,
-        'ajax' => true
+        'ajax' => true,
     );
     
     function register_remappable_fields() {
@@ -154,7 +155,7 @@ class CSV2 extends \CultureObject\Provider {
         echo '</span>';
         echo '</div>';
         
-        $image_field = get_option('cos_csv2_image_field');
+        /*$image_field = get_option('cos_csv2_image_field');
         
         echo '<div class="select_field">';
         echo '<select id="image_field">';
@@ -166,7 +167,7 @@ class CSV2 extends \CultureObject\Provider {
         echo '<span class="description"> ';
         esc_attr_e('If your CSV contains a URL to an image for each object, select that column to import it to the WordPress Media Library', 'culture-object');
         echo '</span>';
-        echo '</div><br />';
+        echo '</div><br />';*/
         
         echo '<fieldset>
             	<label for="perform_cleanup">

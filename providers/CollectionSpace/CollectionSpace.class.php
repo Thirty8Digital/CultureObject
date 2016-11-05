@@ -8,6 +8,7 @@ class CollectionSpace extends \CultureObject\Provider {
         'name' => 'CollectionSpace',
         'version' => '1.0',
         'developer' => 'Thirty8 Digital',
+        'supports_images' => true,
         'cron' => true,
         'supports_remap' => true
     );
