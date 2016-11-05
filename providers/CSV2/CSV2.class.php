@@ -154,6 +154,20 @@ class CSV2 extends \CultureObject\Provider {
         echo '</span>';
         echo '</div>';
         
+        $image_field = get_option('cos_csv2_image_field');
+        
+        echo '<div class="select_field">';
+        echo '<select id="image_field">';
+        echo '<option value="0">'.esc_attr__('-- Don\'t Import Images --', 'culture-object').'</object>';
+        foreach($headers[0] as $key => $header) {
+            echo '<option value="'.$key.'" '.selected($image_field, $key, false).'>'.$header.'</option>';
+        }
+        echo '</select>';
+        echo '<span class="description"> ';
+        esc_attr_e('If your CSV contains a URL to an image for each object, select that column to import it to the WordPress Media Library', 'culture-object');
+        echo '</span>';
+        echo '</div><br />';
+        
         echo '<fieldset>
             	<label for="perform_cleanup">
             		<input name="perform_cleanup" type="checkbox" id="perform_cleanup" value="1" />

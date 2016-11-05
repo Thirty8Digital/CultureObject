@@ -79,7 +79,19 @@ class Settings extends Core {
         $provider_page = add_submenu_page('cos_settings', __('Provider Settings', 'culture-object'), __('Provider Settings', 'culture-object'), 'administrator', 'cos_provider_settings', array($this,'generate_provider_page'));
         add_action('load-'.$provider_page, array($this,'provide_load_action'));
            
-        $remap_page = add_submenu_page('cos_settings', __('Field Remapping Settings', 'culture-object'), __('Field Remapping Settings', 'culture-object'), 'administrator', 'cos_remap_settings', array($this,'generate_remap_page'));
+
+        $provider = $this->get_sync_provider();
+        if ($provider) {
+            if (!class_exists($provider['class'])) include_once($provider['file']);
+            $provider_class = new $provider['class'];
+            $info = $provider_class->get_provider_information();
+            $provider_class->register_settings();
+            
+            if (isset($info['supports_remap']) && $info['supports_remap']) {
+                $remap_page = add_submenu_page('cos_settings', __('Field Remapping Settings', 'culture-object'), __('Field Remapping Settings', 'culture-object'), 'administrator', 'cos_remap_settings', array($this,'generate_remap_page'));
+            }
+        }
+        
     }
     
     function provide_load_action() {
