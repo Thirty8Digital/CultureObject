@@ -133,7 +133,7 @@ class CSV2 extends \CultureObject\Provider {
         echo '<select id="id_field">';
         echo '<option value="0">'.esc_attr__('Select a field to use as the object ID', 'culture-object').'</object>';
         foreach($headers[0] as $key => $header) {
-            echo '<option value="'.$key.'" '.selected($id_field, $key, false).'>'.$header.'</option>';
+            echo '<option value="'.$key.'" '.selected(trim($id_field), $key, false).'>'.$header.'</option>';
         }
         echo '</select>';
         echo '<span class="description"> ';
@@ -147,7 +147,7 @@ class CSV2 extends \CultureObject\Provider {
         echo '<select id="title_field">';
         echo '<option value="0">'.esc_attr__('Select a field to use as the object title', 'culture-object').'</object>';
         foreach($headers[0] as $key => $header) {
-            echo '<option value="'.$key.'" '.selected($title_field, $key, false).'>'.$header.'</option>';
+            echo '<option value="'.$key.'" '.selected(trim($title_field), $key, false).'>'.$header.'</option>';
         }
         echo '</select>';
         echo '<span class="description"> ';
@@ -410,10 +410,10 @@ class CSV2 extends \CultureObject\Provider {
     
     function create_object($doc, $fields, $id_field, $title_field) {
         $post = array(
-            'post_title'                => $doc[$title_field],
+            'post_title'                => trim($doc[$title_field]),
             'post_type'                 => 'object',
             'post_status'               => 'publish',
-            'post_name'                 => $doc[$id_field]
+            'post_name'                 => trim($doc[$id_field])
         );
         $post_id = wp_insert_post($post);
         $this->update_object_meta($post_id,$doc,$fields);
@@ -425,8 +425,8 @@ class CSV2 extends \CultureObject\Provider {
         $existing_id = $this->existing_object_id($doc[$id_field]);
         $post = array(
             'ID'                        => $existing_id,
-            'post_title'                => $doc[$title_field],
-            'post_name'                 => $doc[$id_field],
+            'post_title'                => trim($doc[$title_field]),
+            'post_name'                 => trim($doc[$id_field]),
             'post_type'                 => 'object',
             'post_status'               => 'publish'
         );
@@ -438,7 +438,7 @@ class CSV2 extends \CultureObject\Provider {
     function update_object_meta($post_id,$doc,$fields) {
         foreach($fields as $key=>$value) {
             if (!empty($value)) {
-                update_post_meta($post_id,$value,$doc[$key]);
+                update_post_meta($post_id,trim($value),trim($doc[$key]));
             }
         }
     }
