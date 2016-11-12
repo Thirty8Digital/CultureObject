@@ -31,10 +31,10 @@ class Helper extends Core {
         $img = @file_get_contents($url, false, $stream_context);
         if ($img) {
             foreach($http_response_header as $header) {
-        if (strpos(strtolower($header),'content-disposition') !== false) {
-          $tmp_name = explode('=', $header);
-          if ($tmp_name[1]) $file_name = trim($tmp_name[1],'";\'');
-          }
+                if (strpos(strtolower($header),'content-disposition') !== false) {
+                    $tmp_name = explode('=', $header);
+                    if ($tmp_name[1]) $file_name = trim($tmp_name[1],'";\'');
+                }
             }
             if (isset($file_name) && $file_name) $save_as = $file_name;
             $file_location = $upload_dir['path'].'/'.$save_as;
@@ -52,17 +52,16 @@ class Helper extends Core {
             );
             
             // Insert the attachment.
-            $attach_id = wp_insert_attachment( $attachment, $file_location, 0);
+            $attach_id = wp_insert_attachment($attachment, $file_location, 0);
             
             // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
-            require_once( ABSPATH . 'wp-admin/includes/image.php' );
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
             
             // Generate the metadata for the attachment, and update the database record.
-            $attach_data = wp_generate_attachment_metadata( $attach_id, $file_location );
-            wp_update_attachment_metadata( $attach_id, $attach_data );
+            $attach_data = wp_generate_attachment_metadata($attach_id, $file_location);
+            wp_update_attachment_metadata($attach_id, $attach_data);
             
             return $attach_id;
-            //TODO: Handle save
         } else return false;
     }
     

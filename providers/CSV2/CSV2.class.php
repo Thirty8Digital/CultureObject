@@ -124,6 +124,12 @@ class CSV2 extends \CultureObject\Provider {
         echo '</a>';
         echo '</p>';
         
+        $import_images = get_option('cos_core_import_images');
+        
+        if (!$import_images) {
+            echo '<p style="font-weight:bold">'.__('If your CSV contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object').'</p>';
+        }
+        
         echo '<p>'.__('To begin the import, click the button below.', 'culture-object').'</p>';
         
         
@@ -155,19 +161,23 @@ class CSV2 extends \CultureObject\Provider {
         echo '</span>';
         echo '</div>';
         
-        /*$image_field = get_option('cos_csv2_image_field');
+        if ($import_images) {
         
-        echo '<div class="select_field">';
-        echo '<select id="image_field">';
-        echo '<option value="0">'.esc_attr__('-- Don\'t Import Images --', 'culture-object').'</object>';
-        foreach($headers[0] as $key => $header) {
-            echo '<option value="'.$key.'" '.selected($image_field, $key, false).'>'.$header.'</option>';
+            $image_field = get_option('cos_csv2_image_field');
+            
+            echo '<div class="select_field">';
+            echo '<select id="image_field">';
+            echo '<option value="0">'.esc_attr__('-- Don\'t Import Images --', 'culture-object').'</object>';
+            foreach($headers[0] as $key => $header) {
+                echo '<option value="'.$key.'" '.selected($image_field, $key, false).'>'.$header.'</option>';
+            }
+            echo '</select>';
+            echo '<span class="description"> ';
+            esc_attr_e('If your CSV contains a URL to an image for each object, select that column to import it to the WordPress Media Library', 'culture-object');
+            echo '</span>';
+            echo '</div><br />';
+        
         }
-        echo '</select>';
-        echo '<span class="description"> ';
-        esc_attr_e('If your CSV contains a URL to an image for each object, select that column to import it to the WordPress Media Library', 'culture-object');
-        echo '</span>';
-        echo '</div><br />';*/
         
         echo '<fieldset>
             	<label for="perform_cleanup">
@@ -226,8 +236,15 @@ class CSV2 extends \CultureObject\Provider {
     	} else {
         	
         	if (!isset($_POST['id_field']) || !isset($_POST['title_field'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
-        	$id_field = $_POST['id_field'];
-        	$title_field = $_POST['title_field'];
+        	$id_field = intval($_POST['id_field']);
+        	$title_field = intval($_POST['title_field']);
+        	
+        	if (!empty($_POST['image_field'])) {
+            	$image_field = intval($_POST['image_field']);
+            	update_option('cos_csv2_image_field', $image_field);
+        	} else {
+            	$image_field = false;
+        	}
         	
         	update_option('cos_csv2_id_field', $id_field);
         	update_option('cos_csv2_title_field', $title_field);
@@ -238,7 +255,7 @@ class CSV2 extends \CultureObject\Provider {
         	if ($path = $this->has_uploaded_file()) {
             	$info = $this->get_csv_data($path);
                 $data = $this->get_csv_chunk($path, $start, $count);
-                $result = $this->import_chunk($data, $id_field, $title_field);
+                $result = $this->import_chunk($data, $id_field, $title_field, $image_field);
                 $result['total_rows'] = $info[0]['totalRows'];
                 if ($start + $count < $result['total_rows']) {
                     $result['next_start'] = $start + $count;
@@ -260,7 +277,18 @@ class CSV2 extends \CultureObject\Provider {
         }
     }
     
-    function import_chunk($data, $id_field = 0, $title_field = 0) {
+    function import_chunk($data, $id_field = 0, $title_field = 0, $image_field = false) {
+        
+        $helper = new CultureObject\Helper;
+        
+        $context = stream_context_create(
+            array(
+                'http' => array(
+                    'follow_location' => true
+                )
+            )
+        );
+        
         $fields = array_shift($data);
         $number_of_fields = count($fields);
         
@@ -293,13 +321,25 @@ class CSV2 extends \CultureObject\Provider {
                 $object_exists = $this->object_exists($doc[$id_field]);
                 
                 if (!$object_exists) {
-                    $current_objects[] = $this->create_object($doc, $fields, $id_field, $title_field);
+                    $obj_id = $this->create_object($doc, $fields, $id_field, $title_field);
+                    $current_objects[] = $obj_id;
                     $import_status[] = __("Created object", 'culture-object').': '.$doc[$title_field];
                     $created++;
                 } else {
-                    $current_objects[] = $this->update_object($doc, $fields, $id_field, $title_field);
+                    $obj_id = $this->update_object($doc, $fields, $id_field, $title_field);
+                    $current_objects[] = $obj_id;
                     $import_status[] = __("Updated object", 'culture-object').': '.$doc[$title_field];
                     $updated++;
+                }
+                
+                if ($image_field) {
+                    if (filter_var($doc[$image_field], FILTER_VALIDATE_URL) === false) {
+                        $import_status[] = __("Failed to import image as the selected field doesn't contain a valid URL", 'culture-object');
+                    } else {
+                        $image_id = $helper->add_image_to_gallery_from_url($doc[$image_field], $doc[$id_field], $context);
+                        set_post_thumbnail($obj_id, $image_id);
+                        $import_status[] = __("Downloaded and saved image", 'culture-object').': '.$doc[$title_field]." [".$obj_id."]";
+                    }
                 }
             }
         }
