@@ -137,7 +137,7 @@ class CSV2 extends \CultureObject\Provider {
         
         echo '<div class="select_field">';
         echo '<select id="id_field">';
-        echo '<option value="0">'.esc_attr__('Select a field to use as the object ID', 'culture-object').'</object>';
+        echo '<option value="0">'.esc_attr__('-- Object ID Field --', 'culture-object').'</object>';
         foreach($headers[0] as $key => $header) {
             echo '<option value="'.$key.'" '.selected(trim($id_field), $key, false).'>'.$header.'</option>';
         }
@@ -151,7 +151,7 @@ class CSV2 extends \CultureObject\Provider {
         
         echo '<div class="select_field">';
         echo '<select id="title_field">';
-        echo '<option value="0">'.esc_attr__('Select a field to use as the object title', 'culture-object').'</object>';
+        echo '<option value="0">'.esc_attr__('-- Object Title Field --', 'culture-object').'</object>';
         foreach($headers[0] as $key => $header) {
             echo '<option value="'.$key.'" '.selected(trim($title_field), $key, false).'>'.$header.'</option>';
         }
