@@ -1,4 +1,4 @@
-CultureObject v3.2.0
+CultureObject v3.3.0
 ====================
 
 Welcome
@@ -52,6 +52,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+####Version 3.3.0
+* Support CLI cron imports to get around fast-cgi timeouts on some budget hosting. run `php wp-content/plugins/<plugin_folder>/cron.php`
 
 ####Version 3.2.0
 * Support field mapping for CSV, and enable CSV support for Culture Object Display
