@@ -117,7 +117,7 @@ class Settings extends Core {
         
     }
     
-    function generate_settings_page() {     
+    function generate_settings_page() {
         
         $provider = $this->get_sync_provider();
         if ($provider) {

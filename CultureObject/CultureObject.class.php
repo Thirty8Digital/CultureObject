@@ -56,9 +56,9 @@ class CultureObject extends Core {
     }
     
     function should_sync() {
-        
-        if (isset($_GET['perform_culture_object_sync']) && isset($_GET['key'])) {
-            if (get_option('cos_core_sync_key') == $_GET['key']) {
+	    if (defined('CO_CLI_CRON') && CO_CLI_CRON) $cli_cron = true;
+        if ($cli_cron || (isset($_GET['perform_culture_object_sync']) && isset($_GET['key']))) {
+            if ($cli_cron || (get_option('cos_core_sync_key') == $_GET['key'])) {
                 $provider = $this->get_sync_provider();
                 if ($provider) {
                     if (!class_exists($provider['class'])) include_once($provider['file']);
@@ -178,6 +178,7 @@ class CultureObject extends Core {
                 ),
             'public' => true,
             'has_archive' => true,
+            'show_in_rest' => true,
             'menu_icon' => 'dashicons-list-view',
             'supports' => array('title','custom-fields','thumbnail'),
             'rewrite' => array('slug' => 'object', 'with_front' => false)
