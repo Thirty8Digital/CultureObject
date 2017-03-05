@@ -6,7 +6,7 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.1',
+        'version' => '1.2',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'ajax' => true
@@ -34,8 +34,11 @@ class SWCE extends \CultureObject\Provider {
     
         register_setting('cos_provider_settings', 'cos_provider_site_id');
         register_setting('cos_provider_settings', 'cos_provider_api_token');
+        register_setting('cos_provider_settings', 'cos_provider_category_slug');
         
         add_settings_field('cos_provider_site_id', __('SWCE Site ID','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_site_id'));
+        
+        add_settings_field('cos_provider_category_slug', __('SWCE Category Slug','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_category_slug', 'placeholder' => 'optional category slug'));
         
         add_settings_field('cos_provider_api_token', __('SWCE API Token','culture-object'), array($this,'generate_settings_field_input_text'), 'cos_provider_settings', 'cos_provider_settings', array('field'=>'cos_provider_api_token'));
     }
@@ -108,7 +111,8 @@ class SWCE extends \CultureObject\Provider {
     function generate_settings_field_input_text($args) {
         $field = $args['field'];
         $value = get_option($field);
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, $value, $placeholder);
     }
     
     function perform_ajax_sync() {
@@ -166,8 +170,10 @@ class SWCE extends \CultureObject\Provider {
             throw new SWCEException(__("You haven't yet configured your Site ID in the Culture Object Sync settings",'culture-object'));
         }
         
-        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.$token.'&site='.$site.'&page='.intval($page);
+        $category = get_option('cos_provider_category_slug');
+        if (empty($category)) $category = '';
         
+        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.urlencode($token).'&site='.urlencode($site).'&category='.urlencode($category).'&page='.intval($page);
         
         $result = $this->perform_request($url);
     
