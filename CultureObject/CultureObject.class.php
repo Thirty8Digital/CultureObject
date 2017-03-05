@@ -56,6 +56,7 @@ class CultureObject extends Core {
     }
     
     function should_sync() {
+	    $cli_cron = false;
 	    if (defined('CO_CLI_CRON') && CO_CLI_CRON) $cli_cron = true;
         if ($cli_cron || (isset($_GET['perform_culture_object_sync']) && isset($_GET['key']))) {
             if ($cli_cron || (get_option('cos_core_sync_key') == $_GET['key'])) {
