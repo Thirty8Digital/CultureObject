@@ -6,7 +6,7 @@ class CSV2 extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'CSV2',
-        'version' => '3.0',
+        'version' => '3.0.1',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
