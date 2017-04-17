@@ -19,7 +19,7 @@ class Settings extends Core {
     
     function register_settings() {
         
-        add_settings_section('cos_core_settings',__('Main Settings', 'culture-object'),array($this,'generate_settings_group_content'),'cos_settings');
+        add_settings_section('cos_core_settings', __('Main Settings', 'culture-object'), array($this,'generate_settings_group_content'), 'cos_settings');
     
         register_setting('cos_settings', 'cos_core_sync_provider');
         register_setting('cos_settings', 'cos_core_sync_key');

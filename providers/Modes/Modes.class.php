@@ -1,34 +1,25 @@
 <?php
 
-class CSV2Exception extends \CultureObject\Exception\ProviderException { }
+class ModesException extends \CultureObject\Exception\ProviderException { }
 
-class CSV2 extends \CultureObject\Provider {
+class Modes extends \CultureObject\Provider {
     
     private $provider = array(
-        'name' => 'CSV2',
-        'version' => '3.0',
+        'name' => 'Modes',
+        'version' => '1.0',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
-        'supports_images' => true,
+        'supports_images' => false,
         'no_options' => true,
         'ajax' => true,
     );
     
-    function __construct() {
-	    require('vendor/autoload.php');
-    }
-    
     function register_remappable_fields() {
         if ($path = $this->has_uploaded_file()) {
             if (is_file($path)) {
-                $headers = $this->get_csv_chunk($path,1,0);
-                $headers = $headers[0];
-                $return = [];
-                foreach($headers as $header) {
-                    $return[$header] = $header;
-                }
-                return $return;
+	            $xml = simplexml_load_file($path);
+                return $this->get_fields($xml->Object);
             } else {
                 return array();
             }
@@ -49,11 +40,11 @@ class CSV2 extends \CultureObject\Provider {
         $js_url = plugins_url('/assets/admin.js?nc='.time(), __FILE__);
         wp_enqueue_script('jquery-ui');
         wp_enqueue_script('jquery-ui-core');
-        wp_register_script('csv2_admin_js', $js_url, array('jquery','jquery-ui-core','jquery-ui-progressbar'), '1.0.0', true);
-        wp_enqueue_script('csv2_admin_js');
+        wp_register_script('modes_admin_js', $js_url, array('jquery','jquery-ui-core','jquery-ui-progressbar'), '1.0.0', true);
+        wp_enqueue_script('modes_admin_js');
         
 		wp_enqueue_style('jquery-ui-css', plugin_dir_url( __FILE__ ).'assets/jquery-ui-fresh.css');
-		wp_enqueue_style('csv2_admin_css', plugin_dir_url( __FILE__ ).'assets/admin.css?nc='.time());
+		wp_enqueue_style('modes_admin_css', plugin_dir_url( __FILE__ ).'assets/admin.css?nc='.time());
     }
     
     function get_provider_information() {
@@ -61,15 +52,15 @@ class CSV2 extends \CultureObject\Provider {
     }
     
     function execute_load_action() {
-        if (isset($_FILES['cos_csv_import_file']) && isset($_POST['cos_csv_nonce'])) {
-            if (wp_verify_nonce($_POST['cos_csv_nonce'], 'cos_csv_import') && current_user_can('upload_files')) {
+        if (isset($_FILES['cos_modes_import_file']) && isset($_POST['cos_modes_nonce'])) {
+            if (wp_verify_nonce($_POST['cos_modes_nonce'], 'cos_modes_import') && current_user_can('upload_files')) {
                 $this->save_upload();
             } else {
                 wp_die(__("Security Violation.", 'culture-object'));
             }
         }
-        if (isset($_POST['delete_uploaded_file']) && isset($_POST['cos_csv_nonce'])) {
-            if (wp_verify_nonce($_POST['cos_csv_nonce'], 'cos_csv_delete_uploaded_file')) {
+        if (isset($_POST['delete_uploaded_file']) && isset($_POST['cos_modes_nonce'])) {
+            if (wp_verify_nonce($_POST['cos_modes_nonce'], 'cos_modes_delete_uploaded_file')) {
                 $this->delete_uploaded_file();
             } else {
                 wp_die(__("Security Violation.", 'culture-object'));
@@ -105,77 +96,125 @@ class CSV2 extends \CultureObject\Provider {
         }
     }
     
+    function get_fields($xml) {
+	    $e = [];
+	    $keys = array_keys($this->parse_object($xml));
+	    foreach($keys as $element) {
+		    $e[$element] = $element;
+		}
+		return $e;
+    }
+    
+    function parse_object($xml) {
+	    $fields = [];
+		foreach($xml->children() as $attr) {
+			$fields = $this->parse_children($attr, $fields, []);
+		};
+		return $fields;
+    }
+    
+    function append_elementtype($attr) {
+	    if ($attr['elementtype']) {
+		    return $attr->getName().'['.sanitize_title($attr['elementtype']).']';
+	    }
+	    return $attr->getName();
+    }
+    
+    function parse_children($attr, $fields, $parents = []) {
+	    $seperator = '.';
+	    if ($attr->children()) {
+		    $parents[] = $this->append_elementtype($attr);
+		    foreach($attr->children() as $child) {
+			    $fields = $this->parse_children($child, $fields, $parents);
+		    }
+	    } else {
+		    if ($parents) {
+			    $field_name = implode($parents, $seperator).$seperator.$this->append_elementtype($attr);
+		    } else {
+			    $field_name = $this->append_elementtype($attr);
+		    }
+		    $fields[$field_name] = $attr;
+	    }
+	    return $fields;
+    }
+    
+    
+    
+    function get_total_objects_count($xml) {
+        return count($xml->Object);
+    }
+    
     function parse_uploaded_file($path) {
-        if (!is_file($path)) throw new CSV2Exception(__("An error occurred when trying to parse the CSV.", 'culture-object'));
+        if (!is_file($path)) throw new ModesException(__("An error occurred when trying to parse the Modes XML.", 'culture-object'));
 
-        $headers = $this->get_csv_chunk($path,1,0);
-        $data = $this->get_csv_data($path);
+	    $xml = simplexml_load_file($path);
+        $fields = $this->get_fields($xml->Object);
+        
         
         echo '<div id="hide-on-import">';
         
         echo '<p>';
         printf(
-            /* Translators: 1: CSV File Name 2: Number of columns in the CSV 3: Number of rows in the CSV */
-            __('Your uploaded CSV "%1$s" contains %2$d columns and %3$d rows.', 'culture-object'),
+            /* Translators: 1: Modes XML File Name 2: Number of columns in the Modes XML */
+            __('Your uploaded Modes XML "%1$s" contains %2$d objects.', 'culture-object'),
             basename($path),
-            $data[0]['totalColumns'],
-            $data[0]['totalRows']
+            $this->get_total_objects_count($xml)
         );
         echo ' <a id="delete_uploaded_csv" href="#">';
-        _e('Remove uploaded CSV?', 'culture-object');
+        _e('Remove uploaded Modes XML?', 'culture-object');
         echo '</a>';
         echo '</p>';
         
         $import_images = get_option('cos_core_import_images');
         
         if (!$import_images) {
-            echo '<p style="font-weight:bold">'.__('If your CSV contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object').'</p>';
+            echo '<p style="font-weight:bold">'.__('If your Modes XML contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object').'</p>';
         }
         
         echo '<p>'.__('To begin the import, click the button below.', 'culture-object').'</p>';
         
         
-        $id_field = get_option('cos_csv2_id_field');
+        $id_field = get_option('cos_modes_id_field');
         
         echo '<div class="select_field">';
         echo '<select id="id_field">';
         echo '<option value="0">'.esc_attr__('-- Object ID Field --', 'culture-object').'</object>';
-        foreach($headers[0] as $key => $header) {
+        foreach($fields as $key => $header) {
             echo '<option value="'.$key.'" '.selected(trim($id_field), $key, false).'>'.$header.'</option>';
         }
         echo '</select>';
         echo '<span class="description"> ';
-        esc_attr_e('Select the column that contains the unique ID for the objects in your dataset', 'culture-object');
+        esc_attr_e('Select the field that contains the unique ID for the objects in your dataset', 'culture-object');
         echo '</span>';
         echo '</div>';
         
-        $title_field = get_option('cos_csv2_title_field');
+        $title_field = get_option('cos_modes_title_field');
         
         echo '<div class="select_field">';
         echo '<select id="title_field">';
         echo '<option value="0">'.esc_attr__('-- Object Title Field --', 'culture-object').'</object>';
-        foreach($headers[0] as $key => $header) {
+        foreach($fields as $key => $header) {
             echo '<option value="'.$key.'" '.selected(trim($title_field), $key, false).'>'.$header.'</option>';
         }
         echo '</select>';
         echo '<span class="description"> ';
-        esc_attr_e('Select the column that contains the title for the objects in your dataset', 'culture-object');
+        esc_attr_e('Select the field that contains the title for the objects in your dataset', 'culture-object');
         echo '</span>';
         echo '</div>';
         
         if ($import_images) {
         
-            $image_field = get_option('cos_csv2_image_field');
+            $image_field = get_option('cos_modes_image_field');
             
             echo '<div class="select_field">';
             echo '<select id="image_field">';
             echo '<option value="0">'.esc_attr__('-- Don\'t Import Images --', 'culture-object').'</object>';
-            foreach($headers[0] as $key => $header) {
+            foreach($fields as $key => $header) {
                 echo '<option value="'.$key.'" '.selected($image_field, $key, false).'>'.$header.'</option>';
             }
             echo '</select>';
             echo '<span class="description"> ';
-            esc_attr_e('If your CSV contains a URL to an image for each object, select that column to import it to the WordPress Media Library', 'culture-object');
+            esc_attr_e('If your Modes XML contains a URL to an image for each object, select that column to import it to the WordPress Media Library', 'culture-object');
             echo '</span>';
             echo '</div><br />';
         
@@ -198,30 +237,13 @@ class CSV2 extends \CultureObject\Provider {
         echo '<div id="csv_import_detail"></div>';
         
         echo '<form id="delete_uploaded_csv_form" method="post" action="">';
-            echo '<input type="hidden" name="cos_csv_nonce" value="'.wp_create_nonce('cos_csv_delete_uploaded_file').'" /><br /><br />';
+            echo '<input type="hidden" name="cos_modes_nonce" value="'.wp_create_nonce('cos_modes_delete_uploaded_file').'" /><br /><br />';
             echo '<input type="hidden" name="delete_uploaded_file" value="true" />';
         echo '</form>';
     }
     
-    function get_csv_data($path) {
-        $objReader = PHPExcel_IOFactory::createReader('CSV');
-        return $objReader->listWorksheetInfo($path);
-    }
-    
-    function get_csv_chunk($path,$start,$count = 50) {
-        $objReader = PHPExcel_IOFactory::createReader('CSV'); 
-        $chunkFilter = new chunkReadFilter();
-        $objReader->setReadFilter($chunkFilter); 
-        
-        $chunkFilter->setRows($start+1,$count);  
-        $csv = $objReader->load($path); 
-        $worksheet = $csv->getActiveSheet();
-        
-        return $worksheet->toArray();
-    }
-    
     function perform_ajax_sync() {
-    	if (!isset($_POST['start']) || !isset($_POST['import_id'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
+    	if (!isset($_POST['start']) || !isset($_POST['import_id'])) throw new ModesException(__('Invalid AJAX import request', 'culture-object'));
     	
     	$start = $_POST['start'];
     	$import_id = $_POST['import_id'];
@@ -230,39 +252,43 @@ class CSV2 extends \CultureObject\Provider {
         	
             ini_set('memory_limit','2048M');
             
-            $objects = get_option('cos_csv2_import_'.$import_id, array());
+            $objects = get_option('cos_modes_import_'.$import_id, array());
             $previous_posts = $this->get_current_object_ids();
-            delete_option('cos_csv2_import_'.$import_id, array());
+            delete_option('cos_modes_import_'.$import_id, array());
             return $this->clean_objects($objects,$previous_posts);
             
     	} else {
         	
-        	if (!isset($_POST['id_field']) || !isset($_POST['title_field'])) throw new CSV2Exception(__('Invalid AJAX import request', 'culture-object'));
-        	$id_field = intval($_POST['id_field']);
-        	$title_field = intval($_POST['title_field']);
+        	if (!isset($_POST['id_field']) || !isset($_POST['title_field'])) throw new ModesException(__('Invalid AJAX import request', 'culture-object'));
+        	$id_field = $_POST['id_field'];
+        	$title_field = $_POST['title_field'];
         	
         	if (!empty($_POST['image_field'])) {
-            	$image_field = intval($_POST['image_field']);
-            	update_option('cos_csv2_image_field', $image_field);
+            	$image_field = $_POST['image_field'];
+            	update_option('cos_modes_image_field', $image_field);
         	} else {
             	$image_field = false;
         	}
         	
-        	update_option('cos_csv2_id_field', $id_field);
-        	update_option('cos_csv2_title_field', $title_field);
+        	update_option('cos_modes_id_field', $id_field);
+        	update_option('cos_modes_title_field', $title_field);
         	
         	$cleanup = isset($_POST['perform_cleanup']) && $_POST['perform_cleanup'];
         	
         	$count = 50;
         	if ($path = $this->has_uploaded_file()) {
-            	$info = $this->get_csv_data($path);
-                $data = $this->get_csv_chunk($path, $start, $count);
+	        	$xml = simplexml_load_file($path);
+	        	$total_count = $this->get_total_objects_count($xml);
+	        	$xpath = '//Object[position() >= '.$start.' and position() < '.($start+$count).']';
+		        $data = $xml->xpath($xpath);
+		        
                 $result = $this->import_chunk($data, $id_field, $title_field, $image_field);
-                $result['total_rows'] = $info[0]['totalRows'];
+	        	//$result['looking'] = "Looking for: $xpath";
+                $result['total_rows'] = $total_count;
                 if ($start + $count < $result['total_rows']) {
                     $result['next_start'] = $start + $count;
                     $result['complete'] = false;
-                    $result['percentage'] = round((100/$info[0]['totalRows'])*($start+$count));
+                    $result['percentage'] = round((100/$total_count)*($start+$count));
                 } else {
                     $result['complete'] = true;
                     $result['percentage'] = 100;
@@ -270,12 +296,12 @@ class CSV2 extends \CultureObject\Provider {
                 $result['next_nonce'] = wp_create_nonce('cos_ajax_import_request');
                 
                 if ($cleanup) {
-                    $objects = get_option('cos_csv2_import_'.$import_id, array());
-                    update_option('cos_csv2_import_'.$import_id, array_merge($objects, $result['chunk_objects']));
+                    $objects = get_option('cos_modes_import_'.$import_id, array());
+                    update_option('cos_modes_import_'.$import_id, array_merge($objects, $result['chunk_objects']));
                 }
                 
                 return $result;
-            } else throw new CSV2Exception(__('Attempted to import without a file uploaded.', 'culture-object'));
+            } else throw new ModesException(__('Attempted to import without a file uploaded.', 'culture-object'));
         }
     }
     
@@ -290,57 +316,48 @@ class CSV2 extends \CultureObject\Provider {
                 )
             )
         );
-        
-        $fields = array_shift($data);
-        $number_of_fields = count($fields);
-        
+                
         $data_array = $current_objects = [];
         $updated = $created = 0;
         
-        foreach($data as $new_row) {
-            if (empty($new_row[0])) continue;
-            if (count($new_row) > $number_of_fields) {
-                throw new CSV2Exception(sprintf(
-                    /* Translators: 1: A row number from the CSV 2: The number of fields in that row 3: The number of fields defined by the first row. */
-                    __("Row %1$s of this CSV file contains %2$s fields, but the field keys only provides names for %3$s.\r\nTo prevent something bad happening, we're bailing on this import.", 'culture-object'),
-                    count($data_array)+2,
-                    count($new_row),
-                    $number_of_fields
-                ));
-                return;
-            }
-            $data_array[] = $new_row;
-        }
-        
-        $number_of_objects = count($data_array);
-        $fields[] = '_cos_object_id';
+        $number_of_objects = count($data);
         
         if ($number_of_objects > 0) {
-            foreach($data_array as $doc) {
+            foreach($data as $xml_doc) {
                 
-                $doc['_cos_object_id'] = $doc[$id_field];
+                $obj = $this->parse_object($xml_doc);
                 
-                $object_exists = $this->object_exists($doc[$id_field]);
+	            if ($id_field === 0) {
+		            $id_field = key($obj);
+	            }
+	            
+	            if ($title_field === 0) {
+		            $title_field = key($obj);
+	            }
+	            
+                $object_exists = $this->object_exists((string) $obj[$id_field]);
+                
+                $obj['_cos_object_id'] = $obj[$id_field];
                 
                 if (!$object_exists) {
-                    $obj_id = $this->create_object($doc, $fields, $id_field, $title_field);
+                    $obj_id = $this->create_object($obj, $id_field, $title_field);
                     $current_objects[] = $obj_id;
-                    $import_status[] = __("Created object", 'culture-object').': '.$doc[$title_field];
+                    $import_status[] = __("Created object", 'culture-object').': '.$obj[$title_field];
                     $created++;
                 } else {
-                    $obj_id = $this->update_object($doc, $fields, $id_field, $title_field);
+                    $obj_id = $this->update_object($obj, $id_field, $title_field);
                     $current_objects[] = $obj_id;
-                    $import_status[] = __("Updated object", 'culture-object').': '.$doc[$title_field];
+                    $import_status[] = __("Updated object", 'culture-object').': '.$obj[$title_field];
                     $updated++;
                 }
                 
                 if ($image_field) {
-                    if (filter_var($doc[$image_field], FILTER_VALIDATE_URL) === false) {
+                    if (filter_var($obj[$image_field], FILTER_VALIDATE_URL) === false) {
                         $import_status[] = __("Failed to import image as the selected field doesn't contain a valid URL", 'culture-object');
                     } else {
-                        $image_id = $helper->add_image_to_gallery_from_url($doc[$image_field], $doc[$id_field], $context);
+                        $image_id = $helper->add_image_to_gallery_from_url($obj[$image_field], $obj[$id_field], $context);
                         set_post_thumbnail($obj_id, $image_id);
-                        $import_status[] = __("Downloaded and saved image", 'culture-object').': '.$doc[$title_field]." [".$obj_id."]";
+                        $import_status[] = __("Downloaded and saved image", 'culture-object').': '.$obj[$title_field]." [".$obj_id."]";
                     }
                 }
             }
@@ -372,14 +389,14 @@ class CSV2 extends \CultureObject\Provider {
     
     function display_upload_prompt() {
         echo '<p>';
-        _e('Select a CSV to upload','culture-object');
+        _e('Select a Modes XML export file to upload','culture-object');
         echo '</p>';
         
         echo '<form id="csv_import_form" method="post" action="" enctype="multipart/form-data">';
-            echo '<input type="file" name="cos_csv_import_file" />';
-            echo '<input type="hidden" name="cos_csv_nonce" value="'.wp_create_nonce('cos_csv_import').'" /><br /><br />';
+            echo '<input type="file" name="cos_modes_import_file" />';
+            echo '<input type="hidden" name="cos_modes_nonce" value="'.wp_create_nonce('cos_modes_import').'" /><br /><br />';
             echo '<input id="csv_import_submit" type="button" class="button button-primary" value="';
-            _e('Upload CSV File', 'culture-object');
+            _e('Upload Modes XML File', 'culture-object');
             echo '" />';
         echo '</form>';
     }
@@ -392,9 +409,9 @@ class CSV2 extends \CultureObject\Provider {
            mkdir( $upload_dir, 0700 );
         }
         
-        $file = $_FILES['cos_csv_import_file'];
+        $file = $_FILES['cos_modes_import_file'];
         if ($file['error'] !== 0) {
-            throw new CSV2Exception(sprintf(
+            throw new ModesException(sprintf(
                 /* Translators: %s: The numeric error code PHP reported for an upload failure */
                 __("Unable to import. PHP reported an error code: %s", 'culture-object'),
                 $file['error']
@@ -402,42 +419,42 @@ class CSV2 extends \CultureObject\Provider {
             return;
         }
         
-        if ($file['type'] != 'text/csv') {
-            throw new CSV2Exception(__("Unable to import. You didn't upload a CSV file.", 'culture-object'));
+        if ($file['type'] != 'text/xml') {
+            throw new ModesException(__("Unable to import. You didn't upload a Modes XML file.", 'culture-object'));
             return;
         }
         
         $current_path = $this->has_uploaded_file();
         if ($current_path && is_file($current_path)) {
             unlink($current_path);
-            delete_option('cos_csv2_uploaded_file_path');
+            delete_option('cos_modes_uploaded_file_path');
         }
         
         $file_name = preg_replace('/[^A-Za-z0-9_\-.]/', '_', $file['name']);
         $full_path = $upload_dir.$file_name;
         if (move_uploaded_file($file['tmp_name'], $full_path)) {
-            update_option('cos_csv2_uploaded_file_path', $full_path);
+            update_option('cos_modes_uploaded_file_path', $full_path);
             return;
         } else {
-            throw new CSV2Exception(__("Unable to import. Could not write file to uploads folder.", 'culture-object'));
+            throw new ModesException(__("Unable to import. Could not write file to uploads folder.", 'culture-object'));
         }
     }
     
     function delete_uploaded_file() {
-        $path = get_option('cos_csv2_uploaded_file_path');
+        $path = get_option('cos_modes_uploaded_file_path');
         if (is_file($path)) {
             unlink($path);
         }
-        delete_option('cos_csv2_uploaded_file_path');
+        delete_option('cos_modes_uploaded_file_path');
     }
     
     function has_uploaded_file() {
-        $path = get_option('cos_csv2_uploaded_file_path');
+        $path = get_option('cos_modes_uploaded_file_path');
         if ($path) {
             if (is_file($path)) {
                 return $path;
             } else {
-                delete_option('cos_csv2_uploaded_file_path');
+                delete_option('cos_modes_uploaded_file_path');
                 return false;
             }
         }
@@ -450,37 +467,37 @@ class CSV2 extends \CultureObject\Provider {
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
     }
     
-    function create_object($doc, $fields, $id_field, $title_field) {
+    function create_object($obj, $id_field, $title_field) {
         $post = array(
-            'post_title'                => trim($doc[$title_field]),
+            'post_title'                => trim($obj[$title_field]),
             'post_type'                 => 'object',
             'post_status'               => 'publish',
-            'post_name'                 => trim($doc[$id_field])
+            'post_name'                 => trim($obj[$id_field])
         );
         $post_id = wp_insert_post($post);
-        $this->update_object_meta($post_id,$doc,$fields);
+        $this->update_object_meta($post_id,$obj);
         return $post_id;
     }
     
     
-    function update_object($doc, $fields, $id_field, $title_field) {
-        $existing_id = $this->existing_object_id($doc[$id_field]);
+    function update_object($obj, $id_field, $title_field) {
+        $existing_id = $this->existing_object_id((string) $obj[$id_field]);
         $post = array(
             'ID'                        => $existing_id,
-            'post_title'                => trim($doc[$title_field]),
-            'post_name'                 => trim($doc[$id_field]),
+            'post_title'                => trim($obj[$title_field]),
+            'post_name'                 => trim($obj[$id_field]),
             'post_type'                 => 'object',
             'post_status'               => 'publish'
         );
         $post_id = wp_update_post($post);
-        $this->update_object_meta($post_id,$doc,$fields);
+        $this->update_object_meta($post_id,$obj);
         return $post_id;
     }
     
-    function update_object_meta($post_id,$doc,$fields) {
-        foreach($fields as $key=>$value) {
+    function update_object_meta($post_id,$obj) {
+        foreach($obj as $key=>$value) {
             if (!empty($value)) {
-                update_post_meta($post_id,trim($value),trim($doc[$key]));
+                update_post_meta($post_id,trim($key),trim($value));
             }
         }
     }
@@ -530,15 +547,15 @@ class CSV2 extends \CultureObject\Provider {
         foreach($to_remove as $remove_id) {
             wp_delete_post($remove_id,true);
             $import_delete[] = sprintf(
-                /* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
+                /* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (Modes XML, AdLib, etc) */
                 __('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
                 $remove_id,
-                'CSV'
+                'Modes XML'
             );
             $deleted++;
         }
         
-        set_transient('cos_csv_deleted', $import_delete, 0);
+        set_transient('cos_modes_deleted', $import_delete, 0);
         
         $return = [];
         $return['deleted_count'] = $deleted;
@@ -547,7 +564,7 @@ class CSV2 extends \CultureObject\Provider {
     }
 
     function perform_sync() {
-        throw new CSV2Exception(__('Only AJAX sync is supported for this provider.', 'culture-object'));
+        throw new ModesException(__('Only AJAX sync is supported for this provider.', 'culture-object'));
     }
     
 }
