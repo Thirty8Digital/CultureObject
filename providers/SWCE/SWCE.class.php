@@ -6,7 +6,7 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.2',
+        'version' => '1.2.1',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'ajax' => true
@@ -180,6 +180,8 @@ class SWCE extends \CultureObject\Provider {
         $current_objects = [];
         $updated = $created = 0;
         $number_of_objects = count($result['data']);
+        
+        $doc['_cos_object_id'] = $doc['accession-loan-no'];
         
         foreach($result['data'] as $doc) {
             $object_exists = $this->object_exists($doc['accession-loan-no']);
