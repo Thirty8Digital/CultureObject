@@ -81,7 +81,7 @@ class CultureObject extends Core {
                         echo __("An unknown exception occurred during sync", 'culture-object').":<br />";
                         echo $e->getMessage();
                     }
-                    exit();
+                    die('Sync Complete');
                 }
             }
         }

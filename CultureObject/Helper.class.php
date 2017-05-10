@@ -26,7 +26,7 @@ class Helper extends Core {
         echo cos_get_remapped_field_name($key);
     }
     
-    function add_image_to_gallery_from_url($url,$save_as,$stream_context = false) {
+    function add_image_to_gallery_from_url($url, $save_as, $stream_context = false, $post_parent = 0) {
         $upload_dir = wp_upload_dir();
         $img = @file_get_contents($url, false, $stream_context);
         if ($img) {
@@ -52,7 +52,7 @@ class Helper extends Core {
             );
             
             // Insert the attachment.
-            $attach_id = wp_insert_attachment($attachment, $file_location, 0);
+            $attach_id = wp_insert_attachment($attachment, $file_location, $post_parent);
             
             // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
             require_once(ABSPATH . 'wp-admin/includes/image.php');
