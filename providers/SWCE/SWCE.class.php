@@ -6,7 +6,7 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.2.1',
+        'version' => '1.3',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'ajax' => true
@@ -253,6 +253,7 @@ class SWCE extends \CultureObject\Provider {
     function create_object($doc) {
         $post = array(
             'post_title'    => $doc['simple-name'],
+            'post_name'     => str_replace('/','-',$doc['accession-loan-no']),
             'post_type'     => 'object',
             'post_status'   => 'publish',
         );
@@ -267,6 +268,7 @@ class SWCE extends \CultureObject\Provider {
         $post = array(
             'ID'            => $existing_id,
             'post_title'    => $doc['simple-name'],
+            'post_name'     => str_replace('/','-',$doc['accession-loan-no']),
             'post_type'     => 'object',
             'post_status'   => 'publish',
         );
