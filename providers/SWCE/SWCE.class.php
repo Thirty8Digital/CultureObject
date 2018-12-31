@@ -6,7 +6,7 @@ class SWCE extends \CultureObject\Provider {
     
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.3.1',
+        'version' => '1.4',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'ajax' => true
@@ -120,8 +120,11 @@ class SWCE extends \CultureObject\Provider {
     	if (!isset($_POST['start']) || !isset($_POST['import_id'])) throw new SWCEException(__('Invalid AJAX import request', 'culture-object'));
     	
     	$start = $_POST['start'];
-    	$import_id = $_POST['import_id'];
-    	$result = [];
+        $import_id = $_POST['import_id'];
+        $since = $_POST['since'];
+        $result = [];
+        
+        update_option('cos_swce_import_since', $since);
     	
     	if ($start == "cleanup") {
         	
@@ -136,9 +139,9 @@ class SWCE extends \CultureObject\Provider {
                     	
         	$cleanup = isset($_POST['perform_cleanup']) && $_POST['perform_cleanup'];
         	
-        	$result = $this->import_page($start);
+        	$result = $this->import_page($start, $since);
         	
-            if ($result['current_page'] != $result['last_page']) {
+            if ($result['current_page'] < $result['last_page']) {
                 $result['complete'] = false;
                 $result['percentage'] = round((100/$result['last_page'])*$result['current_page']);
             } else {
@@ -159,7 +162,7 @@ class SWCE extends \CultureObject\Provider {
         
     }
     
-    function import_page($page) {
+    function import_page($page, $since) {
         $token = get_option('cos_provider_api_token');
         if (empty($token)) {
             throw new SWCEException(__("You haven't yet configured your API token in the Culture Object Sync settings",'culture-object'));
@@ -173,25 +176,29 @@ class SWCE extends \CultureObject\Provider {
         $category = get_option('cos_provider_category_slug');
         if (empty($category)) $category = '';
         
-        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.urlencode($token).'&site='.urlencode($site).'&category='.urlencode($category).'&page='.intval($page);
-        
+        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token='.urlencode($token).'&site='.urlencode($site).'&category='.urlencode($category).'&since='.urlencode($since).'&page='.intval($page);
+
         $result = $this->perform_request($url);
     
         $current_objects = [];
         $updated = $created = 0;
         $number_of_objects = count($result['data']);
-        
-        foreach($result['data'] as $doc) {
-	        $doc['_cos_object_id'] = $doc['accession-loan-no'];
-            $object_exists = $this->object_exists($doc['accession-loan-no']);
-            if (!$object_exists) {
-                $current_objects[] = $this->create_object($doc);
-                $import_status[] = __("Created object", 'culture-object').': '.$doc['accession-loan-no'];
-                $created++;
-            } else {
-                $current_objects[] = $this->update_object($doc);
-                $import_status[] = __("Updated object", 'culture-object').': '.$doc['accession-loan-no'];
-                $updated++;
+
+        if ($number_of_objects == 0) {
+            $import_status[] = "Nothing to import";
+        } else {   
+            foreach($result['data'] as $doc) {
+                $doc['_cos_object_id'] = $doc['accession-loan-no'];
+                $object_exists = $this->object_exists($doc['accession-loan-no']);
+                if (!$object_exists) {
+                    $current_objects[] = $this->create_object($doc);
+                    $import_status[] = __("Created object", 'culture-object').': '.$doc['accession-loan-no'];
+                    $created++;
+                } else {
+                    $current_objects[] = $this->update_object($doc);
+                    $import_status[] = __("Updated object", 'culture-object').': '.$doc['accession-loan-no'];
+                    $updated++;
+                }
             }
         }
         
@@ -206,6 +213,7 @@ class SWCE extends \CultureObject\Provider {
         $return['processed_count'] = $number_of_objects;
         $return['created'] = $created;
         $return['updated'] = $updated;
+
         return $return;
     }
     
@@ -341,9 +349,16 @@ class SWCE extends \CultureObject\Provider {
         echo "<p>".__('Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object')."</p>";
         
         echo '<fieldset>
+            <label for="since">
+                <span>'.esc_attr__('Only process objects modified or created since this date', 'culture-object').'</span>
+                <input name="since" type="textbox" id="since" value="'.esc_attr(get_option('cos_swce_import_since')).'" placeholder="2019-01-01" /><br />
+                <span class="note">If you enter a date here, the perform cleanup option will be ignored.</span>
+            </label>
+        </fieldset>
+        <fieldset>
         	<label for="perform_cleanup">
         		<input name="perform_cleanup" type="checkbox" id="perform_cleanup" value="1" />
-        		<span>'.esc_attr__('Delete existing objects not in this import?', 'culture-object').'</span>
+                <span>'.esc_attr__('Delete existing objects not in this import?', 'culture-object').'</span>
         	</label>
         </fieldset>';
         

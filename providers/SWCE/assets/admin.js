@@ -19,16 +19,23 @@ $(document).ready(function() {
         $("#hide-on-import").css('display','none');
         
         perform_cleanup = $('#perform_cleanup').is(':checked');
+        since = $('#since').val().trim();
+
+        if (since) {
+            perform_cleanup = false;
+        } else {
+            since = false;
+        }
         
         $("#csv_import_progressbar .progress-label").css('display', 'inline-block');
         $("#csv_import_progressbar").progressbar({value: 0});
         
-        importChunk(1, $('#csv_perform_ajax_import').data('import-id'), $('#csv_perform_ajax_import').data('sync-key'), $('#csv_perform_ajax_import').data('starting-nonce'), perform_cleanup);
+        importChunk(1, $('#csv_perform_ajax_import').data('import-id'), $('#csv_perform_ajax_import').data('sync-key'), $('#csv_perform_ajax_import').data('starting-nonce'), perform_cleanup, since);
     });
 })
 
 
-function importChunk(start, import_id, sync_key, nonce, perform_cleanup) {
+function importChunk(start, import_id, sync_key, nonce, perform_cleanup, since) {
     $.post(
         ajaxurl, 
         {
@@ -37,6 +44,7 @@ function importChunk(start, import_id, sync_key, nonce, perform_cleanup) {
             'start': start,
             'import_id': import_id,
             'perform_cleanup': perform_cleanup,
+            'since': since,
             'nonce': nonce
         }, 
         function(response) {
@@ -55,7 +63,7 @@ function importChunk(start, import_id, sync_key, nonce, perform_cleanup) {
                     $("#csv_import_progressbar").progressbar({value: response.percentage});
                     $("#csv_import_progressbar .progress-label").html(strings.imported+' '+(response.imported_count)+'/'+response.total_objects+' '+strings.objects);
                     $("#csv_import_detail").prepend(response.import_status.join("<br />")+"<br />");
-                    importChunk(response.next_start, import_id, sync_key, response.next_nonce, perform_cleanup);
+                    importChunk(response.next_start, import_id, sync_key, response.next_nonce, perform_cleanup, since);
                 }
             }
         },

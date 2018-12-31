@@ -24,3 +24,7 @@
 fieldset {
     margin-bottom: 20px;
 }
+.note {
+    font-size: 10px;
+    font-style: italic;
+}
