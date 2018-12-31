@@ -244,7 +244,7 @@ class SWCE extends \CultureObject\Provider {
                 /* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
                 __('Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object'),
                 $remove_id,
-                'CSV'
+                'SWCE'
             );
             $deleted++;
         }
