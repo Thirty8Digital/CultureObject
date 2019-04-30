@@ -32,9 +32,26 @@
     </strong></p>
     <?php } else { ?>
   
-    <p>The Culture Object plugin requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.</p>
-    <p>You shouldn't do this too frequently to avoid causing problems with your provider. Once a day should be enough.</p>
-    <p>You should load the following URL:<br /><a target="_blank" href="<?php echo get_site_url(); ?>?perform_culture_object_sync=true&key=<?php echo get_option('cos_core_sync_key'); ?>"><?php echo get_site_url(); ?>?perform_culture_object_sync=true&key=<?php echo get_option('cos_core_sync_key'); ?></a></p>
+    <p><?php _e('The Culture Object plugin you\'re using requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.', 'culture-object'); ?></p>
+    <p><?php _e('You shouldn\'t do this too frequently to avoid causing problems with your provider.', 'culture-object'); ?></p>
+    <p>
+        <?php 
+        printf(
+            /* Translators 1: URL to perform cron sync */
+            __('You should load the following URL: %s', 'culture-object'),
+            '<a target="_blank" href="'.get_site_url().'?perform_culture_object_sync=true&key='.get_option('cos_core_sync_key').'">'.get_site_url().'?perform_culture_object_sync=true&key='.get_option('cos_core_sync_key').'</a>'
+        );
+        ?>
+    </p>
+    <p>
+        <?php
+        printf(
+            /* Translators 1: <pre> wrapped cli path */
+            __('Alternatively, you can call the following script from your root path to bypass any web timeouts that may exist with your provider. %s', 'culture-object'),
+            '<pre>php wp-content/plugins/[culture-object-sync-folder-name]/cron.php</pre>'
+        );
+        ?>
+    </p>
 
   <?php } ?>
 
