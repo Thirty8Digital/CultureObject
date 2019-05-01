@@ -18,28 +18,33 @@ register_activation_hook(__FILE__, array('CultureObject\CultureObject', 'regener
 register_deactivation_hook(__FILE__, array('CultureObject\CultureObject', 'regenerate_permalinks'));
 $cos = new \CultureObject\CultureObject();
 
-function cos_get_instance() {
+function cos_get_instance()
+{
     global $cos;
     return $cos;
 }
 
 /* General Functions. These need to go into their own file one day. */
-function cos_get_remapped_field_name($field_key) {
+function cos_get_remapped_field_name($field_key)
+{
     global $cos;
     return $cos->helper->cos_get_remapped_field_name($field_key);
 }
 
-function cos_remapped_field_name($field_key) {
+function cos_remapped_field_name($field_key)
+{
     global $cos;
     return $cos->helper->cos_remapped_field_name($field_key);
 }
 
-function cos_get_field($field_key) {
+function cos_get_field($field_key)
+{
     $id = get_the_ID();
     if (!$id) return false;
     return get_post_meta($id, $field_key, true);
 }
 
-function cos_the_field($field_key) {
+function cos_the_field($field_key)
+{
     echo cos_get_field($field_key);
 }
