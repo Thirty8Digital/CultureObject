@@ -2,8 +2,9 @@
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 4.5
-Tested up to: 4.5.3
-Stable tag: 3.1.1
+Tested up to: 5.2
+Stable tag: 3.5
+Requires PHP: 5.5
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -25,6 +26,25 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 3.5 =
+New: Code standard changes
+
+New: Improvements to internationalization efforts
+
+New: CSV2 supports a taxonomy field which can contain comma seperated values.
+
+Fix: Fixes a bug with CSV2 which means new objects could be created each import, rather than updating existing ones.
+
+Deprecated: In Version 4.0, we will require at least PHP 7.2, and then track PHP's supported versions going forward (until security fixes end) as detailed [on php.net](https://www.php.net/supported-versions.php)
+
+= 3.3.0 =
+New: Support CLI cron imports to get around fast-cgi timeouts on some budget hosting. run `php wp-content/plugins/<plugin_folder>/cron.php`
+
+New: Support category filters in SWCE provider.
+
+= 3.2.0 =
+New: Support field mapping for CSV, and enable CSV support for Culture Object Display
 
 = 3.1.1 =
 Minor changes to support Culture Object Display

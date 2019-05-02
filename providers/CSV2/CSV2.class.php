@@ -8,7 +8,7 @@ class CSV2 extends \CultureObject\Provider
 
     private $provider = array(
         'name' => 'CSV2',
-        'version' => '3.0.1',
+        'version' => '3.1',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
@@ -46,6 +46,32 @@ class CSV2 extends \CultureObject\Provider
         if (is_admin()) {
             add_action('admin_enqueue_scripts', array($this, 'add_provider_assets'));
         }
+
+        $this->register_taxonomy();
+    }
+
+    function register_taxonomy()
+    {
+        $taxonomy_field = get_option('cos_csv2_taxonomy_field');
+        if (($path = $this->has_uploaded_file()) && (intval($taxonomy_field) == $taxonomy_field) && intval($taxonomy_field) >= 0) {
+            $headers = $this->get_csv_chunk($path, 1, 0);
+            $taxonomy_field = intval($taxonomy_field);
+            $taxonomy_name = $headers[0][$taxonomy_field];
+            $taxonomy = substr(sanitize_title($taxonomy_name, 'object_taxonomy'), 0, 32);
+
+            register_taxonomy($taxonomy, 'object', ['label' => $taxonomy_name]);
+        }
+    }
+
+    function get_taxonomy_name()
+    {
+        $taxonomy_field = get_option('cos_csv2_taxonomy_field');
+        if (($path = $this->has_uploaded_file()) && (intval($taxonomy_field) == $taxonomy_field) && intval($taxonomy_field) >= 0) {
+            $headers = $this->get_csv_chunk($path, 1, 0);
+            $taxonomy_field = intval($taxonomy_field);
+            $taxonomy_name = $headers[0][$taxonomy_field];
+            return substr(sanitize_title($taxonomy_name, 'object_taxonomy'), 0, 32);
+        } else return false;
     }
 
     function add_provider_assets()
@@ -179,7 +205,7 @@ class CSV2 extends \CultureObject\Provider
 
             echo '<div class="select_field">';
             echo '<select id="image_field">';
-            echo '<option value="0">' . esc_attr__('-- Don\'t Import Images --', 'culture-object') . '</object>';
+            echo '<option value="-1">' . esc_attr__('-- Don\'t Import Images --', 'culture-object') . '</object>';
             foreach ($headers[0] as $key => $header) {
                 echo '<option value="' . $key . '" ' . selected($image_field, $key, false) . '>' . $header . '</option>';
             }
@@ -189,6 +215,20 @@ class CSV2 extends \CultureObject\Provider
             echo '</span>';
             echo '</div><br />';
         }
+
+        $taxonomy_field = get_option('cos_csv2_taxonomy_field');
+
+        echo '<div class="select_field">';
+        echo '<select id="taxonomy_field">';
+        echo '<option value="-1">' . esc_attr__('-- Don\'t Import A Taxonomy --', 'culture-object') . '</object>';
+        foreach ($headers[0] as $key => $header) {
+            echo '<option value="' . $key . '" ' . selected($taxonomy_field, $key, false) . '>' . $header . '</option>';
+        }
+        echo '</select>';
+        echo '<span class="description"> ';
+        esc_attr_e('If your CSV contains a taxonomy column, select that column to import it as a taxonomy. The column header will be used as the taxonomy name.', 'culture-object');
+        echo '</span>';
+        echo '</div><br />';
 
         echo '<fieldset>
             	<label for="perform_cleanup">
@@ -252,11 +292,20 @@ class CSV2 extends \CultureObject\Provider
             $id_field = intval($_POST['id_field']);
             $title_field = intval($_POST['title_field']);
 
-            if (!empty($_POST['image_field'])) {
+            if (!empty($_POST['image_field']) && intval($_POST['image_field']) >= 0) {
                 $image_field = intval($_POST['image_field']);
                 update_option('cos_csv2_image_field', $image_field);
             } else {
                 $image_field = false;
+                update_option('cos_csv2_image_field', -1);
+            }
+
+            if (!empty($_POST['taxonomy_field']) && intval($_POST['taxonomy_field']) >= 0) {
+                $taxonomy_field = intval($_POST['taxonomy_field']);
+                update_option('cos_csv2_taxonomy_field', $taxonomy_field);
+            } else {
+                $taxonomy_field = false;
+                update_option('cos_csv2_taxonomy_field', -1);
             }
 
             update_option('cos_csv2_id_field', $id_field);
@@ -268,7 +317,7 @@ class CSV2 extends \CultureObject\Provider
             if ($path = $this->has_uploaded_file()) {
                 $info = $this->get_csv_data($path);
                 $data = $this->get_csv_chunk($path, $start, $count);
-                $result = $this->import_chunk($data, $id_field, $title_field, $image_field);
+                $result = $this->import_chunk($data, $id_field, $title_field, $image_field, $taxonomy_field);
                 $result['total_rows'] = $info[0]['totalRows'];
                 if ($start + $count < $result['total_rows']) {
                     $result['next_start'] = $start + $count;
@@ -290,7 +339,7 @@ class CSV2 extends \CultureObject\Provider
         }
     }
 
-    function import_chunk($data, $id_field = 0, $title_field = 0, $image_field = false)
+    function import_chunk($data, $id_field = 0, $title_field = 0, $image_field = false, $taxonomy_field = false)
     {
 
         $helper = new CultureObject\Helper;
@@ -305,6 +354,8 @@ class CSV2 extends \CultureObject\Provider
 
         $fields = array_shift($data);
         $number_of_fields = count($fields);
+
+        $taxonomy_name = $this->get_taxonomy_name();
 
         $data_array = $current_objects = [];
         $updated = $created = 0;
@@ -330,7 +381,7 @@ class CSV2 extends \CultureObject\Provider
         if ($number_of_objects > 0) {
             foreach ($data_array as $doc) {
 
-                $doc['_cos_object_id'] = $doc[$id_field];
+                $doc[] = $doc[$id_field];
 
                 $object_exists = $this->object_exists($doc[$id_field]);
 
@@ -346,13 +397,21 @@ class CSV2 extends \CultureObject\Provider
                     $updated++;
                 }
 
+                if ($taxonomy_field && $taxonomy_name) {
+                    $taxonomies = explode(',', $doc[$taxonomy_field]);
+                    wp_set_post_terms($obj_id, $taxonomies, $taxonomy_name);
+                }
+
                 if ($image_field) {
-                    if (filter_var($doc[$image_field], FILTER_VALIDATE_URL) === false) {
-                        $import_status[] = __("Failed to import image as the selected field doesn't contain a valid URL", 'culture-object');
+                    if (has_post_thumbnail($obj_id)) { 
+                        $import_status[] = __('Skipping image import for object as it already has a post thumbnail', 'culture-object');
                     } else {
-                        $image_id = $helper->add_image_to_gallery_from_url($doc[$image_field], $doc[$id_field], $context);
-                        set_post_thumbnail($obj_id, $image_id);
-                        $import_status[] = __("Downloaded and saved image", 'culture-object') . ': ' . $doc[$title_field] . " [" . $obj_id . "]";
+                        if (filter_var($doc[$image_field], FILTER_VALIDATE_URL) === true) {
+                            $save_path = $doc['id_field'] . '.' . pathinfo($doc[$image_field], PATHINFO_EXTENSION);
+                            $image_id = $helper->add_image_to_gallery_from_url($doc[$image_field], $save_path, $context);
+                            set_post_thumbnail($obj_id, $image_id);
+                            $import_status[] = __("Downloaded and saved image", 'culture-object') . ': ' . $doc[$title_field] . " [" . $image_id . "]";
+                        }
                     }
                 }
             }

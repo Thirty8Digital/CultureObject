@@ -21,17 +21,18 @@ $(document).ready(function() {
         var id_field = $('#id_field').val();
         var title_field = $('#title_field').val();
         var image_field = $('#image_field').val();
+        var taxonomy_field = $('#taxonomy_field').val();
         perform_cleanup = $('#perform_cleanup').is(':checked');
         
         $("#csv_import_progressbar .progress-label").css('display', 'inline-block');
         $("#csv_import_progressbar").progressbar({value: 0});
         
-        importChunk(1, $('#csv_perform_ajax_import').data('import-id'), $('#csv_perform_ajax_import').data('sync-key'), $('#csv_perform_ajax_import').data('starting-nonce'), id_field, title_field, image_field, perform_cleanup);
+        importChunk(1, $('#csv_perform_ajax_import').data('import-id'), $('#csv_perform_ajax_import').data('sync-key'), $('#csv_perform_ajax_import').data('starting-nonce'), id_field, title_field, image_field, taxonomy_field, perform_cleanup);
     });
 })
 
 
-function importChunk(start, import_id, sync_key, nonce, id_field, title_field, image_field, perform_cleanup) {
+function importChunk(start, import_id, sync_key, nonce, id_field, title_field, image_field, taxonomy_field, perform_cleanup) {
     $.post(
         ajaxurl, 
         {
@@ -43,6 +44,7 @@ function importChunk(start, import_id, sync_key, nonce, id_field, title_field, i
             'perform_cleanup': perform_cleanup,
             'title_field': title_field,
             'image_field': image_field,
+            'taxonomy_field': taxonomy_field,
             'nonce': nonce
         }, 
         function(response) {
