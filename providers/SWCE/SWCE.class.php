@@ -8,7 +8,7 @@ class SWCE extends \CultureObject\Provider
 
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.4',
+        'version' => '1.5',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'ajax' => true
