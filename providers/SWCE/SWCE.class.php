@@ -1,7 +1,8 @@
 <?php
 
 class SWCEException extends \CultureObject\Exception\ProviderException
-{ }
+{
+}
 
 class SWCE extends \CultureObject\Provider
 {
@@ -168,7 +169,7 @@ class SWCE extends \CultureObject\Provider
         }
     }
 
-    function import_page($page, $since)
+    function import_page($page, $since, $per_page = 100)
     {
         $token = get_option('cos_provider_api_token');
         if (empty($token)) {
@@ -183,7 +184,7 @@ class SWCE extends \CultureObject\Provider
         $category = get_option('cos_provider_category_slug');
         if (empty($category)) $category = '';
 
-        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=100&api_token=' . urlencode($token) . '&site=' . urlencode($site) . '&category=' . urlencode($category) . '&since=' . urlencode($since) . '&page=' . intval($page);
+        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=' . $per_page . '&api_token=' . urlencode($token) . '&site=' . urlencode($site) . '&category=' . urlencode($category) . '&since=' . urlencode($since) . '&page=' . intval($page);
 
         $result = $this->perform_request($url);
 
@@ -213,7 +214,8 @@ class SWCE extends \CultureObject\Provider
         $return['total_objects'] = $result['total'];
         $return['next_start'] = $result['current_page'] + 1;
         $return['current_page'] = $result['current_page'];
-        $return['imported_count'] = (($result['current_page'] - 1) * 100) + $number_of_objects;
+        $return['per_page'] = $per_page;
+        $return['imported_count'] = (($result['current_page'] - 1) * $per_page) + $number_of_objects;
         $return['last_page'] = $result['last_page'];
         $return['chunk_objects'] = $current_objects;
         $return['import_status'] = $import_status;
