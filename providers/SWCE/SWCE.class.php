@@ -269,20 +269,53 @@ class SWCE extends \CultureObject\Provider
 
     function create_object($doc)
     {
+        $doc['site-name'] = $doc['site']['name'];
+        $doc['site-id'] = $doc['site']['id'];
+        unset($doc['site']);
+
+        $meta = $tax = [];
+        $term = term_exists($doc['category']['name'], 'object_category');
+        if (!$term) $term = wp_insert_term($doc['category']['name'], 'object_category');
+        if ($term) $tax['object_category'] = intval($term['term_id']);
+        unset($doc['category']);
+
+        foreach ($doc as $key => $value) {
+            if (empty($value)) continue;
+            $key = strtolower($key);
+            $meta[$key] = $value;
+        }
+
         $post = array(
             'post_title'    => $doc['simple-name'],
             'post_name'     => str_replace('/', '-', $doc['accession-loan-no']),
             'post_type'     => 'object',
             'post_status'   => 'publish',
+            'meta_input'    => $meta,
+            'tax_input'     => $tax
         );
         $post_id = wp_insert_post($post);
-        $this->update_object_meta($post_id, $doc);
         return $post_id;
     }
 
 
     function update_object($doc)
     {
+        $doc['site-name'] = $doc['site']['name'];
+        $doc['site-id'] = $doc['site']['id'];
+        unset($doc['site']);
+
+        $meta = $tax = [];
+        $term = term_exists($doc['category']['name'], 'object_category');
+        if (!$term) $term = wp_insert_term($doc['category']['name'], 'object_category');
+        if ($term) $tax['object_category'] = intval($term['term_id']);
+        unset($doc['category']);
+
+        foreach ($doc as $key => $value) {
+            if (empty($value)) continue;
+            $key = strtolower($key);
+            $meta[$key] = $value;
+        }
+
         $existing_id = $this->existing_object_id($doc['accession-loan-no']);
         $post = array(
             'ID'            => $existing_id,
@@ -290,37 +323,11 @@ class SWCE extends \CultureObject\Provider
             'post_name'     => str_replace('/', '-', $doc['accession-loan-no']),
             'post_type'     => 'object',
             'post_status'   => 'publish',
+            'meta_input'    => $meta,
+            'tax_input'     => $tax
         );
         $post_id = wp_update_post($post);
-        $this->update_object_meta($post_id, $doc);
         return $post_id;
-    }
-
-    function set_category($post_id, $category_array)
-    {
-        //Check if the category already exists.
-        $term = term_exists($category_array['name'], 'object_category');
-        if (!$term) {
-            $term = wp_insert_term($category_array['name'], 'object_category');
-        }
-        wp_set_post_terms($post_id, $term, 'object_category');
-    }
-
-    function update_object_meta($post_id, $doc)
-    {
-        $doc['site-name'] = $doc['site']['name'];
-        $doc['site-id'] = $doc['site']['id'];
-        unset($doc['site']);
-
-        //process the category.
-        $this->set_category($post_id, $doc['category']);
-        unset($doc['category']);
-
-        foreach ($doc as $key => $value) {
-            if (empty($value)) continue;
-            $key = strtolower($key);
-            update_post_meta($post_id, $key, $value);
-        }
     }
 
     function object_exists($id)
