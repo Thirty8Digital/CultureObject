@@ -183,6 +183,7 @@ class SWCE extends \CultureObject\Provider
 
         $category = get_option('cos_provider_category_slug');
         if (empty($category)) $category = '';
+        if (empty($since)) $since = '';
 
         $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=' . $per_page . '&api_token=' . urlencode($token) . '&site=' . urlencode($site) . '&category=' . urlencode($category) . '&since=' . urlencode($since) . '&page=' . intval($page);
 
