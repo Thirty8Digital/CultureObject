@@ -13,7 +13,7 @@ class CSV2 extends \CultureObject\Provider
 
     private $provider = array(
         'name' => 'CSV2',
-        'version' => '4.0.2',
+        'version' => '4.0.3',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
@@ -318,6 +318,7 @@ class CSV2 extends \CultureObject\Provider
             if (!empty($_POST['taxonomy_field']) && intval($_POST['taxonomy_field']) >= 0) {
                 $taxonomy_field = intval($_POST['taxonomy_field']);
                 update_option('cos_csv2_taxonomy_field', $taxonomy_field);
+                $this->register_taxonomy();
             } else {
                 $taxonomy_field = false;
                 update_option('cos_csv2_taxonomy_field', -1);
@@ -710,7 +711,7 @@ class CSV2 extends \CultureObject\Provider
             return;
         }
 
-        if ($file['type'] != 'text/csv') {
+        if (in_array($file['type'], $valid_file_types)) {
             throw new CSV2Exception(__("Unable to import. You didn't upload a CSV file (" . $file['type'] . ")", 'culture-object'));
             return;
         }
