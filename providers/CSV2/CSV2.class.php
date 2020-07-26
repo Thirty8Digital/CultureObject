@@ -13,7 +13,7 @@ class CSV2 extends \CultureObject\Provider
 
     private $provider = array(
         'name' => 'CSV2',
-        'version' => '4.0',
+        'version' => '4.0.1',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
@@ -420,6 +420,7 @@ class CSV2 extends \CultureObject\Provider
                 }
 
                 if ($import_images && $image_field) {
+                    $doc[$image_field] = trim($doc[$image_field]);
                     if (has_post_thumbnail($obj_id)) {
                         $import_status[] = __('Skipping image import for object as it already has a post thumbnail', 'culture-object');
                     } else {
