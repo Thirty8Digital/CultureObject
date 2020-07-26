@@ -105,7 +105,13 @@ class CSV2 extends \CultureObject\Provider
                 try {
                     $this->save_upload();
                 } catch (Exception $e) {
-                    wp_die(sprintf(__('Unable to save file: %1$s', 'culture-object'), $e->getMessage()));
+                    wp_die(
+                        sprintf(
+                            /* Translators: 1: Mime type of uploaded file */
+                            __('Unable to save file: %1$s', 'culture-object'),
+                            $e->getMessage()
+                        )
+                    );
                 }
             } else {
                 wp_die(__("Security Violation.", 'culture-object'));
@@ -430,7 +436,6 @@ class CSV2 extends \CultureObject\Provider
                                 if (isset($headers['Content-Type'])) {
                                     $ext = $this->mime2ext($headers['Content-Type']);
                                 }
-
                             }
                             if (!$ext) $ext = $presumed_extension;
 
@@ -701,7 +706,7 @@ class CSV2 extends \CultureObject\Provider
         }
 
         if ($file['type'] != 'text/csv') {
-            throw new CSV2Exception(__("Unable to import. You didn't upload a CSV file (".$file['type'].")", 'culture-object'));
+            throw new CSV2Exception(__("Unable to import. You didn't upload a CSV file (" . $file['type'] . ")", 'culture-object'));
             return;
         }
 
