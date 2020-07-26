@@ -13,7 +13,7 @@ class CSV2 extends \CultureObject\Provider
 
     private $provider = array(
         'name' => 'CSV2',
-        'version' => '4.0.1',
+        'version' => '4.0.2',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'supports_remap' => true,
@@ -440,10 +440,14 @@ class CSV2 extends \CultureObject\Provider
                             }
                             if (!$ext) $ext = $presumed_extension;
 
-                            $save_path = $doc['id_field'] . '.' . $ext;
-                            $image_id = $helper->add_image_to_gallery_from_url($doc[$image_field], $save_path, $context);
-                            set_post_thumbnail($obj_id, $image_id);
-                            $import_status[] = __("Downloaded and saved image", 'culture-object') . ': ' . $doc[$title_field] . " [" . $image_id . "]";
+                            $save_path = $obj_id . '.' . $ext;
+                            $image_id = $helper->add_image_to_gallery_from_url($doc[$image_field], $save_path, $context, $obj_id, trim($doc[$title_field]));
+                            if ($image_id) {
+                                set_post_thumbnail($obj_id, $image_id);
+                                $import_status[] = __("Downloaded and saved image", 'culture-object') . ': ' . $doc[$title_field] . " [" . $image_id . "]";
+                            } else {
+                                $import_status[] = __("Failed to download image. Check it is accessible.", 'culture-object');
+                            }
                         } else {
                             $import_status[] = __('Skipping image import for object as the supplied URL is invalid', 'culture-object');
                         }

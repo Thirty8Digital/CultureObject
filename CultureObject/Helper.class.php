@@ -29,7 +29,7 @@ class Helper extends Core
         echo cos_get_remapped_field_name($key);
     }
 
-    function add_image_to_gallery_from_url($url, $save_as, $stream_context = false, $post_parent = 0)
+    function add_image_to_gallery_from_url($url, $save_as, $stream_context = false, $post_parent = 0, $image_title = false)
     {
         $upload_dir = wp_upload_dir();
         $img = @file_get_contents($url, false, $stream_context);
@@ -46,11 +46,13 @@ class Helper extends Core
 
             $filetype = wp_check_filetype(basename($file_location), null);
 
+            $image_title = $image_title ?: preg_replace('/\.[^.]+$/', '', basename($file_location));
+
             // Prepare an array of post data for the attachment.
             $attachment = array(
                 'guid'           => $upload_dir['url'] . '/' . basename($file_location),
                 'post_mime_type' => $filetype['type'],
-                'post_title'     => preg_replace('/\.[^.]+$/', '', basename($file_location)),
+                'post_title'     => $image_title,
                 'post_content'   => '',
                 'post_status'    => 'inherit'
             );
