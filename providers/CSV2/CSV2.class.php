@@ -105,7 +105,7 @@ class CSV2 extends \CultureObject\Provider
                 try {
                     $this->save_upload();
                 } catch (Exception $e) {
-                    wp_die(sprintf(__("Unable to save file: %1", 'culture-object'), $e->getMessage()));
+                    wp_die(sprintf(__('Unable to save file: %1$s', 'culture-object'), $e->getMessage()));
                 }
             } else {
                 wp_die(__("Security Violation.", 'culture-object'));
