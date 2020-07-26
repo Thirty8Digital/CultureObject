@@ -3,7 +3,7 @@ Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 5.2
 Tested up to: 5.4.2
-Stable tag: 3.7
+Stable tag: 4.0
 Requires PHP: 7.3
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -27,7 +27,7 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 
 == Changelog ==
 
-= 3.7 =
+= 4.0 =
 Fix: CSV2 improvements for images, taxonomies and many other bug fixes.
 
 Update: We now require PHP 7.3 and WordPress 5.2+ for the sake of testing ability on supported software.

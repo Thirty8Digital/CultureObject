@@ -1,4 +1,4 @@
-CultureObject v3.7.0
+CultureObject v4.0.0
 ====================
 
 Welcome
@@ -36,7 +36,7 @@ We're currently building CultureObject into an expandable framework that will be
 
 Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
 
-Todo in 4.0
+Todo in 5.0
 ---------------------
 
 * "Schema" learning support: CultureObject will learn about your data architecture and offer appropriate mappings automatically, just like CSV2 does in 3.0
@@ -53,8 +53,9 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 Change Log
 ---------------------
 
-#### Version 3.7.0
+#### Version 4.0.0
 * CSV2 improvements for images, taxonomies and many other bug fixes.
+* Version bump for the sake of WordPress release
 
 #### Version 3.6.0
 * SWCE improvements
