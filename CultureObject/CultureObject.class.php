@@ -33,7 +33,7 @@ class CultureObject extends Core
     {
         global $wp_version;
         $wp = '4.5';
-        $php = '5.5';
+        $php = '7.3';
 
         if (version_compare(PHP_VERSION, $php, '<')) {
             $flag = 'PHP';

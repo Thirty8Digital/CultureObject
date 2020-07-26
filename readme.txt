@@ -2,9 +2,9 @@
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 4.5
-Tested up to: 5.4
+Tested up to: 5.4.2
 Stable tag: 3.5
-Requires PHP: 7.0
+Requires PHP: 7.3
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -26,6 +26,9 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 3.7 =
+Fix: CSV2 improvements for images, taxonomies and many other bug fixes.
 
 = 3.6 =
 New: SWCE Improvements
