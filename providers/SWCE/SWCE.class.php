@@ -9,7 +9,7 @@ class SWCE extends \CultureObject\Provider
 
     private $provider = array(
         'name' => 'SWCE',
-        'version' => '1.5',
+        'version' => '1.5.1',
         'developer' => 'Thirty8 Digital',
         'cron' => false,
         'ajax' => true
@@ -132,6 +132,7 @@ class SWCE extends \CultureObject\Provider
         $start = $_POST['start'];
         $import_id = $_POST['import_id'];
         $since = $_POST['since'];
+        if (empty($since)) $since = '';
         $result = [];
 
         update_option('cos_swce_import_since', $since);
@@ -182,7 +183,8 @@ class SWCE extends \CultureObject\Provider
         }
 
         $category = get_option('cos_provider_category_slug');
-        if (empty($category)) $category = '';
+        if (empty($category) || $category == 'false') $category = '';
+        if (empty($since) || $since == 'false') $since = '';
 
         $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=' . $per_page . '&api_token=' . urlencode($token) . '&site=' . urlencode($site) . '&category=' . urlencode($category) . '&since=' . urlencode($since) . '&page=' . intval($page);
 
@@ -375,10 +377,13 @@ class SWCE extends \CultureObject\Provider
         echo '<div id="hide-on-import">';
         echo "<p>" . __('Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object') . "</p>";
 
+        $op = esc_attr(get_option('cos_swce_import_since'));
+        if (empty($op) || $op == 'false') $op = '';
+        
         echo '<fieldset>
             <label for="since">
                 <span>' . esc_attr__('Only process objects modified or created since this date', 'culture-object') . '</span>
-                <input name="since" type="textbox" id="since" value="' . esc_attr(get_option('cos_swce_import_since')) . '" placeholder="2019-01-01" /><br />
+                <input name="since" type="textbox" id="since" value="' . $op . '" placeholder="2019-01-01" /><br />
                 <span class="note">If you enter a date here, the perform cleanup option will be ignored.</span>
             </label>
         </fieldset>

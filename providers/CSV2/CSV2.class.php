@@ -700,8 +700,8 @@ class CSV2 extends \CultureObject\Provider
             return;
         }
 
-        if (in_array($file['type'], $valid_file_types)) {
-            throw new CSV2Exception(__("Unable to import. You didn't upload a CSV file.", 'culture-object'));
+        if ($file['type'] != 'text/csv') {
+            throw new CSV2Exception(__("Unable to import. You didn't upload a CSV file (".$file['type'].")", 'culture-object'));
             return;
         }
 
