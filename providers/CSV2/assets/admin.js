@@ -63,7 +63,7 @@ function importChunk(start, import_id, sync_key, nonce, id_field, title_field, i
                     $("#csv_import_progressbar").progressbar({value: response.percentage});
                     $("#csv_import_progressbar .progress-label").html(strings.imported+' '+(response.next_start-1)+'/'+response.total_rows+' '+strings.objects);
                     $("#csv_import_detail").prepend(response.import_status.join("<br />")+"<br />");
-                    importChunk(response.next_start, import_id, sync_key, response.next_nonce, id_field, title_field, image_field, perform_cleanup);
+                    importChunk(response.next_start, import_id, sync_key, response.next_nonce, id_field, id_field, title_field, image_field, taxonomy_field, perform_cleanup);
                 }
             }
         },
