@@ -1,4 +1,4 @@
-CultureObject v4.0.0
+CultureObject v4.1.0
 ====================
 
 Welcome
@@ -52,6 +52,10 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+#### Version 4.1.0
+* Fix some unescaped output to HTML
+* Implement PSR-4 autoloader for classes
 
 #### Version 4.0.0
 * CSV2 improvements for images, taxonomies and many other bug fixes.

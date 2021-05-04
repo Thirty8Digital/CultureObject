@@ -2,12 +2,6 @@
 
 namespace CultureObject;
 
-require_once('Core.class.php');
-require_once('Exception/Exception.class.php');
-require_once('Helper.class.php');
-require_once('Provider.class.php');
-require_once('Settings.class.php');
-
 class CultureObject extends Core
 {
 

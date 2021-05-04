@@ -1,0 +1,15 @@
+{
+    "name": "thirty8digital/culture-object",
+    "description": "Culture Object",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Liam Gladdy",
+            "email": "liam@gladdy.co.uk"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": { "CultureObject\\": "src/" }
+    }
+}
