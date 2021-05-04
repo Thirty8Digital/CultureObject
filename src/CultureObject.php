@@ -91,8 +91,8 @@ class CultureObject extends Core
     {
 
         if (isset($_POST['key'])) {
-            if (get_option('cos_core_sync_key') == $_POST['key']) {
-                if (wp_verify_nonce($_POST['nonce'], 'cos_ajax_import_request')) {
+            if (wp_verify_nonce($_POST['nonce'], 'cos_ajax_import_request')) {
+                if (get_option('cos_core_sync_key') == $_POST['key']) {
                     $provider = $this->get_sync_provider();
                     if ($provider) {
                         if (!class_exists($provider['class'])) include_once($provider['file']);
@@ -129,7 +129,7 @@ class CultureObject extends Core
                     $result = array();
                     $result['state'] = 'error';
                     $result['message'] = __("Security Violation", 'culture-object');
-                    $result['detail'] = __('Nonce verification failed: ' . $_POST['nonce'], 'culture-object');
+                    $result['detail'] = __('Invalid Sync Key', 'culture-object');
                     echo json_encode($result);
                     wp_die();
                 }
@@ -137,7 +137,7 @@ class CultureObject extends Core
                 $result = array();
                 $result['state'] = 'error';
                 $result['message'] = __("Security Violation", 'culture-object');
-                $result['detail'] = __('Invalid Sync Key', 'culture-object');
+                $result['detail'] = __('Nonce verification failed: ' . $_POST['nonce'], 'culture-object');
                 echo json_encode($result);
                 wp_die();
             }
