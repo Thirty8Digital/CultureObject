@@ -74,10 +74,10 @@ class CultureObject extends Core
 
                     try {
                         $provider_class->perform_sync();
-                    } catch (ProviderException $e) {
+                    } catch (Exception\ProviderException $e) {
                         echo __("A sync exception occurred during sync", 'culture-object') . ":<br />";
                         echo $e->getMessage();
-                    } catch (Exception $e) {
+                    } catch (Exception\Exception $e) {
                         echo __("An unknown exception occurred during sync", 'culture-object') . ":<br />";
                         echo $e->getMessage();
                     }
@@ -109,14 +109,14 @@ class CultureObject extends Core
                             $result = $provider_class->perform_ajax_sync();
                             echo json_encode($result);
                             wp_die();
-                        } catch (ProviderException $e) {
+                        } catch (Exception\ProviderException $e) {
                             $result = array();
                             $result['state'] = 'error';
                             $result['message'] = urlencode(__("A sync exception occurred during sync", 'culture-object'));
                             $result['detail'] = urlencode($e->getMessage());
                             echo json_encode($result);
                             wp_die();
-                        } catch (Exception $e) {
+                        } catch (Exception\Exception $e) {
                             $result = array();
                             $result['state'] = 'error';
                             $result['message'] = urlencode(__("An unknown exception occurred during sync", 'culture-object'));
@@ -126,7 +126,6 @@ class CultureObject extends Core
                         }
                     }
                 } else {
-                    var_dump($_POST);
                     $result = array();
                     $result['state'] = 'error';
                     $result['message'] = __("Security Violation", 'culture-object');
