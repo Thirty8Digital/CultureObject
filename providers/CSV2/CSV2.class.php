@@ -252,7 +252,7 @@ class CSV2 extends \CultureObject\Provider
             	</label>
             </fieldset>';
 
-        echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid('', true) . '" data-sync-key="' . get_option('cos_core_sync_key') . '" data-starting-nonce="' . wp_create_nonce('cos_ajax_import_request') . '" type="button" class="button button-primary" value="';
+        echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid('', true) . '" data-sync-key="' . esc_attr(get_option('cos_core_sync_key')) . '" data-starting-nonce="' . wp_create_nonce('cos_ajax_import_request') . '" type="button" class="button button-primary" value="';
         _e('Process Import', 'culture-object');
         echo '" />';
 
@@ -383,7 +383,7 @@ class CSV2 extends \CultureObject\Provider
             if (count($new_row) > $number_of_fields) {
                 throw new CSV2Exception(sprintf(
                     /* Translators: 1: A row number from the CSV 2: The number of fields in that row 3: The number of fields defined by the first row. */
-                    __("Row %1$s of this CSV file contains %2$s fields, but the field keys only provides names for %3$s.\r\nTo prevent something bad happening, we're bailing on this import.", 'culture-object'),
+                    __('Row %1$s of this CSV file contains %2$s fields, but the field keys only provides names for %3$s.\r\nTo prevent something bad happening, we\'re bailing on this import.', 'culture-object'),
                     count($data_array) + 2,
                     count($new_row),
                     $number_of_fields
@@ -759,7 +759,7 @@ class CSV2 extends \CultureObject\Provider
     {
         $field = $args['field'];
         $value = get_option($field);
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr($value));
     }
 
     function create_object($doc, $fields, $id_field, $title_field)

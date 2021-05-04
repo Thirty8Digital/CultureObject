@@ -140,7 +140,7 @@ class CollectionSpace extends \CultureObject\Provider
     {
         $field = $args['field'];
         $value = get_option($field);
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr($value));
     }
 
     function generate_settings_field_input_password($args)

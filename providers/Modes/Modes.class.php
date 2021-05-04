@@ -240,7 +240,7 @@ class Modes extends \CultureObject\Provider
             	</label>
             </fieldset>';
 
-        echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid('', true) . '" data-sync-key="' . get_option('cos_core_sync_key') . '" data-starting-nonce="' . wp_create_nonce('cos_ajax_import_request') . '" type="button" class="button button-primary" value="';
+        echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid('', true) . '" data-sync-key="' . esc_attr(get_option('cos_core_sync_key')) . '" data-starting-nonce="' . wp_create_nonce('cos_ajax_import_request') . '" type="button" class="button button-primary" value="';
         _e('Process Import', 'culture-object');
         echo '" />';
 
@@ -483,7 +483,7 @@ class Modes extends \CultureObject\Provider
     {
         $field = $args['field'];
         $value = get_option($field);
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr($value));
     }
 
     function create_object($obj, $id_field, $title_field)

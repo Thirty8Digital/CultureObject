@@ -121,7 +121,7 @@ class SWCE extends \CultureObject\Provider
         $field = $args['field'];
         $value = get_option($field);
         $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, $value, $placeholder);
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr($value), $placeholder);
     }
 
     function perform_ajax_sync()
@@ -186,7 +186,7 @@ class SWCE extends \CultureObject\Provider
         if (empty($category) || $category == 'false') $category = '';
         if (empty($since) || $since == 'false') $since = '';
 
-        $url = 'https://swce.herokuapp.com/api/v1/objects?per_page=' . $per_page . '&api_token=' . urlencode($token) . '&site=' . urlencode($site) . '&category=' . urlencode($category) . '&since=' . urlencode($since) . '&page=' . intval($page);
+        $url = 'https://api.swcollectionsexplorer.org.uk/api/v1/objects?per_page=' . $per_page . '&api_token=' . urlencode($token) . '&site=' . urlencode($site) . '&category=' . urlencode($category) . '&since=' . urlencode($since) . '&page=' . intval($page);
 
         $result = $this->perform_request($url);
 
@@ -394,7 +394,7 @@ class SWCE extends \CultureObject\Provider
         	</label>
         </fieldset>';
 
-        echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid('', true) . '" data-sync-key="' . get_option('cos_core_sync_key') . '" data-starting-nonce="' . wp_create_nonce('cos_ajax_import_request') . '" type="button" class="button button-primary" value="';
+        echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid('', true) . '" data-sync-key="' . esc_attr(get_option('cos_core_sync_key')) . '" data-starting-nonce="' . wp_create_nonce('cos_ajax_import_request') . '" type="button" class="button button-primary" value="';
         _e('Begin Import', 'culture-object');
         echo '" />';
         echo "</div>";

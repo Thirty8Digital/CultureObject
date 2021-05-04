@@ -43,7 +43,7 @@ class CultureGrid extends \CultureObject\Provider
 
         $authority = get_option('cos_provider_search_authority');
         if (!empty($authority)) {
-            $url = "http://www.culturegrid.org.uk/index/select?fl=*&wt=json&rows=1&indent=on&q=authority:" . $authority . "&start=0";
+            $url = "http://www.culturegrid.org.uk/index/select?fl=*&wt=json&rows=1&indent=on&q=authority:" . urlencode($authority) . "&start=0";
             $result = $this->perform_request($url);
             $number_of_objects = $result['response']['numFound'];
             echo "<p>";
@@ -82,7 +82,7 @@ class CultureGrid extends \CultureObject\Provider
     {
         $field = $args['field'];
         $value = get_option($field);
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr($value));
     }
 
     function perform_sync()

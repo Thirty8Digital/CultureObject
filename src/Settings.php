@@ -196,7 +196,7 @@ class Settings extends Core
         $field = $args['field'];
         $value = get_option($field);
         if (empty($value) && isset($args['default'])) $value = $args['default'];
-        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+        echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr($value));
         if ($field == "cos_core_sync_key") echo '<br /><small>' . __('This key forms part of the sync URL for a little bit more security.', 'culture-object') . '</small>';
     }
 
