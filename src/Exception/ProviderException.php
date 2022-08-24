@@ -2,6 +2,6 @@
 
 namespace CultureObject\Exception;
 
-class ProviderException extends Exception
-{
+class ProviderException extends Exception {
+
 }

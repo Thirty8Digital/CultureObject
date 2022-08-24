@@ -1,9 +1,9 @@
 === Culture Object ===
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
-Requires at least: 5.2
-Tested up to: 5.4.2
-Stable tag: 4.0.1
+Requires at least: 5.6
+Tested up to: 6.0.1
+Stable tag: 4.1.1
 Requires PHP: 7.3
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -27,9 +27,15 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 
 == Changelog ==
 
+= 4.1.1 =
+Improvment: Implement WordPress coding standards
+
+= 4.1 =
+Security Fix: some unescaped output to HTML
+Improvement: Implement PSR-4 autoloader for classes
+
 = 4.0 =
 Fix: CSV2 improvements for images, taxonomies and many other bug fixes.
-
 Update: We now require PHP 7.3 and WordPress 5.2+ for the sake of testing ability on supported software.
 
 = 3.6 =
@@ -37,18 +43,13 @@ New: SWCE Improvements
 
 = 3.5 =
 New: Code standard changes
-
 New: Improvements to internationalization efforts
-
 New: CSV2 supports a taxonomy field which can contain comma seperated values.
-
 Fix: Fixes a bug with CSV2 which means new objects could be created each import, rather than updating existing ones.
-
 Deprecated: In Version 4.0, we will require at least PHP 7.2, and then track PHP's supported versions going forward (until security fixes end) as detailed [on php.net](https://www.php.net/supported-versions.php)
 
 = 3.3.0 =
 New: Support CLI cron imports to get around fast-cgi timeouts on some budget hosting. run `php wp-content/plugins/<plugin_folder>/cron.php`
-
 New: Support category filters in SWCE provider.
 
 = 3.2.0 =
@@ -62,13 +63,9 @@ New: Support AJAX import for SWCE.
 
 = 3.0.0 =
 New: CSV2 Provider (Replaces CSV) - Support field name mapping, makes cleanup optional (for partial imports) and supports AJAX import.
-
 New: Full i18n support. If you want to contribute in your native language, [become a WordPress Translator](https://translate.wordpress.org/projects/wp-plugins/culture-object)
-
 New: CSV2/3.0.0 moves more of the logic out of providers and into CultureObject Core, meaning Version 4 can make writing a provider much easier.
-
 Deprecated: PHP < 5.5 support. We require at least PHP 5.5.
-
 Fix: Support WordPress Multisite. If you were using < 3.0.0 on multisite (you probably weren't, as it didn't really work!), you will need to reconfigure Culture Object on each site.
 
 = 2.2.0 =

@@ -27,10 +27,10 @@ div.help-tooltip:hover {
 }
 
 div#ajax_output {
-    margin-top: 10px;
-    background-color: #ccc;
-    border: 1px solid #bbb;
-    padding: 5px;
-    max-height: 100px;
-    display: none;
+	margin-top: 10px;
+	background-color: #ccc;
+	border: 1px solid #bbb;
+	padding: 5px;
+	max-height: 100px;
+	display: none;
 }
