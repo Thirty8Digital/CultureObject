@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<ruleset name="WPCS">
+
+	<exclude-pattern>vendor/</exclude-pattern>
+
+	<arg name="extensions" value="php" />
+	<arg name="parallel" value="16" />
+	<config name="testVersion" value="8.1-" />
+
+	<rule ref="PHPCompatibilityWP" />
+	<config name="minimum_supported_wp_version" value="6.2" />
+
+	<rule ref="Squiz.Commenting">
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+		<exclude name="Squiz.Commenting.PostStatementComment.Found" />
+		<exclude name="Squiz.Commenting.InlineComment.NotCapital" />
+		<exclude name="Squiz.Commenting.BlockComment.SingleLine" />
+		<exclude name="Squiz.Commenting.ClosingDeclarationComment.Missing" />
+		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
+
+		<exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing" />
+		<exclude name="Squiz.Commenting.FunctionComment.TypeHintMissing" />
+
+		<exclude name="Squiz.Commenting.InlineComment.DocBlock" />
+		<exclude name="Squiz.Commenting.BlockComment.WrongStart" />
+
+		<exclude name="Squiz.Commenting.FileComment.IncorrectAuthor" />
+		<exclude name="Squiz.Commenting.FileComment.IncorrectCopyright" />
+		<exclude name="Squiz.Commenting.FileComment.MissingAuthorTag" />
+		<exclude name="Squiz.Commenting.FileComment.MissingSubpackageTag" />
+		<exclude name="Squiz.Commenting.FileComment.MissingCopyrightTag" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingReturn" />
+	</rule>
+
+	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
+		<properties>
+			<property name="blank_line_check" value="true" />
+		</properties>
+	</rule>
+</ruleset>

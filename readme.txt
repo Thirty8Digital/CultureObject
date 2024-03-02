@@ -1,10 +1,10 @@
 === Culture Object ===
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
-Requires at least: 5.6
+Requires at least: 6.2
 Tested up to: 6.0.1
 Stable tag: 4.1.1
-Requires PHP: 7.3
+Requires PHP: 8.1
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -27,8 +27,11 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 
 == Changelog ==
 
+= 4.2 =
+Improvement: Updated dependencies, modernised codebase. Now requires WordPress 6.2 and PHP 8.1
+
 = 4.1.1 =
-Improvment: Implement WordPress coding standards
+Improvement: Implement WordPress coding standards
 
 = 4.1 =
 Security Fix: some unescaped output to HTML
