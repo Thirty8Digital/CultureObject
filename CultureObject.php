@@ -41,5 +41,5 @@ function cos_get_field( $field_key ) {
 }
 
 function cos_the_field( $field_key ) {
-	echo cos_get_field( $field_key );
+	echo wp_kses_post( cos_get_field( $field_key ) );
 }
