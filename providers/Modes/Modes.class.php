@@ -206,7 +206,6 @@ class Modes extends \CultureObject\Provider {
 		echo '</div>';
 
 		if ( $import_images ) {
-
 			$image_field = get_option( 'cos_modes_image_field' );
 
 			echo '<div class="select_field">';
@@ -253,7 +252,6 @@ class Modes extends \CultureObject\Provider {
 		$import_id = $_POST['import_id'];
 
 		if ( $start == 'cleanup' ) {
-
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_modes_import_' . $import_id, array() );
@@ -261,7 +259,6 @@ class Modes extends \CultureObject\Provider {
 			delete_option( 'cos_modes_import_' . $import_id, array() );
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
-
 			if ( ! isset( $_POST['id_field'] ) || ! isset( $_POST['title_field'] ) ) {
 				throw new ModesException( __( 'Invalid AJAX import request', 'culture-object' ) );
 			}
@@ -331,7 +328,6 @@ class Modes extends \CultureObject\Provider {
 
 		if ( $number_of_objects > 0 ) {
 			foreach ( $data as $xml_doc ) {
-
 				$obj = $this->parse_object( $xml_doc );
 
 				if ( $id_field === 0 ) {

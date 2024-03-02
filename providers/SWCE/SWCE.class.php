@@ -145,7 +145,6 @@ class SWCE extends \CultureObject\Provider {
 		update_option( 'cos_swce_import_since', $since );
 
 		if ( $start == 'cleanup' ) {
-
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_swce_import_' . $import_id, array() );
@@ -153,7 +152,6 @@ class SWCE extends \CultureObject\Provider {
 			delete_option( 'cos_swce_import_' . $import_id, array() );
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
-
 			$cleanup = isset( $_POST['perform_cleanup'] ) && $_POST['perform_cleanup'];
 
 			$result = $this->import_page( $start, $since );

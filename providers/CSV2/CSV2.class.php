@@ -209,7 +209,6 @@ class CSV2 extends \CultureObject\Provider {
 		echo '</div>';
 
 		if ( $import_images ) {
-
 			$image_field = get_option( 'cos_csv2_image_field' );
 
 			echo '<div class="select_field">';
@@ -287,7 +286,6 @@ class CSV2 extends \CultureObject\Provider {
 		$import_id = $_POST['import_id'];
 
 		if ( $start == 'cleanup' ) {
-
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_csv2_import_' . $import_id, array() );
@@ -295,7 +293,6 @@ class CSV2 extends \CultureObject\Provider {
 			delete_option( 'cos_csv2_import_' . $import_id, array() );
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
-
 			if ( ! isset( $_POST['id_field'] ) || ! isset( $_POST['title_field'] ) ) {
 				throw new CSV2Exception( __( 'Invalid AJAX import request', 'culture-object' ) );
 			}
@@ -398,7 +395,6 @@ class CSV2 extends \CultureObject\Provider {
 
 		if ( $number_of_objects > 0 ) {
 			foreach ( $data_array as $doc ) {
-
 				$doc[] = $doc[ $id_field ];
 
 				$object_exists = $this->object_exists( $doc[ $id_field ] );

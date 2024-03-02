@@ -140,7 +140,6 @@ class Emu extends CultureObject\Provider {
 			}
 			$number_of_objects = $number_of_objects + count( $dataset['rows'] );
 			foreach ( $dataset['rows'] as $doc ) {
-
 				$doc = $this->flattenWithKeys( $doc );
 
 				$object_exists = $this->object_exists( $doc['ID'] );

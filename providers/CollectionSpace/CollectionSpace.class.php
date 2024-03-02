@@ -246,7 +246,6 @@ class CollectionSpace extends \CultureObject\Provider {
 		$import_complete = false;
 
 		while ( ! $import_complete ) {
-
 			$url    = $host . '/collectionobjects/?pgSz=250&wf_deleted=false&pgNum=' . $page;
 			$import = $this->perform_request( $url, $this->generate_stream_context( $user, $pass ) );
 
@@ -299,7 +298,6 @@ class CollectionSpace extends \CultureObject\Provider {
 		);
 		$posts = get_posts( $args );
 		foreach ( $posts as $post ) {
-
 			$init   = get_post_meta( $post->ID, 'cos_init', true );
 			$uri    = get_post_meta( $post->ID, 'uri', true );
 			$url    = $host . $uri;
@@ -566,7 +564,6 @@ class CollectionSpace extends \CultureObject\Provider {
 		}
 
 		if ( get_post_meta( $post->ID, 'saved_image_id', true ) != $image['csid'] ) {
-
 			$image_id = $helper->add_image_to_gallery_from_url( $host . '/media/' . $image['csid'] . '/blob/content', $image['csid'], $this->generate_stream_context( $user, $pass ) );
 			update_post_meta( $post->ID, 'saved_image_id', $image['csid'] );
 			set_post_thumbnail( $post->ID, $image_id );

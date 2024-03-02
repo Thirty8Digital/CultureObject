@@ -143,7 +143,6 @@ class AdLib extends \CultureObject\Provider {
 		$number_of_objects = count( $import );
 		if ( $number_of_objects > 0 ) {
 			foreach ( $import as $doc ) {
-
 				if ( is_array( $doc['title'] ) ) {
 					$doc['title'] = array_pop( $doc['title'] ); // This is weird. Why would you have more than one title per record?
 				}

@@ -142,7 +142,6 @@ class IndexPlus extends \CultureObject\Provider {
 		$result    = array();
 
 		if ( $start === 'cleanup' ) {
-
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_indexplus_import_' . $import_id, array() );
@@ -150,7 +149,6 @@ class IndexPlus extends \CultureObject\Provider {
 			delete_option( 'cos_indexplus_import_' . $import_id, array() );
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
-
 			$cleanup = isset( $_POST['perform_cleanup'] ) && $_POST['perform_cleanup'];
 
 			$result = $this->import_page( $service, $start );
@@ -198,7 +196,6 @@ class IndexPlus extends \CultureObject\Provider {
 		$number_of_objects = count( $result['result']['items'] );
 
 		foreach ( $result['result']['items'] as $doc ) {
-
 			$doc                   = $this->ixflatten( $doc );
 			$doc['_cos_object_id'] = $doc['uniqueID'];
 			$object_exists         = $this->object_exists( $doc['uniqueID'] );
