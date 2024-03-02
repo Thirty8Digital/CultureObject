@@ -1,4 +1,4 @@
-CultureObject v4.1.0
+CultureObject v4.2.0-beta1
 ====================
 
 Welcome
@@ -28,7 +28,7 @@ The plugin is built to be extensible so that when other providers are added to t
 
 Usage Instructions
 ---------------------
-We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v2.2.0)
+We use the master branch here for development. If you want a known working build, grab the latest tag. (Currently v4.1)
 
 Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
@@ -52,6 +52,10 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+#### Version 4.2
+* Modernise codebase to WordPress Code Standards
+* Fixed several escaping security vulnerabilities
 
 #### Version 4.1.0
 * Fix some unescaped output to HTML
