@@ -101,7 +101,7 @@ class Emu extends CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 	}
 
 	function perform_sync() {
@@ -147,11 +147,11 @@ class Emu extends CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
 					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['Name'];
-					$created++;
+					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
 					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['Name'];
-					$updated++;
+					++$updated;
 				}
 			}
 			$deleted = $this->clean_objects( $current_objects, $previous_posts );
@@ -206,7 +206,7 @@ class Emu extends CultureObject\Provider {
 				$remove_id,
 				'emu'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_emu_deleted', $import_delete, 0 );

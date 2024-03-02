@@ -125,7 +125,7 @@ class SWCE extends \CultureObject\Provider {
 		$field       = $args['field'];
 		$value       = get_option( $field );
 		$placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr( $value ), $placeholder );
+		printf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr( $value ), $placeholder );
 	}
 
 	function perform_ajax_sync() {
@@ -211,11 +211,11 @@ class SWCE extends \CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
 					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['accession-loan-no'];
-					$created++;
+					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
 					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['accession-loan-no'];
-					$updated++;
+					++$updated;
 				}
 			}
 		}
@@ -268,7 +268,7 @@ class SWCE extends \CultureObject\Provider {
 				$remove_id,
 				'SWCE'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_swce_deleted', $import_delete, 0 );

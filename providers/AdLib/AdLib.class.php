@@ -97,7 +97,7 @@ class AdLib extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 	}
 
 	function perform_sync() {
@@ -151,11 +151,11 @@ class AdLib extends \CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
 					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['title'];
-					$created++;
+					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
 					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['title'];
-					$updated++;
+					++$updated;
 				}
 			}
 			$deleted = $this->clean_objects( $current_objects, $previous_posts );
@@ -211,7 +211,7 @@ class AdLib extends \CultureObject\Provider {
 				$remove_id,
 				'CSV'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_adlib_deleted', $import_delete, 0 );

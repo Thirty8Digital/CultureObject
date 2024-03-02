@@ -346,12 +346,12 @@ class Modes extends \CultureObject\Provider {
 					$obj_id            = $this->create_object( $obj, $id_field, $title_field );
 					$current_objects[] = $obj_id;
 					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $obj[ $title_field ];
-					$created++;
+					++$created;
 				} else {
 					$obj_id            = $this->update_object( $obj, $id_field, $title_field );
 					$current_objects[] = $obj_id;
 					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $obj[ $title_field ];
-					$updated++;
+					++$updated;
 				}
 
 				if ( $image_field ) {
@@ -468,7 +468,7 @@ class Modes extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 	}
 
 	function create_object( $obj, $id_field, $title_field ) {
@@ -565,7 +565,7 @@ class Modes extends \CultureObject\Provider {
 				$remove_id,
 				'Modes XML'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_modes_deleted', $import_delete, 0 );

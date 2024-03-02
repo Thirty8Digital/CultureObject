@@ -215,7 +215,7 @@ class Settings extends Core {
 		if ( empty( $value ) && isset( $args['default'] ) ) {
 			$value = $args['default'];
 		}
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 		if ( $field == 'cos_core_sync_key' ) {
 			echo '<br /><small>' . __( 'This key forms part of the sync URL for a little bit more security.', 'culture-object' ) . '</small>';
 		}
@@ -228,9 +228,9 @@ class Settings extends Core {
 			$value = $args['default'];
 		}
 		if ( $value ) {
-			echo sprintf( '<input type="checkbox" name="%s" value="1" id="%s" checked="checked" />', $field, $field );
+			printf( '<input type="checkbox" name="%s" value="1" id="%s" checked="checked" />', $field, $field );
 		} else {
-			echo sprintf( '<input type="checkbox" name="%s" value="1" id="%s" />', $field, $field );
+			printf( '<input type="checkbox" name="%s" value="1" id="%s" />', $field, $field );
 		}
 		if ( $field == 'cos_core_import_images' ) {
 			echo '<br /><small>' . __( 'Your provider supports automatic importing of images to the WordPress Media Library.<br />Would you like to enable this?', 'culture-object' ) . '</small>';

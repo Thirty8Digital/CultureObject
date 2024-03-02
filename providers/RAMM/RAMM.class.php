@@ -60,7 +60,7 @@ class RAMM extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 	}
 
 	function perform_sync() {

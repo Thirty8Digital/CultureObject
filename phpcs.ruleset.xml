@@ -10,9 +10,21 @@
 	<rule ref="PHPCompatibilityWP" />
 	<config name="minimum_supported_wp_version" value="6.2" />
 
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+		<exclude name="PEAR.NamingConventions.ValidClassName.StartWithCapital" />
+		<exclude name="PEAR.NamingConventions.ValidClassName.Invalid" />
+
+		<exclude name="Squiz.Scope.MethodScope.Missing" />
+
+		<exclude name="Universal.Operators.StrictComparisons" />
+	</rule>
+
 	<rule ref="Squiz.Commenting">
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 		<exclude name="Squiz.Commenting.PostStatementComment.Found" />
 		<exclude name="Squiz.Commenting.InlineComment.NotCapital" />
 		<exclude name="Squiz.Commenting.BlockComment.SingleLine" />
@@ -21,6 +33,8 @@
 
 		<exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing" />
 		<exclude name="Squiz.Commenting.FunctionComment.TypeHintMissing" />
+		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 
 		<exclude name="Squiz.Commenting.InlineComment.DocBlock" />
 		<exclude name="Squiz.Commenting.BlockComment.WrongStart" />

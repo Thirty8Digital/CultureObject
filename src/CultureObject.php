@@ -18,7 +18,7 @@ class CultureObject extends Core {
 	}
 
 	function load_co_languages() {
-		load_plugin_textdomain( 'culture-object', false, basename( dirname( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'culture-object', false, basename( __DIR__ ) . '/languages/' );
 	}
 
 	static function check_versions() {

@@ -403,12 +403,12 @@ class CSV2 extends \CultureObject\Provider {
 					$obj_id            = $this->create_object( $doc, $fields, $id_field, $title_field );
 					$current_objects[] = $obj_id;
 					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc[ $title_field ];
-					$created++;
+					++$created;
 				} else {
 					$obj_id            = $this->update_object( $doc, $fields, $id_field, $title_field );
 					$current_objects[] = $obj_id;
 					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc[ $title_field ];
-					$updated++;
+					++$updated;
 				}
 
 				if ( $taxonomy_field && $taxonomy_name ) {
@@ -420,36 +420,34 @@ class CSV2 extends \CultureObject\Provider {
 					$doc[ $image_field ] = trim( $doc[ $image_field ] );
 					if ( has_post_thumbnail( $obj_id ) ) {
 						$import_status[] = __( 'Skipping image import for object as it already has a post thumbnail', 'culture-object' );
-					} else {
-						if ( filter_var( $doc[ $image_field ], FILTER_VALIDATE_URL ) ) {
+					} elseif ( filter_var( $doc[ $image_field ], FILTER_VALIDATE_URL ) ) {
 
 							// Trusted extensions
 							$presumed_extension = pathinfo( $doc[ $image_field ], PATHINFO_EXTENSION );
 							$trusted_extensions = array( 'jpg', 'png', 'gif', 'jpeg' );
 							$ext                = false;
 
-							if ( ! in_array( $presumed_extension, $trusted_extensions ) ) {
-								// Try to parse the extension from content headers - if we don't think we can trust pathinfo.
-								$headers = get_headers( $doc[ $image_field ], 1 );
-								if ( isset( $headers['Content-Type'] ) ) {
-									$ext = $this->mime2ext( $headers['Content-Type'] );
-								}
+						if ( ! in_array( $presumed_extension, $trusted_extensions ) ) {
+							// Try to parse the extension from content headers - if we don't think we can trust pathinfo.
+							$headers = get_headers( $doc[ $image_field ], 1 );
+							if ( isset( $headers['Content-Type'] ) ) {
+								$ext = $this->mime2ext( $headers['Content-Type'] );
 							}
-							if ( ! $ext ) {
-								$ext = $presumed_extension;
-							}
+						}
+						if ( ! $ext ) {
+							$ext = $presumed_extension;
+						}
 
 							$save_path = $obj_id . '.' . $ext;
 							$image_id  = $helper->add_image_to_gallery_from_url( $doc[ $image_field ], $save_path, $context, $obj_id, trim( $doc[ $title_field ] ) );
-							if ( $image_id ) {
-								set_post_thumbnail( $obj_id, $image_id );
-								$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . $doc[ $title_field ] . ' [' . $image_id . ']';
-							} else {
-								$import_status[] = __( 'Failed to download image. Check it is accessible.', 'culture-object' );
-							}
+						if ( $image_id ) {
+							set_post_thumbnail( $obj_id, $image_id );
+							$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . $doc[ $title_field ] . ' [' . $image_id . ']';
 						} else {
-							$import_status[] = __( 'Skipping image import for object as the supplied URL is invalid', 'culture-object' );
+							$import_status[] = __( 'Failed to download image. Check it is accessible.', 'culture-object' );
 						}
+					} else {
+						$import_status[] = __( 'Skipping image import for object as the supplied URL is invalid', 'culture-object' );
 					}
 				} else {
 				}
@@ -752,7 +750,7 @@ class CSV2 extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 	}
 
 	function create_object( $doc, $fields, $id_field, $title_field ) {
@@ -849,7 +847,7 @@ class CSV2 extends \CultureObject\Provider {
 				$remove_id,
 				'CSV'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_csv_deleted', $import_delete, 0 );

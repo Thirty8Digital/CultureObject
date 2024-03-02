@@ -127,7 +127,7 @@ class IndexPlus extends \CultureObject\Provider {
 		$field       = $args['field'];
 		$value       = get_option( $field );
 		$placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr( $value ), $placeholder );
+		printf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr( $value ), $placeholder );
 	}
 
 	function perform_ajax_sync() {
@@ -202,11 +202,11 @@ class IndexPlus extends \CultureObject\Provider {
 			if ( ! $object_exists ) {
 				$current_objects[] = $this->create_object( $doc );
 				$import_status[]   = __( 'Created object for service URL', 'culture-object' ) . ' ' . $service . ': ' . $doc['uniqueID'];
-				$created++;
+				++$created;
 			} else {
 				$current_objects[] = $this->update_object( $doc );
 				$import_status[]   = __( 'Updated object for service URL', 'culture-object' ) . ' ' . $service . ': ' . $doc['uniqueID'];
-				$updated++;
+				++$updated;
 			}
 		}
 
@@ -258,7 +258,7 @@ class IndexPlus extends \CultureObject\Provider {
 				$remove_id,
 				'CSV'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_indexplus_deleted', $import_delete, 0 );

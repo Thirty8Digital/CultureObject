@@ -140,14 +140,14 @@ class CollectionSpace extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		echo sprintf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
 	}
 
 	function generate_settings_field_input_password( $args ) {
 		$field   = $args['field'];
 		$value   = get_option( $field );
 		$blurred = str_repeat( '*', strlen( $value ) );
-		echo sprintf( '<input type="password" name="%s" id="%s" value="%s" />', $field, $field, $blurred );
+		printf( '<input type="password" name="%s" id="%s" value="%s" />', $field, $field, $blurred );
 	}
 
 	function generate_settings_group_content() {
@@ -260,13 +260,13 @@ class CollectionSpace extends \CultureObject\Provider {
 						$ttext             = sprintf( __( 'Created initial object: %s', 'culture-object' ), $doc['csid'] );
 						$import_status[]   = $ttext;
 						echo $ttext;
-						$created++;
+						++$created;
 					} else {
 						$current_objects[] = $this->update_object( $doc );
 						$ttext             = sprintf( __( 'Updated initial object: %s', 'culture-object' ), $doc['csid'] );
 						$import_status[]   = $ttext;
 						echo $ttext;
-						$updated++;
+						++$updated;
 					}
 				}
 			}
@@ -280,7 +280,7 @@ class CollectionSpace extends \CultureObject\Provider {
 				echo 'Imported page ' . ( $page + 1 ) . '. [Objects ' . ( ( $import['pageNum'] + 1 ) * $import['pageSize'] ) . '/' . $import['totalItems'] . "]\r\n";
 			}
 
-			$page++;
+			++$page;
 
 			flush();
 		}
@@ -718,7 +718,7 @@ class CollectionSpace extends \CultureObject\Provider {
 				$remove_id,
 				'CollectionSpace'
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		set_transient( 'cos_collectionspace_deleted', $import_delete, 0 );
