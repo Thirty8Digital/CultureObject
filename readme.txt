@@ -2,7 +2,7 @@
 Contributors: lgladdy
 Tags: collections, museum, culture, objects, object, sync
 Requires at least: 6.2
-Tested up to: 6.0.1
+Tested up to: 6.5
 Stable tag: 4.1.1
 Requires PHP: 8.1
 License: Apache 2.0
