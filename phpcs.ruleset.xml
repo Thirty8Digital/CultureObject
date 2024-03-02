@@ -14,9 +14,15 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
 		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+		<exclude name="WordPress.PHP.IniSet.memory_limit_Disallowed" />
+
 		<exclude name="PEAR.NamingConventions.ValidClassName.StartWithCapital" />
 		<exclude name="PEAR.NamingConventions.ValidClassName.Invalid" />
+
+		<exclude name="Generic.Files.OneObjectStructurePerFile.MultipleFound" />
 
 		<exclude name="Squiz.Scope.MethodScope.Missing" />
 
@@ -25,26 +31,35 @@
 
 	<rule ref="Squiz.Commenting">
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-		<exclude name="Squiz.Commenting.PostStatementComment.Found" />
 		<exclude name="Squiz.Commenting.InlineComment.NotCapital" />
+		<exclude name="Squiz.Commenting.InlineComment.DocBlock" />
+
+		<exclude name="Squiz.Commenting.PostStatementComment.Found" />
+
 		<exclude name="Squiz.Commenting.BlockComment.SingleLine" />
+
 		<exclude name="Squiz.Commenting.ClosingDeclarationComment.Missing" />
+
 		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
 
 		<exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing" />
 		<exclude name="Squiz.Commenting.FunctionComment.TypeHintMissing" />
 		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingReturn" />
 
-		<exclude name="Squiz.Commenting.InlineComment.DocBlock" />
 		<exclude name="Squiz.Commenting.BlockComment.WrongStart" />
+
+		<exclude name="Squiz.Commenting.ClassComment.Missing" />
+
+		<exclude name="Squiz.Commenting.VariableComment.Missing" />
 
 		<exclude name="Squiz.Commenting.FileComment.IncorrectAuthor" />
 		<exclude name="Squiz.Commenting.FileComment.IncorrectCopyright" />
 		<exclude name="Squiz.Commenting.FileComment.MissingAuthorTag" />
 		<exclude name="Squiz.Commenting.FileComment.MissingSubpackageTag" />
 		<exclude name="Squiz.Commenting.FileComment.MissingCopyrightTag" />
-		<exclude name="Squiz.Commenting.FunctionComment.MissingReturn" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
 	</rule>
 
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
