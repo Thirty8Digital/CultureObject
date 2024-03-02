@@ -8,7 +8,7 @@ class CollectionSpace extends \CultureObject\Provider {
 
 	private $provider = array(
 		'name'            => 'CollectionSpace',
-		'version'         => '1.0',
+		'version'         => '1.1',
 		'developer'       => 'Thirty8 Digital',
 		'supports_images' => true,
 		'cron'            => true,

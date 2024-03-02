@@ -4,24 +4,24 @@ use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
 
 class ChunkReadFilter implements IReadFilter {
 
-	private $startRow = 0;
+	private $start_row = 0;
 
-	private $endRow = 0;
+	private $end_row = 0;
 
 	/**
 	 * Set the list of rows that we want to read.
 	 *
-	 * @param mixed $startRow
-	 * @param mixed $chunkSize
+	 * @param mixed $start_row  Starting row number
+	 * @param mixed $chunk_size Number of rows to import
 	 */
-	public function setRows( $startRow, $chunkSize ): void {
-		$this->startRow = $startRow;
-		$this->endRow   = $startRow + $chunkSize;
+	public function setRows( $start_row, $chunk_size ): void {
+		$this->start_row = $start_row;
+		$this->end_row   = $start_row + $chunk_size;
 	}
 
-	public function readCell( $column, $row, $worksheetName = '' ) {
-		// Only read the heading row, and the rows that are configured in $this->_startRow and $this->_endRow
-		if ( ( $row == 1 ) || ( $row >= $this->startRow && $row < $this->endRow ) ) {
+	public function readCell( $column, $row, $worksheet_name = '' ) {
+		// Only read the heading row, and the rows that are configured in $this->_start_row and $this->_end_row
+		if ( ( $row == 1 ) || ( $row >= $this->start_row && $row < $this->end_row ) ) {
 			return true;
 		}
 

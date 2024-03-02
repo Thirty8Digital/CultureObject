@@ -13,7 +13,7 @@ class CSV2 extends \CultureObject\Provider {
 
 	private $provider = array(
 		'name'            => 'CSV2',
-		'version'         => '4.0.3',
+		'version'         => '4.1',
 		'developer'       => 'Thirty8 Digital',
 		'cron'            => false,
 		'supports_remap'  => true,
@@ -27,7 +27,8 @@ class CSV2 extends \CultureObject\Provider {
 	}
 
 	function register_remappable_fields() {
-		if ( $path = $this->has_uploaded_file() ) {
+		$path = $this->has_uploaded_file();
+		if ( $path ) {
 			if ( is_file( $path ) ) {
 				$headers = $this->get_csv_chunk( $path, 1, 0 );
 				$headers = $headers[0];
@@ -54,7 +55,8 @@ class CSV2 extends \CultureObject\Provider {
 
 	function register_taxonomy() {
 		$taxonomy_field = get_option( 'cos_csv2_taxonomy_field' );
-		if ( ( $path = $this->has_uploaded_file() ) && ( intval( $taxonomy_field ) == $taxonomy_field ) && intval( $taxonomy_field ) >= 0 ) {
+		$path           = $this->has_uploaded_file();
+		if ( ( $path ) && ( intval( $taxonomy_field ) == $taxonomy_field ) && intval( $taxonomy_field ) >= 0 ) {
 			$headers        = $this->get_csv_chunk( $path, 1, 0 );
 			$taxonomy_field = intval( $taxonomy_field );
 			$taxonomy_name  = $headers[0][ $taxonomy_field ];
@@ -66,7 +68,8 @@ class CSV2 extends \CultureObject\Provider {
 
 	function get_taxonomy_name() {
 		$taxonomy_field = get_option( 'cos_csv2_taxonomy_field' );
-		if ( ( $path = $this->has_uploaded_file() ) && ( intval( $taxonomy_field ) == $taxonomy_field ) && intval( $taxonomy_field ) >= 0 ) {
+		$path           = $this->has_uploaded_file();
+		if ( ( $path ) && ( intval( $taxonomy_field ) == $taxonomy_field ) && intval( $taxonomy_field ) >= 0 ) {
 			$headers        = $this->get_csv_chunk( $path, 1, 0 );
 			$taxonomy_field = intval( $taxonomy_field );
 			$taxonomy_name  = $headers[0][ $taxonomy_field ];
@@ -87,8 +90,8 @@ class CSV2 extends \CultureObject\Provider {
 		wp_register_script( 'csv2_admin_js', $js_url, array( 'jquery', 'jquery-ui-core', 'jquery-ui-progressbar' ), '1.0.0', true );
 		wp_enqueue_script( 'csv2_admin_js' );
 
-		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css' );
-		wp_enqueue_style( 'csv2_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time() );
+		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css', array(), $this->provider['version'] );
+		wp_enqueue_style( 'csv2_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time(), array(), $this->provider['version'] );
 	}
 
 	function get_provider_information() {
@@ -104,45 +107,47 @@ class CSV2 extends \CultureObject\Provider {
 					wp_die(
 						sprintf(
 							/* Translators: 1: Mime type of uploaded file */
-							__( 'Unable to save file: %1$s', 'culture-object' ),
-							$e->getMessage()
+							esc_html__( 'Unable to save file: %1$s', 'culture-object' ),
+							esc_html( $e->getMessage() )
 						)
 					);
 				}
 			} else {
-				wp_die( __( 'Security Violation.', 'culture-object' ) );
+				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
 			}
 		}
 		if ( isset( $_POST['delete_uploaded_file'] ) && isset( $_POST['cos_csv_nonce'] ) ) {
 			if ( wp_verify_nonce( $_POST['cos_csv_nonce'], 'cos_csv_delete_uploaded_file' ) ) {
 				$this->delete_uploaded_file();
 			} else {
-				wp_die( __( 'Security Violation.', 'culture-object' ) );
+				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
 			}
 		}
 	}
 
 	function register_settings() {
-		return;
 	}
 
 	function generate_settings_outside_form_html() {
 
 		$this->output_js_localization();
 
-		echo '<h3>' . __( 'Provider Settings', 'culture-object' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'Provider Settings', 'culture-object' ) . '</h3>';
 
 		echo '<p>';
-		printf(
+		echo esc_html(
+			sprintf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+				__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+				$this->provider['version'],
+				$this->provider['name'],
+				$this->provider['developer']
+			)
 		);
 		echo '</p>';
 
-		if ( $path = $this->has_uploaded_file() ) {
+		$path = $this->has_uploaded_file();
+		if ( $path ) {
 			$this->parse_uploaded_file( $path );
 		} else {
 			$this->display_upload_prompt();
@@ -151,7 +156,7 @@ class CSV2 extends \CultureObject\Provider {
 
 	function parse_uploaded_file( $path ) {
 		if ( ! is_file( $path ) ) {
-			throw new CSV2Exception( __( 'An error occurred when trying to parse the CSV.', 'culture-object' ) );
+			throw new CSV2Exception( esc_html__( 'An error occurred when trying to parse the CSV.', 'culture-object' ) );
 		}
 
 		$headers = $this->get_csv_chunk( $path, 1, 0 );
@@ -160,25 +165,27 @@ class CSV2 extends \CultureObject\Provider {
 		echo '<div id="hide-on-import">';
 
 		echo '<p>';
-		printf(
+		echo esc_html(
+			sprintf(
 			/* Translators: 1: CSV File Name 2: Number of columns in the CSV 3: Number of rows in the CSV */
-			__( 'Your uploaded CSV "%1$s" contains %2$d columns and %3$d rows.', 'culture-object' ),
-			basename( $path ),
-			$data[0]['totalColumns'],
-			$data[0]['totalRows']
+				__( 'Your uploaded CSV "%1$s" contains %2$d columns and %3$d rows.', 'culture-object' ),
+				basename( $path ),
+				$data[0]['totalColumns'],
+				$data[0]['totalRows']
+			)
 		);
 		echo ' <a id="delete_uploaded_csv" href="#">';
-		_e( 'Remove uploaded CSV?', 'culture-object' );
+		esc_html_e( 'Remove uploaded CSV?', 'culture-object' );
 		echo '</a>';
 		echo '</p>';
 
 		$import_images = get_option( 'cos_core_import_images' );
 
 		if ( ! $import_images ) {
-			echo '<p style="font-weight:bold">' . __( 'If your CSV contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object' ) . '</p>';
+			echo '<p style="font-weight:bold">' . esc_html__( 'If your CSV contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object' ) . '</p>';
 		}
 
-		echo '<p>' . __( 'To begin the import, click the button below.', 'culture-object' ) . '</p>';
+		echo '<p>' . esc_html__( 'To begin the import, click the button below.', 'culture-object' ) . '</p>';
 
 		$id_field = get_option( 'cos_csv2_id_field' );
 
@@ -186,7 +193,7 @@ class CSV2 extends \CultureObject\Provider {
 		echo '<select id="id_field">';
 		echo '<option value="0">' . esc_attr__( '-- Object ID Field --', 'culture-object' ) . '</object>';
 		foreach ( $headers[0] as $key => $header ) {
-			echo '<option value="' . $key . '" ' . selected( trim( $id_field ), $key, false ) . '>' . $header . '</option>';
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( trim( $id_field ), $key, false ) . '>' . esc_html( $header ) . '</option>';
 		}
 		echo '</select>';
 		echo '<span class="description"> ';
@@ -200,7 +207,7 @@ class CSV2 extends \CultureObject\Provider {
 		echo '<select id="title_field">';
 		echo '<option value="0">' . esc_attr__( '-- Object Title Field --', 'culture-object' ) . '</object>';
 		foreach ( $headers[0] as $key => $header ) {
-			echo '<option value="' . $key . '" ' . selected( trim( $title_field ), $key, false ) . '>' . $header . '</option>';
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( trim( $title_field ), $key, false ) . '>' . esc_html( $header ) . '</option>';
 		}
 		echo '</select>';
 		echo '<span class="description"> ';
@@ -215,7 +222,7 @@ class CSV2 extends \CultureObject\Provider {
 			echo '<select id="image_field">';
 			echo '<option value="-1">' . esc_attr__( '-- Don\'t Import Images --', 'culture-object' ) . '</object>';
 			foreach ( $headers[0] as $key => $header ) {
-				echo '<option value="' . $key . '" ' . selected( $image_field, $key, false ) . '>' . $header . '</option>';
+				echo '<option value="' . esc_attr( $key ) . '" ' . selected( $image_field, $key, false ) . '>' . esc_html( $header ) . '</option>';
 			}
 			echo '</select>';
 			echo '<span class="description"> ';
@@ -230,7 +237,7 @@ class CSV2 extends \CultureObject\Provider {
 		echo '<select id="taxonomy_field">';
 		echo '<option value="-1">' . esc_attr__( '-- Don\'t Import A Taxonomy --', 'culture-object' ) . '</object>';
 		foreach ( $headers[0] as $key => $header ) {
-			echo '<option value="' . $key . '" ' . selected( $taxonomy_field, $key, false ) . '>' . $header . '</option>';
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $taxonomy_field, $key, false ) . '>' . esc_html( $header ) . '</option>';
 		}
 		echo '</select>';
 		echo '<span class="description"> ';
@@ -245,33 +252,33 @@ class CSV2 extends \CultureObject\Provider {
             	</label>
             </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid( '', true ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . wp_create_nonce( 'cos_ajax_import_request' ) . '" type="button" class="button button-primary" value="';
-		_e( 'Process Import', 'culture-object' );
+		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . wp_create_nonce( 'cos_ajax_import_request' ) . '" type="button" class="button button-primary" value="';
+		esc_html_e( 'Process Import', 'culture-object' );
 		echo '" />';
 
 		echo '</div>';
 
-		echo '<div id="csv_import_progressbar"><div class="progress-label">' . __( 'Starting Import...', 'culture-object' ) . '</div></div>';
+		echo '<div id="csv_import_progressbar"><div class="progress-label">' . esc_html__( 'Starting Import...', 'culture-object' ) . '</div></div>';
 		echo '<div id="csv_import_detail"></div>';
 
 		echo '<form id="delete_uploaded_csv_form" method="post" action="">';
-		echo '<input type="hidden" name="cos_csv_nonce" value="' . wp_create_nonce( 'cos_csv_delete_uploaded_file' ) . '" /><br /><br />';
+		echo '<input type="hidden" name="cos_csv_nonce" value="' . esc_attr( wp_create_nonce( 'cos_csv_delete_uploaded_file' ) ) . '" /><br /><br />';
 		echo '<input type="hidden" name="delete_uploaded_file" value="true" />';
 		echo '</form>';
 	}
 
 	function get_csv_data( $path ) {
-		$objReader = IOFactory::createReader( 'Csv' );
-		return $objReader->listWorksheetInfo( $path );
+		$object_reader = IOFactory::createReader( 'Csv' );
+		return $object_reader->listWorksheetInfo( $path );
 	}
 
 	function get_csv_chunk( $path, $start, $count = 5 ) {
-		$objReader   = IOFactory::createReader( 'Csv' );
-		$chunkFilter = new chunkReadFilter();
-		$objReader->setReadFilter( $chunkFilter )->setContiguous( true );
+		$object_reader = IOFactory::createReader( 'Csv' );
+		$chunk_filter  = new chunkReadFilter();
+		$object_reader->setReadFilter( $chunk_filter )->setContiguous( true );
 
-		$chunkFilter->setRows( $start + 1, $count );
-		$csv       = $objReader->load( $path );
+		$chunk_filter->setRows( $start + 1, $count );
+		$csv       = $object_reader->load( $path );
 		$worksheet = $csv->getActiveSheet();
 
 		return $worksheet->toArray();
@@ -279,7 +286,7 @@ class CSV2 extends \CultureObject\Provider {
 
 	function perform_ajax_sync() {
 		if ( ! isset( $_POST['start'] ) || ! isset( $_POST['import_id'] ) ) {
-			throw new CSV2Exception( __( 'Invalid AJAX import request', 'culture-object' ) );
+			throw new CSV2Exception( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
 		$start     = $_POST['start'];
@@ -322,7 +329,8 @@ class CSV2 extends \CultureObject\Provider {
 			$cleanup = isset( $_POST['perform_cleanup'] ) && $_POST['perform_cleanup'];
 
 			$count = 50;
-			if ( $path = $this->has_uploaded_file() ) {
+			$path  = $this->has_uploaded_file();
+			if ( $path ) {
 				$info                 = $this->get_csv_data( $path );
 				$data                 = $this->get_csv_chunk( $path, $start, $count );
 				$result               = $this->import_chunk( $data, $id_field, $title_field, $image_field, $taxonomy_field );
@@ -344,12 +352,16 @@ class CSV2 extends \CultureObject\Provider {
 
 				return $result;
 			} else {
-				throw new CSV2Exception( __( 'Attempted to import without a file uploaded.', 'culture-object' ) );
+				throw new CSV2Exception( esc_html__( 'Attempted to import without a file uploaded.', 'culture-object' ) );
 			}
 		}
 	}
 
 	function import_chunk( $data, $id_field = 0, $title_field = 0, $image_field = false, $taxonomy_field = false ) {
+		$data_array      = array();
+		$current_objects = array();
+		$updated         = 0;
+		$created         = 0;
 
 		$helper = new CultureObject\Helper();
 
@@ -368,9 +380,6 @@ class CSV2 extends \CultureObject\Provider {
 
 		$taxonomy_name = $this->get_taxonomy_name();
 
-		$data_array = $current_objects = array();
-		$updated    = $created = 0;
-
 		foreach ( $data as $new_row ) {
 			if ( empty( $new_row[0] ) ) {
 				continue;
@@ -379,13 +388,12 @@ class CSV2 extends \CultureObject\Provider {
 				throw new CSV2Exception(
 					sprintf(
 					/* Translators: 1: A row number from the CSV 2: The number of fields in that row 3: The number of fields defined by the first row. */
-						__( 'Row %1$s of this CSV file contains %2$s fields, but the field keys only provides names for %3$s.\r\nTo prevent something bad happening, we\'re bailing on this import.', 'culture-object' ),
+						esc_html__( 'Row %1$s of this CSV file contains %2$s fields, but the field keys only provides names for %3$s.\r\nTo prevent something bad happening, we\'re bailing on this import.', 'culture-object' ),
 						count( $data_array ) + 2,
 						count( $new_row ),
-						$number_of_fields
+						intval( $number_of_fields )
 					)
 				);
-				return;
 			}
 			$data_array[] = $new_row;
 		}
@@ -427,7 +435,7 @@ class CSV2 extends \CultureObject\Provider {
 							$trusted_extensions = array( 'jpg', 'png', 'gif', 'jpeg' );
 							$ext                = false;
 
-						if ( ! in_array( $presumed_extension, $trusted_extensions ) ) {
+						if ( ! in_array( $presumed_extension, $trusted_extensions, true ) ) {
 							// Try to parse the extension from content headers - if we don't think we can trust pathinfo.
 							$headers = get_headers( $doc[ $image_field ], 1 );
 							if ( isset( $headers['Content-Type'] ) ) {
@@ -449,7 +457,6 @@ class CSV2 extends \CultureObject\Provider {
 					} else {
 						$import_status[] = __( 'Skipping image import for object as the supplied URL is invalid', 'culture-object' );
 					}
-				} else {
 				}
 			}
 		}
@@ -670,14 +677,14 @@ class CSV2 extends \CultureObject\Provider {
 
 	function display_upload_prompt() {
 		echo '<p>';
-		_e( 'Select a CSV to upload', 'culture-object' );
+		esc_html_e( 'Select a CSV to upload', 'culture-object' );
 		echo '</p>';
 
 		echo '<form id="csv_import_form" method="post" action="" enctype="multipart/form-data">';
 		echo '<input type="file" name="cos_csv_import_file" />';
-		echo '<input type="hidden" name="cos_csv_nonce" value="' . wp_create_nonce( 'cos_csv_import' ) . '" /><br /><br />';
+		echo '<input type="hidden" name="cos_csv_nonce" value="' . esc_attr( wp_create_nonce( 'cos_csv_import' ) ) . '" /><br /><br />';
 		echo '<input id="csv_import_submit" type="button" class="button button-primary" value="';
-		_e( 'Upload CSV File', 'culture-object' );
+		esc_html_e( 'Upload CSV File', 'culture-object' );
 		echo '" />';
 		echo '</form>';
 	}
@@ -690,29 +697,27 @@ class CSV2 extends \CultureObject\Provider {
 		$upload_dir = $upload['basedir'];
 		$upload_dir = $upload_dir . '/culture-object/';
 		if ( ! is_dir( $upload_dir ) ) {
-			mkdir( $upload_dir, 0700 );
+			mkdir( $upload_dir, 0700 ); //phpcs:ignore WordPress.WP.AlternativeFunctions
 		}
 
-		$file = $_FILES['cos_csv_import_file'];
+		$file = $_FILES['cos_csv_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified before this method is called.
 		if ( $file['error'] !== 0 ) {
 			throw new CSV2Exception(
 				sprintf(
 				/* Translators: %s: The numeric error code PHP reported for an upload failure */
-					__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
-					$file['error']
+					esc_html__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
+					esc_html( $file['error'] )
 				)
 			);
-			return;
 		}
 
-		if ( ! in_array( $file['type'], $valid_file_types ) ) {
-			throw new CSV2Exception( __( "Unable to import. You didn't upload a CSV file (" . $file['type'] . ')', 'culture-object' ) );
-			return;
+		if ( ! in_array( $file['type'], $valid_file_types, true ) ) {
+			throw new CSV2Exception( esc_html__( 'Unable to import. You didn\'t upload a CSV file', 'culture-object' ) );
 		}
 
 		$current_path = $this->has_uploaded_file();
 		if ( $current_path && is_file( $current_path ) ) {
-			unlink( $current_path );
+			wp_delete_file( $current_path );
 			delete_option( 'cos_csv2_uploaded_file_path' );
 		}
 
@@ -722,14 +727,14 @@ class CSV2 extends \CultureObject\Provider {
 			update_option( 'cos_csv2_uploaded_file_path', $full_path );
 			return;
 		} else {
-			throw new CSV2Exception( __( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
+			throw new CSV2Exception( esc_html__( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
 		}
 	}
 
 	function delete_uploaded_file() {
 		$path = get_option( 'cos_csv2_uploaded_file_path' );
 		if ( is_file( $path ) ) {
-			unlink( $path );
+			wp_delete_file( $path );
 		}
 		delete_option( 'cos_csv2_uploaded_file_path' );
 	}
@@ -750,7 +755,7 @@ class CSV2 extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ) );
 	}
 
 	function create_object( $doc, $fields, $id_field, $title_field ) {
@@ -811,7 +816,7 @@ class CSV2 extends \CultureObject\Provider {
 		);
 
 		if ( empty( $post ) ) {
-			throw new Exception( __( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
+			throw new Exception( esc_html__( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
 		}
 
 		$post = array_shift( $post );
@@ -859,6 +864,6 @@ class CSV2 extends \CultureObject\Provider {
 	}
 
 	function perform_sync() {
-		throw new CSV2Exception( __( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
+		throw new CSV2Exception( esc_html__( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
 	}
 }
