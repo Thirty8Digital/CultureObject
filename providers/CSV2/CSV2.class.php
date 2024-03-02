@@ -252,7 +252,7 @@ class CSV2 extends \CultureObject\Provider {
             	</label>
             </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . wp_create_nonce( 'cos_ajax_import_request' ) . '" type="button" class="button button-primary" value="';
+		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
 		esc_html_e( 'Process Import', 'culture-object' );
 		echo '" />';
 
@@ -285,6 +285,7 @@ class CSV2 extends \CultureObject\Provider {
 	}
 
 	function perform_ajax_sync() {
+		//phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified by CultureObject before provider method is called.
 		if ( ! isset( $_POST['start'] ) || ! isset( $_POST['import_id'] ) ) {
 			throw new CSV2Exception( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
@@ -301,7 +302,7 @@ class CSV2 extends \CultureObject\Provider {
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
 			if ( ! isset( $_POST['id_field'] ) || ! isset( $_POST['title_field'] ) ) {
-				throw new CSV2Exception( __( 'Invalid AJAX import request', 'culture-object' ) );
+				throw new CSV2Exception( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 			}
 			$id_field    = intval( $_POST['id_field'] );
 			$title_field = intval( $_POST['title_field'] );
@@ -355,6 +356,7 @@ class CSV2 extends \CultureObject\Provider {
 				throw new CSV2Exception( esc_html__( 'Attempted to import without a file uploaded.', 'culture-object' ) );
 			}
 		}
+		//phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	function import_chunk( $data, $id_field = 0, $title_field = 0, $image_field = false, $taxonomy_field = false ) {
