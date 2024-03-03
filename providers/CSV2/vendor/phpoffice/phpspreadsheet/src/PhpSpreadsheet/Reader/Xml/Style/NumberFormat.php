@@ -17,10 +17,10 @@ class NumberFormat extends StyleBase
             $styleAttributeValue = str_replace($fromFormats, $toFormats, $styleAttributeValue);
 
             switch ($styleAttributeValue) {
-            case 'Short Date':
-                $styleAttributeValue = 'dd/mm/yyyy';
+                case 'Short Date':
+                    $styleAttributeValue = 'dd/mm/yyyy';
 
-                break;
+                    break;
             }
 
             if ($styleAttributeValue > '') {

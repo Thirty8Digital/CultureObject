@@ -40,20 +40,11 @@ class TextValue extends WizardAbstract implements WizardInterface
         Conditional::OPERATOR_ENDSWITH => 'RIGHT(%s,LEN(%s))=%s',
     ];
 
-    /**
-     * @var string 
-     */
-    protected $operator;
+    protected string $operator;
 
-    /**
-     * @var string 
-     */
-    protected $operand;
+    protected string $operand;
 
-    /**
-     * @var string
-     */
-    protected $operandValueType;
+    protected string $operandValueType;
 
     public function __construct(string $cellRange)
     {
@@ -88,7 +79,8 @@ class TextValue extends WizardAbstract implements WizardInterface
             ? $this->wrapValue(str_replace('"', '""', $this->operand))
             : $this->cellConditionCheck($this->operand);
 
-        if ($this->operator === Conditional::OPERATOR_CONTAINSTEXT 
+        if (
+            $this->operator === Conditional::OPERATOR_CONTAINSTEXT
             || $this->operator === Conditional::OPERATOR_NOTCONTAINS
         ) {
             $this->expression = sprintf(self::EXPRESSIONS[$this->operator], $operand, $this->referenceCell);
@@ -133,7 +125,8 @@ class TextValue extends WizardAbstract implements WizardInterface
         if (preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '$/i', $condition)) {
             $wizard->operandValueType = Wizard::VALUE_TYPE_CELL;
             $condition = self::reverseAdjustCellRef($condition, $cellRange);
-        } elseif (preg_match('/\(\)/', $condition) 
+        } elseif (
+            preg_match('/\(\)/', $condition)
             || preg_match('/' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '/i', $condition)
         ) {
             $wizard->operandValueType = Wizard::VALUE_TYPE_FORMULA;
@@ -144,10 +137,9 @@ class TextValue extends WizardAbstract implements WizardInterface
     }
 
     /**
-     * @param string  $methodName
      * @param mixed[] $arguments
      */
-    public function __call($methodName, $arguments): self
+    public function __call(string $methodName, array $arguments): self
     {
         if (!isset(self::MAGIC_OPERATIONS[$methodName])) {
             throw new Exception('Invalid Operation for Text Value CF Rule Wizard');

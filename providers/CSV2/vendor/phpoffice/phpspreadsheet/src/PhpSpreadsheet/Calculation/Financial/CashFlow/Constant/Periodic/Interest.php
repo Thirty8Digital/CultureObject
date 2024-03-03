@@ -23,23 +23,21 @@ class Interest
      * Excel Function:
      *        IPMT(rate,per,nper,pv[,fv][,type])
      *
-     * @param mixed $interestRate    Interest rate per period
-     * @param mixed $period          Period for which we want to find the interest
+     * @param mixed $interestRate Interest rate per period
+     * @param mixed $period Period for which we want to find the interest
      * @param mixed $numberOfPeriods Number of periods
-     * @param mixed $presentValue    Present Value
-     * @param mixed $futureValue     Future Value
-     * @param mixed $type            Payment type: 0 = at the end of each period, 1 = at the beginning of each period
-     *
-     * @return float|string
+     * @param mixed $presentValue Present Value
+     * @param mixed $futureValue Future Value
+     * @param mixed $type Payment type: 0 = at the end of each period, 1 = at the beginning of each period
      */
     public static function payment(
-        $interestRate,
-        $period,
-        $numberOfPeriods,
-        $presentValue,
-        $futureValue = 0,
-        $type = FinancialConstants::PAYMENT_END_OF_PERIOD
-    ) {
+        mixed $interestRate,
+        mixed $period,
+        mixed $numberOfPeriods,
+        mixed $presentValue,
+        mixed $futureValue = 0,
+        mixed $type = FinancialConstants::PAYMENT_END_OF_PERIOD
+    ): string|float {
         $interestRate = Functions::flattenSingleValue($interestRate);
         $period = Functions::flattenSingleValue($period);
         $numberOfPeriods = Functions::flattenSingleValue($numberOfPeriods);
@@ -84,14 +82,12 @@ class Interest
      * Excel Function:
      *     =ISPMT(interest_rate, period, number_payments, pv)
      *
-     * @param mixed $interestRate       is the interest rate for the investment
-     * @param mixed $period             is the period to calculate the interest rate.  It must be betweeen 1 and number_payments.
-     * @param mixed $numberOfPeriods    is the number of payments for the annuity
+     * @param mixed $interestRate is the interest rate for the investment
+     * @param mixed $period is the period to calculate the interest rate.  It must be betweeen 1 and number_payments.
+     * @param mixed $numberOfPeriods is the number of payments for the annuity
      * @param mixed $principleRemaining is the loan amount or present value of the payments
-     *
-     * @return float|string
      */
-    public static function schedulePayment($interestRate, $period, $numberOfPeriods, $principleRemaining)
+    public static function schedulePayment(mixed $interestRate, mixed $period, mixed $numberOfPeriods, mixed $principleRemaining): string|float
     {
         $interestRate = Functions::flattenSingleValue($interestRate);
         $period = Functions::flattenSingleValue($period);
@@ -141,29 +137,26 @@ class Interest
      *        RATE(nper,pmt,pv[,fv[,type[,guess]]])
      *
      * @param mixed $numberOfPeriods The total number of payment periods in an annuity
-     * @param mixed $payment         The payment made each period and cannot change over the life of the annuity.
-     *                               Typically, pmt includes principal and interest but no other fees or taxes.
-     * @param mixed $presentValue    The present value - the total amount that a series of future payments is worth now
-     * @param mixed $futureValue     The future value, or a cash balance you want to attain after the last payment is made.
-     *                               If fv is omitted, it is assumed to be 0 (the future value of a loan, for example, is
-     *                               0).
-     * @param mixed $type            A number 0 or 1 and indicates when payments are due:
-     *                               0 or omitted    At the end of the period. 1         
-     *                               At the beginning of the period.
-     * @param mixed $guess           Your guess for what the rate will be.
-     *                               If you omit guess, it is assumed to
-     *                               be 10 percent.
-     *
-     * @return float|string
+     * @param mixed $payment The payment made each period and cannot change over the life of the annuity.
+     *                           Typically, pmt includes principal and interest but no other fees or taxes.
+     * @param mixed $presentValue The present value - the total amount that a series of future payments is worth now
+     * @param mixed $futureValue The future value, or a cash balance you want to attain after the last payment is made.
+     *                               If fv is omitted, it is assumed to be 0 (the future value of a loan,
+     *                               for example, is 0).
+     * @param mixed $type A number 0 or 1 and indicates when payments are due:
+     *                      0 or omitted    At the end of the period.
+     *                      1               At the beginning of the period.
+     * @param mixed $guess Your guess for what the rate will be.
+     *                          If you omit guess, it is assumed to be 10 percent.
      */
     public static function rate(
-        $numberOfPeriods,
-        $payment,
-        $presentValue,
-        $futureValue = 0.0,
-        $type = FinancialConstants::PAYMENT_END_OF_PERIOD,
-        $guess = 0.1
-    ) {
+        mixed $numberOfPeriods,
+        mixed $payment,
+        mixed $presentValue,
+        mixed $futureValue = 0.0,
+        mixed $type = FinancialConstants::PAYMENT_END_OF_PERIOD,
+        mixed $guess = 0.1
+    ): string|float {
         $numberOfPeriods = Functions::flattenSingleValue($numberOfPeriods);
         $payment = Functions::flattenSingleValue($payment);
         $presentValue = Functions::flattenSingleValue($presentValue);
@@ -200,10 +193,7 @@ class Interest
         return $close ? $rate : ExcelError::NAN();
     }
 
-    /**
-     * @return float|string 
-     */
-    private static function rateNextGuess(float $rate, int $numberOfPeriods, float $payment, float $presentValue, float $futureValue, int $type)
+    private static function rateNextGuess(float $rate, int $numberOfPeriods, float $payment, float $presentValue, float $futureValue, int $type): string|float
     {
         if ($rate == 0.0) {
             return ExcelError::NAN();

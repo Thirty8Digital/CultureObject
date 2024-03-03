@@ -26,9 +26,7 @@ abstract class EndOfCentralDirectory
     ): string {
         $recordSize = 44 + strlen($extensibleDataSector); // (length of block - 12) = 44;
 
-        /**
- * @psalm-suppress MixedArgument 
-*/
+        /** @psalm-suppress MixedArgument */
         return PackField::pack(
             new PackField(format: 'V', value: static::SIGNATURE),
             new PackField(format: 'P', value: $recordSize),

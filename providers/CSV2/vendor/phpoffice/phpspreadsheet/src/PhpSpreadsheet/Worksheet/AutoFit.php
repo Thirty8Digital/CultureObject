@@ -21,9 +21,7 @@ class AutoFit
         $autoFilterIndentRanges[] = $this->getAutoFilterIndentRange($this->worksheet->getAutoFilter());
 
         foreach ($this->worksheet->getTableCollection() as $table) {
-            /**
- * @var Table $table 
-*/
+            /** @var Table $table */
             if ($table->getShowHeaderRow() === true && $table->getAllowFilter() === true) {
                 $autoFilter = $table->getAutoFilter();
                 if ($autoFilter !== null) {

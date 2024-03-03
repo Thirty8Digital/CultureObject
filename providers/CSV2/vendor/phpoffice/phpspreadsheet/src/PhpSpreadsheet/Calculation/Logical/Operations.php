@@ -31,13 +31,9 @@ class Operations
      *
      * @return bool|string the logical AND of the arguments
      */
-    public static function logicalAnd(...$args)
+    public static function logicalAnd(mixed ...$args)
     {
-        return self::countTrueValues(
-            $args, function (int $trueValueCount, int $count): bool {
-                return $trueValueCount === $count;
-            }
-        );
+        return self::countTrueValues($args, fn (int $trueValueCount, int $count): bool => $trueValueCount === $count);
     }
 
     /**
@@ -60,13 +56,9 @@ class Operations
      *
      * @return bool|string the logical OR of the arguments
      */
-    public static function logicalOr(...$args)
+    public static function logicalOr(mixed ...$args)
     {
-        return self::countTrueValues(
-            $args, function (int $trueValueCount): bool {
-                return $trueValueCount > 0;
-            }
-        );
+        return self::countTrueValues($args, fn (int $trueValueCount): bool => $trueValueCount > 0);
     }
 
     /**
@@ -91,13 +83,9 @@ class Operations
      *
      * @return bool|string the logical XOR of the arguments
      */
-    public static function logicalXor(...$args)
+    public static function logicalXor(mixed ...$args)
     {
-        return self::countTrueValues(
-            $args, function (int $trueValueCount): bool {
-                return $trueValueCount % 2 === 1;
-            }
-        );
+        return self::countTrueValues($args, fn (int $trueValueCount): bool => $trueValueCount % 2 === 1);
     }
 
     /**
@@ -116,13 +104,13 @@ class Operations
      *            holds the value TRUE or FALSE, in which case it is evaluated as the corresponding boolean value
      *
      * @param mixed $logical A value or expression that can be evaluated to TRUE or FALSE
-     *                       Or can be an array of values
+     *                      Or can be an array of values
      *
      * @return array|bool|string the boolean inverse of the argument
      *         If an array of values is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function NOT($logical = false)
+    public static function NOT(mixed $logical = false): array|bool|string
     {
         if (is_array($logical)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $logical);
@@ -142,10 +130,7 @@ class Operations
         return !$logical;
     }
 
-    /**
-     * @return bool|string
-     */
-    private static function countTrueValues(array $args, callable $func)
+    private static function countTrueValues(array $args, callable $func): bool|string
     {
         $trueValueCount = 0;
         $count = 0;

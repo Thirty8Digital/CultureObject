@@ -23,18 +23,16 @@ class Matrix
      */
     public static function isRowVector(array $values): bool
     {
-        return count($values, COUNT_RECURSIVE) > 1 &&
-            (count($values, COUNT_NORMAL) === 1 || count($values, COUNT_RECURSIVE) === count($values, COUNT_NORMAL));
+        return count($values, COUNT_RECURSIVE) > 1
+            && (count($values, COUNT_NORMAL) === 1 || count($values, COUNT_RECURSIVE) === count($values, COUNT_NORMAL));
     }
 
     /**
      * TRANSPOSE.
      *
      * @param array|mixed $matrixData A matrix of values
-     *
-     * @return array
      */
-    public static function transpose($matrixData)
+    public static function transpose($matrixData): array
     {
         $returnMatrix = [];
         if (!is_array($matrixData)) {
@@ -62,21 +60,21 @@ class Matrix
      * Excel Function:
      *        =INDEX(range_array, row_num, [column_num], [area_num])
      *
-     * @param mixed $matrix    A range of cells or an array constant
-     * @param mixed $rowNum    The row in the array or range from which to return a value.
-     *                         If row_num is omitted, column_num is required. Or can be an
-     *                         array of values
+     * @param mixed $matrix A range of cells or an array constant
+     * @param mixed $rowNum The row in the array or range from which to return a value.
+     *                          If row_num is omitted, column_num is required.
+     *                      Or can be an array of values
      * @param mixed $columnNum The column in the array or range from which to return a value.
-     *                         If column_num is omitted, row_num is required.
-     *                         Or can be an array of values
+     *                          If column_num is omitted, row_num is required.
+     *                      Or can be an array of values
      *
-     *                         TODO Provide support for area_num, currently not supported
+     * TODO Provide support for area_num, currently not supported
      *
      * @return mixed the value of a specified cell or array of cells
      *         If an array of values is passed as the $rowNum and/or $columnNum arguments, then the returned result
      *            will also be an array with the same dimensions
      */
-    public static function index($matrix, $rowNum = 0, $columnNum = null)
+    public static function index(mixed $matrix, mixed $rowNum = 0, mixed $columnNum = null): mixed
     {
         if (is_array($rowNum) || is_array($columnNum)) {
             return self::evaluateArrayArgumentsSubsetFrom([self::class, __FUNCTION__], 1, $matrix, $rowNum, $columnNum);
@@ -114,9 +112,7 @@ class Matrix
         $columnNum = $columnKeys[--$columnNum];
         if ($rowNum === 0) {
             return array_map(
-                function ($value) {
-                    return [$value];
-                },
+                fn ($value): array => [$value],
                 array_column($matrix, $columnNum)
             );
         }
@@ -125,10 +121,7 @@ class Matrix
         return $matrix[$rowNum][$columnNum];
     }
 
-    /**
-     * @return mixed 
-     */
-    private static function extractRowValue(array $matrix, array $rowKeys, int $rowNum)
+    private static function extractRowValue(array $matrix, array $rowKeys, int $rowNum): mixed
     {
         if ($rowNum === 0) {
             return $matrix;

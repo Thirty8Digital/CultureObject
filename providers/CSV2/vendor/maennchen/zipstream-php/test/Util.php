@@ -86,26 +86,16 @@ trait Util
     protected function zipArchiveOpenErrorCodeName(int $code): string
     {
         switch($code) {
-        case ZipArchive::ER_EXISTS: 
-            return 'ER_EXISTS';
-        case ZipArchive::ER_INCONS: 
-            return 'ER_INCONS';
-        case ZipArchive::ER_INVAL: 
-            return 'ER_INVAL';
-        case ZipArchive::ER_MEMORY: 
-            return 'ER_MEMORY';
-        case ZipArchive::ER_NOENT: 
-            return 'ER_NOENT';
-        case ZipArchive::ER_NOZIP: 
-            return 'ER_NOZIP';
-        case ZipArchive::ER_OPEN: 
-            return 'ER_OPEN';
-        case ZipArchive::ER_READ: 
-            return 'ER_READ';
-        case ZipArchive::ER_SEEK: 
-            return 'ER_SEEK';
-        default: 
-            return 'unknown';
+            case ZipArchive::ER_EXISTS: return 'ER_EXISTS';
+            case ZipArchive::ER_INCONS: return 'ER_INCONS';
+            case ZipArchive::ER_INVAL: return 'ER_INVAL';
+            case ZipArchive::ER_MEMORY: return 'ER_MEMORY';
+            case ZipArchive::ER_NOENT: return 'ER_NOENT';
+            case ZipArchive::ER_NOZIP: return 'ER_NOZIP';
+            case ZipArchive::ER_OPEN: return 'ER_OPEN';
+            case ZipArchive::ER_READ: return 'ER_READ';
+            case ZipArchive::ER_SEEK: return 'ER_SEEK';
+            default: return 'unknown';
         }
     }
 

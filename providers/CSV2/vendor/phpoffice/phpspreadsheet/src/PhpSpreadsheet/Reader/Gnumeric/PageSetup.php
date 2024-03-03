@@ -10,10 +10,7 @@ use SimpleXMLElement;
 
 class PageSetup
 {
-    /**
-     * @var Spreadsheet
-     */
-    private $spreadsheet;
+    private Spreadsheet $spreadsheet;
 
     public function __construct(Spreadsheet $spreadsheet)
     {
@@ -93,27 +90,27 @@ class PageSetup
             //    header is actually the sum of top and header; footer is actually the sum of bottom and footer
             //    then top is actually the header value, and bottom is actually the footer value
             switch ($key) {
-            case 'left':
-            case 'right':
-                $this->sheetMargin($key, $marginSize);
+                case 'left':
+                case 'right':
+                    $this->sheetMargin($key, $marginSize);
 
-                break;
-            case 'top':
-                $this->sheetMargin($key, $marginSet['header'] ?? 0);
+                    break;
+                case 'top':
+                    $this->sheetMargin($key, $marginSet['header'] ?? 0);
 
-                break;
-            case 'bottom':
-                $this->sheetMargin($key, $marginSet['footer'] ?? 0);
+                    break;
+                case 'bottom':
+                    $this->sheetMargin($key, $marginSet['footer'] ?? 0);
 
-                break;
-            case 'header':
-                $this->sheetMargin($key, ($marginSet['top'] ?? 0) - $marginSize);
+                    break;
+                case 'header':
+                    $this->sheetMargin($key, ($marginSet['top'] ?? 0) - $marginSize);
 
-                break;
-            case 'footer':
-                $this->sheetMargin($key, ($marginSet['bottom'] ?? 0) - $marginSize);
+                    break;
+                case 'footer':
+                    $this->sheetMargin($key, ($marginSet['bottom'] ?? 0) - $marginSize);
 
-                break;
+                    break;
             }
         }
     }
@@ -121,30 +118,30 @@ class PageSetup
     private function sheetMargin(string $key, float $marginSize): void
     {
         switch ($key) {
-        case 'top':
-            $this->spreadsheet->getActiveSheet()->getPageMargins()->setTop($marginSize);
+            case 'top':
+                $this->spreadsheet->getActiveSheet()->getPageMargins()->setTop($marginSize);
 
-            break;
-        case 'bottom':
-            $this->spreadsheet->getActiveSheet()->getPageMargins()->setBottom($marginSize);
+                break;
+            case 'bottom':
+                $this->spreadsheet->getActiveSheet()->getPageMargins()->setBottom($marginSize);
 
-            break;
-        case 'left':
-            $this->spreadsheet->getActiveSheet()->getPageMargins()->setLeft($marginSize);
+                break;
+            case 'left':
+                $this->spreadsheet->getActiveSheet()->getPageMargins()->setLeft($marginSize);
 
-            break;
-        case 'right':
-            $this->spreadsheet->getActiveSheet()->getPageMargins()->setRight($marginSize);
+                break;
+            case 'right':
+                $this->spreadsheet->getActiveSheet()->getPageMargins()->setRight($marginSize);
 
-            break;
-        case 'header':
-            $this->spreadsheet->getActiveSheet()->getPageMargins()->setHeader($marginSize);
+                break;
+            case 'header':
+                $this->spreadsheet->getActiveSheet()->getPageMargins()->setHeader($marginSize);
 
-            break;
-        case 'footer':
-            $this->spreadsheet->getActiveSheet()->getPageMargins()->setFooter($marginSize);
+                break;
+            case 'footer':
+                $this->spreadsheet->getActiveSheet()->getPageMargins()->setFooter($marginSize);
 
-            break;
+                break;
         }
     }
 }

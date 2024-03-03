@@ -21,42 +21,39 @@ class AccruedInterest
      * Excel Function:
      *        ACCRINT(issue,firstinterest,settlement,rate,par,frequency[,basis][,calc_method])
      *
-     * @param mixed $issue         the security's issue date
+     * @param mixed $issue the security's issue date
      * @param mixed $firstInterest the security's first interest date
-     * @param mixed $settlement    The security's settlement date.
-     *                             The security settlement date is
-     *                             the date after the issue date
-     *                             when the security is traded to
-     *                             the buyer.
-     * @param mixed $rate          The security's annual coupon rate
-     * @param mixed $parValue      The security's par value.
-     *                             If you omit par, ACCRINT
-     *                             uses $1,000.
-     * @param mixed $frequency     The number of coupon payments per year.
-     *                             Valid frequency values are: 1    Annual
-     *                             2    Semi-Annual 4    Quarterly
-     * @param mixed $basis         The type of day count to use.
-     *                             0 or omitted    US (NASD)
-     *                             30/360 1              
-     *                             Actual/actual 2              
-     *                             Actual/360 3              
-     *                             Actual/365 4              
-     *                             European 30/360
-     * @param mixed $calcMethod
+     * @param mixed $settlement The security's settlement date.
+     *                              The security settlement date is the date after the issue date
+     *                                  when the security is traded to the buyer.
+     * @param mixed $rate The security's annual coupon rate
+     * @param mixed $parValue The security's par value.
+     *                            If you omit par, ACCRINT uses $1,000.
+     * @param mixed $frequency The number of coupon payments per year.
+     *                             Valid frequency values are:
+     *                               1    Annual
+     *                               2    Semi-Annual
+     *                               4    Quarterly
+     * @param mixed $basis The type of day count to use.
+     *                         0 or omitted    US (NASD) 30/360
+     *                         1               Actual/actual
+     *                         2               Actual/360
+     *                         3               Actual/365
+     *                         4               European 30/360
+     * @param mixed $calcMethod Unused by PhpSpreadsheet, and apparently by Excel (https://exceljet.net/functions/accrint-function)
      *
      * @return float|string Result, or a string containing an error
      */
     public static function periodic(
-        $issue,
-        $firstInterest,
-        $settlement,
-        $rate,
-        $parValue = 1000,
-        $frequency = FinancialConstants::FREQUENCY_ANNUAL,
-        $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD,
-        $calcMethod = self::ACCRINT_CALCMODE_ISSUE_TO_SETTLEMENT
+        mixed $issue,
+        mixed $firstInterest,
+        mixed $settlement,
+        mixed $rate,
+        mixed $parValue = 1000,
+        mixed $frequency = FinancialConstants::FREQUENCY_ANNUAL,
+        mixed $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD,
+        mixed $calcMethod = self::ACCRINT_CALCMODE_ISSUE_TO_SETTLEMENT
     ) {
-        self::doNothing($calcMethod);
         $issue = Functions::flattenSingleValue($issue);
         $firstInterest = Functions::flattenSingleValue($firstInterest);
         $settlement = Functions::flattenSingleValue($settlement);
@@ -75,8 +72,7 @@ class AccruedInterest
             SecurityValidations::validateSecurityPeriod($issue, $settlement);
             $rate = SecurityValidations::validateRate($rate);
             $parValue = SecurityValidations::validateParValue($parValue);
-            $frequency = SecurityValidations::validateFrequency($frequency);
-            self::doNothing($frequency);
+            SecurityValidations::validateFrequency($frequency);
             $basis = SecurityValidations::validateBasis($basis);
         } catch (Exception $e) {
             return $e->getMessage();
@@ -104,28 +100,26 @@ class AccruedInterest
      * Excel Function:
      *        ACCRINTM(issue,settlement,rate[,par[,basis]])
      *
-     * @param mixed $issue      The security's issue date
+     * @param mixed $issue The security's issue date
      * @param mixed $settlement The security's settlement (or maturity) date
-     * @param mixed $rate       The security's annual coupon rate
-     * @param mixed $parValue   The security's par value.
-     *                          If you omit parValue,
-     *                          ACCRINT uses $1,000.
-     * @param mixed $basis      The type of day count to use.
-     *                          0 or omitted    US (NASD)
-     *                          30/360 1              
-     *                          Actual/actual 2              
-     *                          Actual/360 3              
-     *                          Actual/365 4              
-     *                          European 30/360
+     * @param mixed $rate The security's annual coupon rate
+     * @param mixed $parValue The security's par value.
+     *                            If you omit parValue, ACCRINT uses $1,000.
+     * @param mixed $basis The type of day count to use.
+     *                         0 or omitted    US (NASD) 30/360
+     *                         1               Actual/actual
+     *                         2               Actual/360
+     *                         3               Actual/365
+     *                         4               European 30/360
      *
      * @return float|string Result, or a string containing an error
      */
     public static function atMaturity(
-        $issue,
-        $settlement,
-        $rate,
-        $parValue = 1000,
-        $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD
+        mixed $issue,
+        mixed $settlement,
+        mixed $rate,
+        mixed $parValue = 1000,
+        mixed $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD
     ) {
         $issue = Functions::flattenSingleValue($issue);
         $settlement = Functions::flattenSingleValue($settlement);
@@ -153,13 +147,5 @@ class AccruedInterest
         }
 
         return $parValue * $rate * $daysBetweenIssueAndSettlement;
-    }
-
-    /**
-     * @param mixed $arg 
-     */
-    private static function doNothing($arg): bool
-    {
-        return (bool) $arg;
     }
 }

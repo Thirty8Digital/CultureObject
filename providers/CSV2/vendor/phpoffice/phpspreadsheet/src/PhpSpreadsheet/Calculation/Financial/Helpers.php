@@ -14,31 +14,31 @@ class Helpers
      *
      * Returns the number of days in a specified year, as defined by the "basis" value
      *
-     * @param int|string $year  The year against which we're testing
+     * @param int|string $year The year against which we're testing
      * @param int|string $basis The type of day count:
-     *                          0 or omitted US (NASD)   360
-     *                          1                        Actual (365 or 366 in a leap year)
-     *                          2                        360
-     *                          3                        365
-     *                          4                        European 360
+     *                              0 or omitted US (NASD)   360
+     *                              1                        Actual (365 or 366 in a leap year)
+     *                              2                        360
+     *                              3                        365
+     *                              4                        European 360
      *
      * @return int|string Result, or a string containing an error
      */
-    public static function daysPerYear($year, $basis = 0)
+    public static function daysPerYear($year, $basis = 0): string|int
     {
         if (!is_numeric($basis)) {
             return ExcelError::NAN();
         }
 
         switch ($basis) {
-        case FinancialConstants::BASIS_DAYS_PER_YEAR_NASD:
-        case FinancialConstants::BASIS_DAYS_PER_YEAR_360:
-        case FinancialConstants::BASIS_DAYS_PER_YEAR_360_EUROPEAN:
-            return 360;
-        case FinancialConstants::BASIS_DAYS_PER_YEAR_365:
-            return 365;
-        case FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL:
-            return (DateTimeExcel\Helpers::isLeapYear($year)) ? 366 : 365;
+            case FinancialConstants::BASIS_DAYS_PER_YEAR_NASD:
+            case FinancialConstants::BASIS_DAYS_PER_YEAR_360:
+            case FinancialConstants::BASIS_DAYS_PER_YEAR_360_EUROPEAN:
+                return 360;
+            case FinancialConstants::BASIS_DAYS_PER_YEAR_365:
+                return 365;
+            case FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL:
+                return (DateTimeExcel\Helpers::isLeapYear($year)) ? 366 : 365;
         }
 
         return ExcelError::NAN();

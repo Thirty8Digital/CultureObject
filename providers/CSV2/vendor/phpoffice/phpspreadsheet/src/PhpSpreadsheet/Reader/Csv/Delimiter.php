@@ -6,35 +6,19 @@ class Delimiter
 {
     protected const POTENTIAL_DELIMETERS = [',', ';', "\t", '|', ':', ' ', '~'];
 
-    /**
-     * @var resource 
-     */
+    /** @var resource */
     protected $fileHandle;
 
-    /**
-     * @var string 
-     */
-    protected $escapeCharacter;
+    protected string $escapeCharacter;
 
-    /**
-     * @var string 
-     */
-    protected $enclosure;
+    protected string $enclosure;
 
-    /**
-     * @var array 
-     */
-    protected $counts = [];
+    protected array $counts = [];
 
-    /**
-     * @var int 
-     */
-    protected $numberLines = 0;
+    protected int $numberLines = 0;
 
-    /**
-     * @var ?string 
-     */
-    protected $delimiter;
+    /** @var ?string */
+    protected ?string $delimiter = null;
 
     /**
      * @param resource $fileHandle
@@ -104,9 +88,7 @@ class Delimiter
 
             $meanSquareDeviations[$delimiter] = array_reduce(
                 $series,
-                function ($sum, $value) use ($median) {
-                    return $sum + ($value - $median) ** 2;
-                }
+                fn ($sum, $value): int|float => $sum + ($value - $median) ** 2
             ) / count($series);
         }
 

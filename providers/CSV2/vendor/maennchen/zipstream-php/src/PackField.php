@@ -28,34 +28,29 @@ class PackField
      */
     public static function pack(self ...$fields): string
     {
-        $fmt = array_reduce(
-            $fields, function (string $acc, self $field) {
-                return $acc . $field->format;
-            }, ''
-        );
+        $fmt = array_reduce($fields, function (string $acc, self $field) {
+            return $acc . $field->format;
+        }, '');
 
-        $args = array_map(
-            function (self $field) {
-                switch($field->format) {
+        $args = array_map(function (self $field) {
+            switch($field->format) {
                 case 'V':
                     if ($field->value > self::MAX_V) {
                         throw new RuntimeException(print_r($field->value, true) . ' is larger than 32 bits');
                     }
-break;
+                    break;
                 case 'v':
                     if ($field->value > self::MAX_v) {
                         throw new RuntimeException(print_r($field->value, true) . ' is larger than 16 bits');
                     }
-break;
-                case 'P': 
-break;
+                    break;
+                case 'P': break;
                 default:
-break;
-                }
+                    break;
+            }
 
-                return $field->value;
-            }, $fields
-        );
+            return $field->value;
+        }, $fields);
 
         return pack($fmt, ...$args);
     }

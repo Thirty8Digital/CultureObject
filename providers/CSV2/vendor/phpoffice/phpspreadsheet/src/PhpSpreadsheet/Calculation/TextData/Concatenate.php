@@ -46,17 +46,17 @@ class Concatenate
     /**
      * TEXTJOIN.
      *
-     * @param mixed $delimiter   The delimter to use between the joined arguments
-     *                           Or can be an array of values
+     * @param mixed $delimiter The delimter to use between the joined arguments
+     *                         Or can be an array of values
      * @param mixed $ignoreEmpty true/false Flag indicating whether empty arguments should be skipped
-     *                           Or can be an array of values
-     * @param mixed $args        The values to join
+     *                         Or can be an array of values
+     * @param mixed $args The values to join
      *
      * @return array|string The joined string
      *         If an array of values is passed for the $delimiter or $ignoreEmpty arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function TEXTJOIN($delimiter = '', $ignoreEmpty = true, ...$args)
+    public static function TEXTJOIN(mixed $delimiter = '', mixed $ignoreEmpty = true, mixed ...$args): array|string
     {
         if (is_array($delimiter) || is_array($ignoreEmpty)) {
             return self::evaluateArrayArgumentsSubset(
@@ -105,15 +105,15 @@ class Concatenate
      * Returns the result of builtin function round after validating args.
      *
      * @param mixed $stringValue The value to repeat
-     *                           Or can be an array of values
+     *                         Or can be an array of values
      * @param mixed $repeatCount The number of times the string value should be repeated
-     *                           Or can be an array of values
+     *                         Or can be an array of values
      *
      * @return array|string The repeated string
      *         If an array of values is passed for the $stringValue or $repeatCount arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function builtinREPT($stringValue, $repeatCount)
+    public static function builtinREPT(mixed $stringValue, mixed $repeatCount): array|string
     {
         if (is_array($stringValue) || is_array($repeatCount)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $stringValue, $repeatCount);

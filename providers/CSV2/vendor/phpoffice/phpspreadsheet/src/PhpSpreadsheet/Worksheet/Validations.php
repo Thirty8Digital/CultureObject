@@ -12,16 +12,16 @@ class Validations
     /**
      * Validate a cell address.
      *
-     * @param null|array<int>|CellAddress|string $cellAddress Coordinate of the cell as a string, eg: 'C5';
-     *                                                        or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
+     * @param null|array{0: int, 1: int}|CellAddress|string $cellAddress Coordinate of the cell as a string, eg: 'C5';
+     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
      */
-    public static function validateCellAddress($cellAddress): string
+    public static function validateCellAddress(null|CellAddress|string|array $cellAddress): string
     {
         if (is_string($cellAddress)) {
             [$worksheet, $address] = Worksheet::extractSheetTitle($cellAddress, true);
-            //            if (!empty($worksheet) && $worksheet !== $this->getTitle()) {
-            //                throw new Exception('Reference is not for this worksheet');
-            //            }
+//            if (!empty($worksheet) && $worksheet !== $this->getTitle()) {
+//                throw new Exception('Reference is not for this worksheet');
+//            }
 
             return empty($worksheet) ? strtoupper("$address") : $worksheet . '!' . strtoupper("$address");
         }
@@ -36,11 +36,11 @@ class Validations
     /**
      * Validate a cell address or cell range.
      *
-     * @param AddressRange|array<int>|CellAddress|int|string $cellRange Coordinate of the cells as a string, eg: 'C5:F12';
-     *                                                                  or as an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 12]),
-     *                                                                  or as a CellAddress or AddressRange object.
+     * @param AddressRange|array{0: int, 1: int, 2: int, 3: int}|array{0: int, 1: int}|CellAddress|int|string $cellRange Coordinate of the cells as a string, eg: 'C5:F12';
+     *               or as an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 12]),
+     *               or as a CellAddress or AddressRange object.
      */
-    public static function validateCellOrCellRange($cellRange): string
+    public static function validateCellOrCellRange(AddressRange|CellAddress|int|string|array $cellRange): string
     {
         if (is_string($cellRange) || is_numeric($cellRange)) {
             // Convert a single column reference like 'A' to 'A:A',
@@ -59,11 +59,11 @@ class Validations
     /**
      * Validate a cell range.
      *
-     * @param AddressRange|array<int>|string $cellRange Coordinate of the cells as a string, eg: 'C5:F12';
-     *                                                  or as an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 12]),
-     *                                                  or as an AddressRange object.
+     * @param AddressRange|array{0: int, 1: int, 2: int, 3: int}|array{0: int, 1: int}|string $cellRange Coordinate of the cells as a string, eg: 'C5:F12';
+     *               or as an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 12]),
+     *               or as an AddressRange object.
      */
-    public static function validateCellRange($cellRange): string
+    public static function validateCellRange(AddressRange|string|array $cellRange): string
     {
         if (is_string($cellRange)) {
             [$worksheet, $addressRange] = Worksheet::extractSheetTitle($cellRange, true);
@@ -73,7 +73,7 @@ class Validations
             $addressRange = (string) preg_replace(
                 ['/^([A-Z]+):([A-Z]+)$/i', '/^(\\d+):(\\d+)$/'],
                 [self::SETMAXROW, self::SETMAXCOL],
-                $addressRange
+                $addressRange ?? ''
             );
 
             return empty($worksheet) ? strtoupper($addressRange) : $worksheet . '!' . strtoupper($addressRange);
@@ -81,18 +81,18 @@ class Validations
 
         if (is_array($cellRange)) {
             switch (count($cellRange)) {
-            case 2:
-                $from = [$cellRange[0], $cellRange[1]];
-                $to = [$cellRange[0], $cellRange[1]];
+                case 4:
+                    $from = [$cellRange[0], $cellRange[1]];
+                    $to = [$cellRange[2], $cellRange[3]];
 
-                break;
-            case 4:
-                $from = [$cellRange[0], $cellRange[1]];
-                $to = [$cellRange[2], $cellRange[3]];
+                    break;
+                case 2:
+                    $from = [$cellRange[0], $cellRange[1]];
+                    $to = [$cellRange[0], $cellRange[1]];
 
-                break;
-            default:
-                throw new SpreadsheetException('CellRange array length must be 2 or 4');
+                    break;
+                default:
+                    throw new SpreadsheetException('CellRange array length must be 2 or 4');
             }
             $cellRange = new CellRange(CellAddress::fromColumnRowArray($from), CellAddress::fromColumnRowArray($to));
         }

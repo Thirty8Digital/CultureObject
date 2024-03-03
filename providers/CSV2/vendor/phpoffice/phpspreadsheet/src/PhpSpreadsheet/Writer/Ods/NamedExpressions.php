@@ -10,20 +10,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class NamedExpressions
 {
-    /**
-     * @var XMLWriter 
-     */
-    private $objWriter;
+    private XMLWriter $objWriter;
 
-    /**
-     * @var Spreadsheet 
-     */
-    private $spreadsheet;
+    private Spreadsheet $spreadsheet;
 
-    /**
-     * @var Formula 
-     */
-    private $formulaConvertor;
+    private Formula $formulaConvertor;
 
     public function __construct(XMLWriter $objWriter, Spreadsheet $spreadsheet, Formula $formulaConvertor)
     {
@@ -66,12 +57,10 @@ class NamedExpressions
             'table:expression',
             $this->formulaConvertor->convertFormula($definedName->getValue(), $title)
         );
-        $this->objWriter->writeAttribute(
-            'table:base-cell-address', $this->convertAddress(
-                $definedName,
-                "'" . $title . "'!\$A\$1"
-            )
-        );
+        $this->objWriter->writeAttribute('table:base-cell-address', $this->convertAddress(
+            $definedName,
+            "'" . $title . "'!\$A\$1"
+        ));
     }
 
     private function writeNamedRange(DefinedName $definedName): void
@@ -82,12 +71,10 @@ class NamedExpressions
             $baseCell = "'" . $ws->getTitle() . "'!$baseCell";
         }
         $this->objWriter->writeAttribute('table:name', $definedName->getName());
-        $this->objWriter->writeAttribute(
-            'table:base-cell-address', $this->convertAddress(
-                $definedName,
-                $baseCell
-            )
-        );
+        $this->objWriter->writeAttribute('table:base-cell-address', $this->convertAddress(
+            $definedName,
+            $baseCell
+        ));
         $this->objWriter->writeAttribute('table:cell-range-address', $this->convertAddress($definedName, $definedName->getValue()));
     }
 
@@ -141,7 +128,7 @@ class NamedExpressions
             $address = substr($address, 0, $offset) . $newRange . substr($address, $offset + $length);
         }
 
-        if (substr($address, 0, 1) === '=') {
+        if (str_starts_with($address, '=')) {
             $address = substr($address, 1);
         }
 

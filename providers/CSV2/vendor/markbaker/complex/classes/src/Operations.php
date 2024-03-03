@@ -9,8 +9,8 @@ class Operations
     /**
      * Adds two or more complex numbers
      *
-     * @param  array of string|integer|float|Complex $complexValues The numbers to add
-     * @return Complex
+     * @param     array of string|integer|float|Complex    $complexValues   The numbers to add
+     * @return    Complex
      */
     public static function add(...$complexValues): Complex
     {
@@ -24,9 +24,8 @@ class Operations
         foreach ($complexValues as $complex) {
             $complex = Complex::validateComplexArgument($complex);
 
-            if ($result->isComplex() && $complex->isComplex() 
-                && $result->getSuffix() !== $complex->getSuffix()
-            ) {
+            if ($result->isComplex() && $complex->isComplex() &&
+                $result->getSuffix() !== $complex->getSuffix()) {
                 throw new Exception('Suffix Mismatch');
             }
 
@@ -46,8 +45,8 @@ class Operations
     /**
      * Divides two or more complex numbers
      *
-     * @param  array of string|integer|float|Complex $complexValues The numbers to divide
-     * @return Complex
+     * @param     array of string|integer|float|Complex    $complexValues   The numbers to divide
+     * @return    Complex
      */
     public static function divideby(...$complexValues): Complex
     {
@@ -61,9 +60,8 @@ class Operations
         foreach ($complexValues as $complex) {
             $complex = Complex::validateComplexArgument($complex);
 
-            if ($result->isComplex() && $complex->isComplex() 
-                && $result->getSuffix() !== $complex->getSuffix()
-            ) {
+            if ($result->isComplex() && $complex->isComplex() &&
+                $result->getSuffix() !== $complex->getSuffix()) {
                 throw new Exception('Suffix Mismatch');
             }
             if ($complex->getReal() == 0.0 && $complex->getImaginary() == 0.0) {
@@ -93,8 +91,8 @@ class Operations
     /**
      * Divides two or more complex numbers
      *
-     * @param  array of string|integer|float|Complex $complexValues The numbers to divide
-     * @return Complex
+     * @param     array of string|integer|float|Complex    $complexValues   The numbers to divide
+     * @return    Complex
      */
     public static function divideinto(...$complexValues): Complex
     {
@@ -108,9 +106,8 @@ class Operations
         foreach ($complexValues as $complex) {
             $complex = Complex::validateComplexArgument($complex);
 
-            if ($result->isComplex() && $complex->isComplex() 
-                && $result->getSuffix() !== $complex->getSuffix()
-            ) {
+            if ($result->isComplex() && $complex->isComplex() &&
+                $result->getSuffix() !== $complex->getSuffix()) {
                 throw new Exception('Suffix Mismatch');
             }
             if ($result->getReal() == 0.0 && $result->getImaginary() == 0.0) {
@@ -140,8 +137,8 @@ class Operations
     /**
      * Multiplies two or more complex numbers
      *
-     * @param  array of string|integer|float|Complex $complexValues The numbers to multiply
-     * @return Complex
+     * @param     array of string|integer|float|Complex    $complexValues   The numbers to multiply
+     * @return    Complex
      */
     public static function multiply(...$complexValues): Complex
     {
@@ -155,9 +152,8 @@ class Operations
         foreach ($complexValues as $complex) {
             $complex = Complex::validateComplexArgument($complex);
 
-            if ($result->isComplex() && $complex->isComplex() 
-                && $result->getSuffix() !== $complex->getSuffix()
-            ) {
+            if ($result->isComplex() && $complex->isComplex() &&
+                $result->getSuffix() !== $complex->getSuffix()) {
                 throw new Exception('Suffix Mismatch');
             }
 
@@ -179,8 +175,8 @@ class Operations
     /**
      * Subtracts two or more complex numbers
      *
-     * @param  array of string|integer|float|Complex $complexValues The numbers to subtract
-     * @return Complex
+     * @param     array of string|integer|float|Complex    $complexValues   The numbers to subtract
+     * @return    Complex
      */
     public static function subtract(...$complexValues): Complex
     {
@@ -194,9 +190,8 @@ class Operations
         foreach ($complexValues as $complex) {
             $complex = Complex::validateComplexArgument($complex);
 
-            if ($result->isComplex() && $complex->isComplex() 
-                && $result->getSuffix() !== $complex->getSuffix()
-            ) {
+            if ($result->isComplex() && $complex->isComplex() &&
+                $result->getSuffix() !== $complex->getSuffix()) {
                 throw new Exception('Suffix Mismatch');
             }
 

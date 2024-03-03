@@ -10,10 +10,7 @@ use stdClass;
 
 class PageSettings
 {
-    /**
-     * @var stdClass
-     */
-    private $printSettings;
+    private stdClass $printSettings;
 
     public function __construct(SimpleXMLElement $xmlX)
     {
@@ -62,28 +59,25 @@ class PageSettings
         if (isset($xmlX->WorksheetOptions->PageSetup)) {
             foreach ($xmlX->WorksheetOptions->PageSetup as $pageSetupData) {
                 foreach ($pageSetupData as $pageSetupKey => $pageSetupValue) {
-                    /**
- * @scrutinizer ignore-call 
-*/
                     $pageSetupAttributes = $pageSetupValue->attributes(Namespaces::URN_EXCEL);
                     if ($pageSetupAttributes !== null) {
                         switch ($pageSetupKey) {
-                        case 'Layout':
-                            $this->setLayout($printDefaults, $pageSetupAttributes);
+                            case 'Layout':
+                                $this->setLayout($printDefaults, $pageSetupAttributes);
 
-                            break;
-                        case 'Header':
-                            $printDefaults->headerMargin = (float) $pageSetupAttributes->Margin ?: 1.0;
+                                break;
+                            case 'Header':
+                                $printDefaults->headerMargin = (float) $pageSetupAttributes->Margin ?: 1.0;
 
-                            break;
-                        case 'Footer':
-                            $printDefaults->footerMargin = (float) $pageSetupAttributes->Margin ?: 1.0;
+                                break;
+                            case 'Footer':
+                                $printDefaults->footerMargin = (float) $pageSetupAttributes->Margin ?: 1.0;
 
-                            break;
-                        case 'PageMargins':
-                            $this->setMargins($printDefaults, $pageSetupAttributes);
+                                break;
+                            case 'PageMargins':
+                                $this->setMargins($printDefaults, $pageSetupAttributes);
 
-                            break;
+                                break;
                         }
                     }
                 }
@@ -99,18 +93,18 @@ class PageSettings
             foreach ($xmlX->WorksheetOptions->Print as $printData) {
                 foreach ($printData as $printKey => $printValue) {
                     switch ($printKey) {
-                    case 'LeftToRight':
-                        $printDefaults->printOrder = PageSetup::PAGEORDER_OVER_THEN_DOWN;
+                        case 'LeftToRight':
+                            $printDefaults->printOrder = PageSetup::PAGEORDER_OVER_THEN_DOWN;
 
-                        break;
-                    case 'PaperSizeIndex':
-                        $printDefaults->paperSize = (int) $printValue ?: 9;
+                            break;
+                        case 'PaperSizeIndex':
+                            $printDefaults->paperSize = (int) $printValue ?: 9;
 
-                        break;
-                    case 'Scale':
-                        $printDefaults->scale = (int) $printValue ?: 100;
+                            break;
+                        case 'Scale':
+                            $printDefaults->scale = (int) $printValue ?: 100;
 
-                        break;
+                            break;
                     }
                 }
             }

@@ -26,9 +26,9 @@ use StockPlot;
  */
 abstract class JpGraphRendererBase implements IRenderer
 {
-    private static $width = 640;
+    private const DEFAULT_WIDTH = 640.0;
 
-    private static $height = 480;
+    private const DEFAULT_HEIGHT = 480.0;
 
     private static $colourSet = [
         'mediumpurple1', 'palegreen3', 'gold1', 'cadetblue1',
@@ -38,9 +38,9 @@ abstract class JpGraphRendererBase implements IRenderer
         'goldenrod2',
     ];
 
-    private static $markSet;
+    private static array $markSet;
 
-    private $chart;
+    private Chart $chart;
 
     private $graph;
 
@@ -68,6 +68,16 @@ abstract class JpGraphRendererBase implements IRenderer
             'circle' => MARK_CIRCLE,
             'plus' => MARK_CROSS,
         ];
+    }
+
+    private function getGraphWidth(): float
+    {
+        return $this->chart->getRenderedWidth() ?? self::DEFAULT_WIDTH;
+    }
+
+    private function getGraphHeight(): float
+    {
+        return $this->chart->getRenderedHeight() ?? self::DEFAULT_HEIGHT;
     }
 
     /**
@@ -102,7 +112,7 @@ abstract class JpGraphRendererBase implements IRenderer
         return $seriesPlot;
     }
 
-    private function formatDataSetLabels($groupID, $datasetLabels, $rotation = '')
+    private function formatDataSetLabels(int $groupID, array $datasetLabels, $rotation = '')
     {
         $datasetLabelFormatCode = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotCategoryByIndex(0)->getFormatCode() ?? '';
         //    Retrieve any label formatting code
@@ -129,7 +139,7 @@ abstract class JpGraphRendererBase implements IRenderer
         return $datasetLabels;
     }
 
-    private function percentageSumCalculation($groupID, $seriesCount)
+    private function percentageSumCalculation(int $groupID, $seriesCount)
     {
         $sumValues = [];
         //    Adjust our values to a percentage value across all series in the group
@@ -151,7 +161,7 @@ abstract class JpGraphRendererBase implements IRenderer
         return $sumValues;
     }
 
-    private function percentageAdjustValues($dataValues, $sumValues)
+    private function percentageAdjustValues(array $dataValues, array $sumValues)
     {
         foreach ($dataValues as $k => $dataValue) {
             $dataValues[$k] = $dataValue / $sumValues[$k] * 100;
@@ -190,38 +200,38 @@ abstract class JpGraphRendererBase implements IRenderer
         if ($legend !== null) {
             $legendPosition = $legend->getPosition();
             switch ($legendPosition) {
-            case 'r':
-                $this->graph->legend->SetPos(0.01, 0.5, 'right', 'center'); //    right
-                $this->graph->legend->SetColumns(1);
+                case 'r':
+                    $this->graph->legend->SetPos(0.01, 0.5, 'right', 'center'); //    right
+                    $this->graph->legend->SetColumns(1);
 
-                break;
-            case 'l':
-                $this->graph->legend->SetPos(0.01, 0.5, 'left', 'center'); //    left
-                $this->graph->legend->SetColumns(1);
+                    break;
+                case 'l':
+                    $this->graph->legend->SetPos(0.01, 0.5, 'left', 'center'); //    left
+                    $this->graph->legend->SetColumns(1);
 
-                break;
-            case 't':
-                $this->graph->legend->SetPos(0.5, 0.01, 'center', 'top'); //    top
+                    break;
+                case 't':
+                    $this->graph->legend->SetPos(0.5, 0.01, 'center', 'top'); //    top
 
-                break;
-            case 'b':
-                $this->graph->legend->SetPos(0.5, 0.99, 'center', 'bottom'); //    bottom
+                    break;
+                case 'b':
+                    $this->graph->legend->SetPos(0.5, 0.99, 'center', 'bottom'); //    bottom
 
-                break;
-            default:
-                $this->graph->legend->SetPos(0.01, 0.01, 'right', 'top'); //    top-right
-                $this->graph->legend->SetColumns(1);
+                    break;
+                default:
+                    $this->graph->legend->SetPos(0.01, 0.01, 'right', 'top'); //    top-right
+                    $this->graph->legend->SetColumns(1);
 
-                break;
+                    break;
             }
         } else {
             $this->graph->legend->Hide();
         }
     }
 
-    private function renderCartesianPlotArea($type = 'textlin'): void
+    private function renderCartesianPlotArea(string $type = 'textlin'): void
     {
-        $this->graph = new Graph(self::$width, self::$height);
+        $this->graph = new Graph($this->getGraphWidth(), $this->getGraphHeight());
         $this->graph->SetScale($type);
 
         $this->renderTitle();
@@ -258,20 +268,20 @@ abstract class JpGraphRendererBase implements IRenderer
 
     private function renderPiePlotArea(): void
     {
-        $this->graph = new PieGraph(self::$width, self::$height);
+        $this->graph = new PieGraph($this->getGraphWidth(), $this->getGraphHeight());
 
         $this->renderTitle();
     }
 
     private function renderRadarPlotArea(): void
     {
-        $this->graph = new RadarGraph(self::$width, self::$height);
+        $this->graph = new RadarGraph($this->getGraphWidth(), $this->getGraphHeight());
         $this->graph->SetScale('lin');
 
         $this->renderTitle();
     }
 
-    private function renderPlotLine($groupID, $filled = false, $combination = false): void
+    private function renderPlotLine(int $groupID, bool $filled = false, bool $combination = false): void
     {
         $grouping = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotGrouping();
 
@@ -338,7 +348,7 @@ abstract class JpGraphRendererBase implements IRenderer
         $this->graph->Add($groupPlot);
     }
 
-    private function renderPlotBar($groupID, $dimensions = '2d'): void
+    private function renderPlotBar(int $groupID, ?string $dimensions = '2d'): void
     {
         $rotation = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotDirection();
         //    Rotate for bar rather than column chart
@@ -426,7 +436,7 @@ abstract class JpGraphRendererBase implements IRenderer
         $this->graph->Add($groupPlot);
     }
 
-    private function renderPlotScatter($groupID, $bubble): void
+    private function renderPlotScatter(int $groupID, bool $bubble): void
     {
         $scatterStyle = $bubbleSize = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotStyle();
 
@@ -460,7 +470,6 @@ abstract class JpGraphRendererBase implements IRenderer
                     $dataValuesY[$k] = $k;
                 }
             }
-            //var_dump($dataValuesY, $dataValuesX, $bubbleSize);
 
             $seriesPlot = new ScatterPlot($dataValuesX, $dataValuesY);
             if ($scatterStyle == 'lineMarker') {
@@ -468,7 +477,7 @@ abstract class JpGraphRendererBase implements IRenderer
                 $seriesPlot->link->SetColor(self::$colourSet[self::$plotColour]);
             } elseif ($scatterStyle == 'smoothMarker') {
                 $spline = new Spline($dataValuesY, $dataValuesX);
-                [$splineDataY, $splineDataX] = $spline->Get(count($dataValuesX) * self::$width / 20);
+                [$splineDataY, $splineDataX] = $spline->Get(count($dataValuesX) * $this->getGraphWidth() / 20);
                 $lplot = new LinePlot($splineDataX, $splineDataY);
                 $lplot->SetColor(self::$colourSet[self::$plotColour]);
 
@@ -490,7 +499,7 @@ abstract class JpGraphRendererBase implements IRenderer
         }
     }
 
-    private function renderPlotRadar($groupID): void
+    private function renderPlotRadar(int $groupID): void
     {
         $radarStyle = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotStyle();
 
@@ -527,7 +536,7 @@ abstract class JpGraphRendererBase implements IRenderer
         }
     }
 
-    private function renderPlotContour($groupID): void
+    private function renderPlotContour(int $groupID): void
     {
         $seriesCount = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotSeriesCount();
 
@@ -543,7 +552,7 @@ abstract class JpGraphRendererBase implements IRenderer
         $this->graph->Add($seriesPlot);
     }
 
-    private function renderPlotStock($groupID): void
+    private function renderPlotStock(int $groupID): void
     {
         $seriesCount = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotSeriesCount();
         $plotOrder = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotOrder();
@@ -605,7 +614,7 @@ abstract class JpGraphRendererBase implements IRenderer
         }
     }
 
-    private function renderBarChart($groupCount, $dimensions = '2d'): void
+    private function renderBarChart($groupCount, ?string $dimensions = '2d'): void
     {
         $this->renderCartesianPlotArea();
 
@@ -632,7 +641,7 @@ abstract class JpGraphRendererBase implements IRenderer
         }
     }
 
-    private function renderPieChart($groupCount, $dimensions = '2d', $doughnut = false, $multiplePlots = false): void
+    private function renderPieChart($groupCount, ?string $dimensions = '2d', bool $doughnut = false, bool $multiplePlots = false): void
     {
         $this->renderPiePlotArea();
 
@@ -729,7 +738,7 @@ abstract class JpGraphRendererBase implements IRenderer
         }
     }
 
-    private function renderCombinationChart($groupCount, $outputDestination)
+    private function renderCombinationChart($groupCount, $outputDestination): bool
     {
         $this->renderCartesianPlotArea();
 
@@ -737,35 +746,35 @@ abstract class JpGraphRendererBase implements IRenderer
             $dimensions = null;
             $chartType = $this->chart->getPlotArea()->getPlotGroupByIndex($i)->getPlotType();
             switch ($chartType) {
-            case 'area3DChart':
-            case 'areaChart':
-                $this->renderPlotLine($i, true, true);
+                case 'area3DChart':
+                case 'areaChart':
+                    $this->renderPlotLine($i, true, true);
 
-                break;
-            case 'bar3DChart':
-                $dimensions = '3d';
-                // no break
-            case 'barChart':
-                $this->renderPlotBar($i, $dimensions);
+                    break;
+                case 'bar3DChart':
+                    $dimensions = '3d';
+                    // no break
+                case 'barChart':
+                    $this->renderPlotBar($i, $dimensions);
 
-                break;
-            case 'line3DChart':
-            case 'lineChart':
-                $this->renderPlotLine($i, false, true);
+                    break;
+                case 'line3DChart':
+                case 'lineChart':
+                    $this->renderPlotLine($i, false, true);
 
-                break;
-            case 'scatterChart':
-                $this->renderPlotScatter($i, false);
+                    break;
+                case 'scatterChart':
+                    $this->renderPlotScatter($i, false);
 
-                break;
-            case 'bubbleChart':
-                $this->renderPlotScatter($i, true);
+                    break;
+                case 'bubbleChart':
+                    $this->renderPlotScatter($i, true);
 
-                break;
-            default:
-                $this->graph = null;
+                    break;
+                default:
+                    $this->graph = null;
 
-                return false;
+                    return false;
             }
         }
 
@@ -776,7 +785,7 @@ abstract class JpGraphRendererBase implements IRenderer
         return true;
     }
 
-    public function render($outputDestination)
+    public function render(?string $outputDestination): bool
     {
         self::$plotColour = 0;
 
@@ -803,66 +812,66 @@ abstract class JpGraphRendererBase implements IRenderer
         }
 
         switch ($chartType) {
-        case 'area3DChart':
-            $dimensions = '3d';
-            // no break
-        case 'areaChart':
-            $this->renderAreaChart($groupCount);
+            case 'area3DChart':
+                $dimensions = '3d';
+                // no break
+            case 'areaChart':
+                $this->renderAreaChart($groupCount);
 
-            break;
-        case 'bar3DChart':
-            $dimensions = '3d';
-            // no break
-        case 'barChart':
-            $this->renderBarChart($groupCount, $dimensions);
+                break;
+            case 'bar3DChart':
+                $dimensions = '3d';
+                // no break
+            case 'barChart':
+                $this->renderBarChart($groupCount, $dimensions);
 
-            break;
-        case 'line3DChart':
-            $dimensions = '3d';
-            // no break
-        case 'lineChart':
-            $this->renderLineChart($groupCount);
+                break;
+            case 'line3DChart':
+                $dimensions = '3d';
+                // no break
+            case 'lineChart':
+                $this->renderLineChart($groupCount);
 
-            break;
-        case 'pie3DChart':
-            $dimensions = '3d';
-            // no break
-        case 'pieChart':
-            $this->renderPieChart($groupCount, $dimensions, false, false);
+                break;
+            case 'pie3DChart':
+                $dimensions = '3d';
+                // no break
+            case 'pieChart':
+                $this->renderPieChart($groupCount, $dimensions, false, false);
 
-            break;
-        case 'doughnut3DChart':
-            $dimensions = '3d';
-            // no break
-        case 'doughnutChart':
-            $this->renderPieChart($groupCount, $dimensions, true, true);
+                break;
+            case 'doughnut3DChart':
+                $dimensions = '3d';
+                // no break
+            case 'doughnutChart':
+                $this->renderPieChart($groupCount, $dimensions, true, true);
 
-            break;
-        case 'scatterChart':
-            $this->renderScatterChart($groupCount);
+                break;
+            case 'scatterChart':
+                $this->renderScatterChart($groupCount);
 
-            break;
-        case 'bubbleChart':
-            $this->renderBubbleChart($groupCount);
+                break;
+            case 'bubbleChart':
+                $this->renderBubbleChart($groupCount);
 
-            break;
-        case 'radarChart':
-            $this->renderRadarChart($groupCount);
+                break;
+            case 'radarChart':
+                $this->renderRadarChart($groupCount);
 
-            break;
-        case 'surface3DChart':
-        case 'surfaceChart':
-            $this->renderContourChart($groupCount);
+                break;
+            case 'surface3DChart':
+            case 'surfaceChart':
+                $this->renderContourChart($groupCount);
 
-            break;
-        case 'stockChart':
-            $this->renderStockChart($groupCount);
+                break;
+            case 'stockChart':
+                $this->renderStockChart($groupCount);
 
-            break;
-        default:
-            echo $chartType . ' is not yet implemented<br />';
+                break;
+            default:
+                echo $chartType . ' is not yet implemented<br />';
 
-            return false;
+                return false;
         }
         $this->renderLegend();
 

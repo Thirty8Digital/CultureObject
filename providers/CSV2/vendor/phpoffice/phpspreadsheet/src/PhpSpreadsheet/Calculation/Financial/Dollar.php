@@ -18,18 +18,17 @@ class Dollar
      * This function converts a number to text using currency format, with the decimals rounded to the specified place.
      * The format used is $#,##0.00_);($#,##0.00)..
      *
-     * @param mixed $number    The value to format, or can be an array of numbers
+     * @param mixed $number The value to format, or can be an array of numbers
      *                         Or can be an array of values
      * @param mixed $precision The number of digits to display to the right of the decimal point (as an integer).
-     *                         If precision is negative, number is rounded to the left of the decimal point.
-     *                         If you omit precision, it is assumed to be 2
-     *                         Or can be an array of precision values
+     *                            If precision is negative, number is rounded to the left of the decimal point.
+     *                            If you omit precision, it is assumed to be 2
+     *              Or can be an array of precision values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function format($number, $precision = 2)
+    public static function format(mixed $number, mixed $precision = 2)
     {
         return Format::DOLLAR($number, $precision);
     }
@@ -45,16 +44,11 @@ class Dollar
      *        DOLLARDE(fractional_dollar,fraction)
      *
      * @param mixed $fractionalDollar Fractional Dollar
-     *                                Or can be an array of values
-     * @param mixed $fraction         Fraction
-     *                                Or can
-     *                                be an
-     *                                array of
-     *                                values
-     *
-     * @return array|float|string
+     *              Or can be an array of values
+     * @param mixed $fraction Fraction
+     *              Or can be an array of values
      */
-    public static function decimal($fractionalDollar = null, $fraction = 0)
+    public static function decimal(mixed $fractionalDollar = null, mixed $fraction = 0): array|string|float
     {
         if (is_array($fractionalDollar) || is_array($fraction)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $fractionalDollar, $fraction);
@@ -96,16 +90,11 @@ class Dollar
      *        DOLLARFR(decimal_dollar,fraction)
      *
      * @param mixed $decimalDollar Decimal Dollar
-     *                             Or can be an array of values
-     * @param mixed $fraction      Fraction
-     *                             Or can
-     *                             be an
-     *                             array of
-     *                             values
-     *
-     * @return array|float|string
+     *              Or can be an array of values
+     * @param mixed $fraction Fraction
+     *              Or can be an array of values
      */
-    public static function fractional($decimalDollar = null, $fraction = 0)
+    public static function fractional(mixed $decimalDollar = null, mixed $fraction = 0): array|string|float
     {
         if (is_array($decimalDollar) || is_array($fraction)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $decimalDollar, $fraction);

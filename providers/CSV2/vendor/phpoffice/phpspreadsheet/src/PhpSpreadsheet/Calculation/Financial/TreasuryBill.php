@@ -16,16 +16,15 @@ class TreasuryBill
      * Returns the bond-equivalent yield for a Treasury bill.
      *
      * @param mixed $settlement The Treasury bill's settlement date.
-     *                          The Treasury bill's settlement date is the date after the issue date
-     *                          when the Treasury bill is traded to the buyer.
-     * @param mixed $maturity   The Treasury bill's maturity date.
-     *                          The maturity date is the date when
-     *                          the Treasury bill expires.
-     * @param mixed $discount   The Treasury bill's discount rate
+     *                                The Treasury bill's settlement date is the date after the issue date
+     *                                    when the Treasury bill is traded to the buyer.
+     * @param mixed $maturity The Treasury bill's maturity date.
+     *                                The maturity date is the date when the Treasury bill expires.
+     * @param mixed $discount The Treasury bill's discount rate
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function bondEquivalentYield($settlement, $maturity, $discount)
+    public static function bondEquivalentYield(mixed $settlement, mixed $maturity, mixed $discount): string|float
     {
         $settlement = Functions::flattenSingleValue($settlement);
         $maturity = Functions::flattenSingleValue($maturity);
@@ -62,16 +61,15 @@ class TreasuryBill
      * Returns the price per $100 face value for a Treasury bill.
      *
      * @param mixed $settlement The Treasury bill's settlement date.
-     *                          The Treasury bill's settlement date is the date after the issue date
-     *                          when the Treasury bill is traded to the buyer.
-     * @param mixed $maturity   The Treasury bill's maturity date.
-     *                          The maturity date is the date when
-     *                          the Treasury bill expires.
-     * @param mixed $discount   The Treasury bill's discount rate
+     *                                The Treasury bill's settlement date is the date after the issue date
+     *                                    when the Treasury bill is traded to the buyer.
+     * @param mixed $maturity The Treasury bill's maturity date.
+     *                                The maturity date is the date when the Treasury bill expires.
+     * @param mixed $discount The Treasury bill's discount rate
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function price($settlement, $maturity, $discount)
+    public static function price(mixed $settlement, mixed $maturity, mixed $discount): string|float
     {
         $settlement = Functions::flattenSingleValue($settlement);
         $maturity = Functions::flattenSingleValue($maturity);
@@ -113,16 +111,13 @@ class TreasuryBill
      * Returns the yield for a Treasury bill.
      *
      * @param mixed $settlement The Treasury bill's settlement date.
-     *                          The Treasury bill's settlement date is the date after the issue date when
-     *                          the Treasury bill is traded to the buyer.
-     * @param mixed $maturity   The Treasury bill's maturity date.
-     *                          The maturity date is the date when
-     *                          the Treasury bill expires.
-     * @param mixed $price      The Treasury bill's price per $100 face value
-     *
-     * @return float|string
+     *                                The Treasury bill's settlement date is the date after the issue date when
+     *                                    the Treasury bill is traded to the buyer.
+     * @param mixed $maturity The Treasury bill's maturity date.
+     *                                The maturity date is the date when the Treasury bill expires.
+     * @param float|string $price The Treasury bill's price per $100 face value
      */
-    public static function yield($settlement, $maturity, $price)
+    public static function yield(mixed $settlement, mixed $maturity, $price): string|float
     {
         $settlement = Functions::flattenSingleValue($settlement);
         $maturity = Functions::flattenSingleValue($maturity);

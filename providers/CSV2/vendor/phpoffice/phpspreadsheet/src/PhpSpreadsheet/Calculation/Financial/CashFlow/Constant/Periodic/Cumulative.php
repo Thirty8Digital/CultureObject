@@ -18,27 +18,24 @@ class Cumulative
      * Excel Function:
      *        CUMIPMT(rate,nper,pv,start,end[,type])
      *
-     * @param mixed $rate         The Interest rate
-     * @param mixed $periods      The total number of payment periods
+     * @param mixed $rate The Interest rate
+     * @param mixed $periods The total number of payment periods
      * @param mixed $presentValue Present Value
-     * @param mixed $start        The first period in the calculation.
-     *                            Payment periods are numbered
-     *                            beginning with 1.
-     * @param mixed $end          the last period in the calculation
-     * @param mixed $type         A number 0 or 1 and indicates when payments are due:
-     *                            0 or omitted    At the end of the period. 1         
-     *                            At the beginning of the period.
-     *
-     * @return float|string
+     * @param mixed $start The first period in the calculation.
+     *                       Payment periods are numbered beginning with 1.
+     * @param mixed $end the last period in the calculation
+     * @param mixed $type A number 0 or 1 and indicates when payments are due:
+     *                    0 or omitted    At the end of the period.
+     *                    1               At the beginning of the period.
      */
     public static function interest(
-        $rate,
-        $periods,
-        $presentValue,
-        $start,
-        $end,
-        $type = FinancialConstants::PAYMENT_END_OF_PERIOD
-    ) {
+        mixed $rate,
+        mixed $periods,
+        mixed $presentValue,
+        mixed $start,
+        mixed $end,
+        mixed $type = FinancialConstants::PAYMENT_END_OF_PERIOD
+    ): string|float|int {
         $rate = Functions::flattenSingleValue($rate);
         $periods = Functions::flattenSingleValue($periods);
         $presentValue = Functions::flattenSingleValue($presentValue);
@@ -84,27 +81,24 @@ class Cumulative
      * Excel Function:
      *        CUMPRINC(rate,nper,pv,start,end[,type])
      *
-     * @param mixed $rate         The Interest rate
-     * @param mixed $periods      The total number of payment periods as an integer
+     * @param mixed $rate The Interest rate
+     * @param mixed $periods The total number of payment periods as an integer
      * @param mixed $presentValue Present Value
-     * @param mixed $start        The first period in the calculation.
-     *                            Payment periods are numbered
-     *                            beginning with 1.
-     * @param mixed $end          the last period in the calculation
-     * @param mixed $type         A number 0 or 1 and indicates when payments are due:
-     *                            0 or omitted    At the end of the period. 1         
-     *                            At the beginning of the period.
-     *
-     * @return float|string
+     * @param mixed $start The first period in the calculation.
+     *                       Payment periods are numbered beginning with 1.
+     * @param mixed $end the last period in the calculation
+     * @param mixed $type A number 0 or 1 and indicates when payments are due:
+     *                    0 or omitted    At the end of the period.
+     *                    1               At the beginning of the period.
      */
     public static function principal(
-        $rate,
-        $periods,
-        $presentValue,
-        $start,
-        $end,
-        $type = FinancialConstants::PAYMENT_END_OF_PERIOD
-    ) {
+        mixed $rate,
+        mixed $periods,
+        mixed $presentValue,
+        mixed $start,
+        mixed $end,
+        mixed $type = FinancialConstants::PAYMENT_END_OF_PERIOD
+    ): string|float|int {
         $rate = Functions::flattenSingleValue($rate);
         $periods = Functions::flattenSingleValue($periods);
         $presentValue = Functions::flattenSingleValue($presentValue);

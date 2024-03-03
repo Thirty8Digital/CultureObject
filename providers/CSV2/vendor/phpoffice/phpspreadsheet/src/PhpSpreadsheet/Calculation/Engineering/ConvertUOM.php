@@ -29,7 +29,7 @@ class ConvertUOM
      *
      * @var mixed[]
      */
-    private static $conversionUnits = [
+    private static array $conversionUnits = [
         // Weight and Mass
         'g' => ['Group' => self::CATEGORY_WEIGHT_AND_MASS, 'Unit Name' => 'Gram', 'AllowPrefix' => true],
         'sg' => ['Group' => self::CATEGORY_WEIGHT_AND_MASS, 'Unit Name' => 'Slug', 'AllowPrefix' => false],
@@ -203,7 +203,7 @@ class ConvertUOM
      *
      * @var mixed[]
      */
-    private static $conversionMultipliers = [
+    private static array $conversionMultipliers = [
         'Y' => ['multiplier' => 1E24, 'name' => 'yotta'],
         'Z' => ['multiplier' => 1E21, 'name' => 'zetta'],
         'E' => ['multiplier' => 1E18, 'name' => 'exa'],
@@ -232,7 +232,7 @@ class ConvertUOM
      *
      * @var mixed[]
      */
-    private static $binaryConversionMultipliers = [
+    private static array $binaryConversionMultipliers = [
         'Yi' => ['multiplier' => 2 ** 80, 'name' => 'yobi'],
         'Zi' => ['multiplier' => 2 ** 70, 'name' => 'zebi'],
         'Ei' => ['multiplier' => 2 ** 60, 'name' => 'exbi'],
@@ -248,7 +248,7 @@ class ConvertUOM
      *
      * @var mixed[]
      */
-    private static $unitConversions = [
+    private static array $unitConversions = [
         // Conversion uses gram (g) as an intermediate unit
         self::CATEGORY_WEIGHT_AND_MASS => [
             'g' => 1.0,
@@ -435,10 +435,8 @@ class ConvertUOM
     /**
      *    getConversionGroups
      * Returns a list of the different conversion groups for UOM conversions.
-     *
-     * @return array
      */
-    public static function getConversionCategories()
+    public static function getConversionCategories(): array
     {
         $conversionGroups = [];
         foreach (self::$conversionUnits as $conversionUnit) {
@@ -452,11 +450,9 @@ class ConvertUOM
      *    getConversionGroupUnits
      * Returns an array of units of measure, for a specified conversion group, or for all groups.
      *
-     * @param string $category The group whose units of measure you want to retrieve
-     *
-     * @return array
+     * @param ?string $category The group whose units of measure you want to retrieve
      */
-    public static function getConversionCategoryUnits($category = null)
+    public static function getConversionCategoryUnits(?string $category = null): array
     {
         $conversionGroups = [];
         foreach (self::$conversionUnits as $conversionUnit => $conversionGroup) {
@@ -471,11 +467,9 @@ class ConvertUOM
     /**
      * getConversionGroupUnitDetails.
      *
-     * @param string $category The group whose units of measure you want to retrieve
-     *
-     * @return array
+     * @param ?string $category The group whose units of measure you want to retrieve
      */
-    public static function getConversionCategoryUnitDetails($category = null)
+    public static function getConversionCategoryUnitDetails(?string $category = null): array
     {
         $conversionGroups = [];
         foreach (self::$conversionUnits as $conversionUnit => $conversionGroup) {
@@ -496,7 +490,7 @@ class ConvertUOM
      *
      * @return mixed[]
      */
-    public static function getConversionMultipliers()
+    public static function getConversionMultipliers(): array
     {
         return self::$conversionMultipliers;
     }
@@ -507,7 +501,7 @@ class ConvertUOM
      *
      * @return mixed[]
      */
-    public static function getBinaryConversionMultipliers()
+    public static function getBinaryConversionMultipliers(): array
     {
         return self::$binaryConversionMultipliers;
     }
@@ -522,14 +516,12 @@ class ConvertUOM
      *    Excel Function:
      *        CONVERT(value,fromUOM,toUOM)
      *
-     * @param array|float|int|string $value   the value in fromUOM to convert
-     *                                        Or can be an array of values
-     * @param array|string           $fromUOM the units for value
-     *                                        Or can be an array
-     *                                        of values
-     * @param array|string           $toUOM   the units for the result
-     *                                        Or can be an array of
-     *                                        values
+     * @param array|float|int|string $value the value in fromUOM to convert
+     *                      Or can be an array of values
+     * @param array|string $fromUOM the units for value
+     *                      Or can be an array of values
+     * @param array|string $toUOM the units for the result
+     *                      Or can be an array of values
      *
      * @return array|float|string Result, or a string containing an error
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
@@ -548,7 +540,7 @@ class ConvertUOM
         try {
             [$fromUOM, $fromCategory, $fromMultiplier] = self::getUOMDetails($fromUOM);
             [$toUOM, $toCategory, $toMultiplier] = self::getUOMDetails($toUOM);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return ExcelError::NA();
         }
 
@@ -566,11 +558,7 @@ class ConvertUOM
         } elseif ($fromUOM === $toUOM) {
             return $value / $toMultiplier;
         } elseif ($fromCategory === self::CATEGORY_TEMPERATURE) {
-            return self::convertTemperature(
-                $fromUOM, $toUOM, /**
-                * @scrutinizer ignore-type 
-                */ $value
-            );
+            return self::convertTemperature($fromUOM, $toUOM, $value);
         }
 
         $baseValue = $value * (1.0 / self::$unitConversions[$fromCategory][$fromUOM]);
@@ -627,12 +615,7 @@ class ConvertUOM
         throw new Exception('UoM Not Found');
     }
 
-    /**
-     * @param float|int $value
-     *
-     * @return float|int
-     */
-    protected static function convertTemperature(string $fromUOM, string $toUOM, $value)
+    protected static function convertTemperature(string $fromUOM, string $toUOM, float|int $value): float|int
     {
         $fromUOM = self::resolveTemperatureSynonyms($fromUOM);
         $toUOM = self::resolveTemperatureSynonyms($toUOM);
@@ -643,42 +626,42 @@ class ConvertUOM
 
         // Convert to Kelvin
         switch ($fromUOM) {
-        case 'F':
-            $value = ($value - 32) / 1.8 + 273.15;
+            case 'F':
+                $value = ($value - 32) / 1.8 + 273.15;
 
-            break;
-        case 'C':
-            $value += 273.15;
+                break;
+            case 'C':
+                $value += 273.15;
 
-            break;
-        case 'Rank':
-            $value /= 1.8;
+                break;
+            case 'Rank':
+                $value /= 1.8;
 
-            break;
-        case 'Reau':
-            $value = $value * 1.25 + 273.15;
+                break;
+            case 'Reau':
+                $value = $value * 1.25 + 273.15;
 
-            break;
+                break;
         }
 
         // Convert from Kelvin
         switch ($toUOM) {
-        case 'F':
-            $value = ($value - 273.15) * 1.8 + 32.00;
+            case 'F':
+                $value = ($value - 273.15) * 1.8 + 32.00;
 
-            break;
-        case 'C':
-            $value -= 273.15;
+                break;
+            case 'C':
+                $value -= 273.15;
 
-            break;
-        case 'Rank':
-            $value *= 1.8;
+                break;
+            case 'Rank':
+                $value *= 1.8;
 
-            break;
-        case 'Reau':
-            $value = ($value - 273.15) * 0.80000;
+                break;
+            case 'Reau':
+                $value = ($value - 273.15) * 0.80000;
 
-            break;
+                break;
         }
 
         return $value;
@@ -686,15 +669,11 @@ class ConvertUOM
 
     private static function resolveTemperatureSynonyms(string $uom): string
     {
-        switch ($uom) {
-        case 'fah':
-            return 'F';
-        case 'cel':
-            return 'C';
-        case 'kel':
-            return 'K';
-        }
-
-        return $uom;
+        return match ($uom) {
+            'fah' => 'F',
+            'cel' => 'C',
+            'kel' => 'K',
+            default => $uom,
+        };
     }
 }

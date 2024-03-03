@@ -14,13 +14,13 @@ class Lookup
      * LOOKUP
      * The LOOKUP function searches for value either from a one-row or one-column range or from an array.
      *
-     * @param mixed      $lookupValue  The value that you want to match in lookup_array
-     * @param mixed      $lookupVector The range of cells being searched
+     * @param mixed $lookupValue The value that you want to match in lookup_array
+     * @param mixed $lookupVector The range of cells being searched
      * @param null|mixed $resultVector The column from which the matching value must be returned
      *
      * @return mixed The value of the found cell
      */
-    public static function lookup($lookupValue, $lookupVector, $resultVector = null)
+    public static function lookup(mixed $lookupValue, mixed $lookupVector, $resultVector = null): mixed
     {
         if (is_array($lookupValue)) {
             return self::evaluateArrayArgumentsSubset([self::class, __FUNCTION__], 1, $lookupValue, $lookupVector, $resultVector);

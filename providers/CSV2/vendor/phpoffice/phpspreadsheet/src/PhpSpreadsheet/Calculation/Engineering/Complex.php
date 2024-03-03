@@ -21,18 +21,17 @@ class Complex
      *        COMPLEX(realNumber,imaginary[,suffix])
      *
      * @param mixed $realNumber the real float coefficient of the complex number
-     *                          Or can be an array of values
-     * @param mixed $imaginary  the imaginary float coefficient of the complex number
-     *                          Or can be an array of values
-     * @param mixed $suffix     The character suffix for the imaginary component of the complex number.
-     *                          If omitted, the suffix is assumed to be "i". Or can be an array of
-     *                          values
+     *                      Or can be an array of values
+     * @param mixed $imaginary the imaginary float coefficient of the complex number
+     *                      Or can be an array of values
+     * @param mixed $suffix The character suffix for the imaginary component of the complex number.
+     *                          If omitted, the suffix is assumed to be "i".
+     *                      Or can be an array of values
      *
-     * @return array|string
-     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|string If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function COMPLEX($realNumber = 0.0, $imaginary = 0.0, $suffix = 'i')
+    public static function COMPLEX(mixed $realNumber = 0.0, mixed $imaginary = 0.0, mixed $suffix = 'i'): array|string
     {
         if (is_array($realNumber) || is_array($imaginary) || is_array($suffix)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $realNumber, $imaginary, $suffix);
@@ -67,14 +66,14 @@ class Complex
      *        IMAGINARY(complexNumber)
      *
      * @param array|string $complexNumber the complex number for which you want the imaginary
-     *                                    coefficient
-     *                                    Or can be an array of values
+     *                                         coefficient
+     *                      Or can be an array of values
      *
      * @return array|float|string (string if an error)
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function IMAGINARY($complexNumber)
+    public static function IMAGINARY($complexNumber): array|string|float
     {
         if (is_array($complexNumber)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $complexNumber);
@@ -82,7 +81,7 @@ class Complex
 
         try {
             $complex = new ComplexObject($complexNumber);
-        } catch (ComplexException $e) {
+        } catch (ComplexException) {
             return ExcelError::NAN();
         }
 
@@ -98,13 +97,13 @@ class Complex
      *        IMREAL(complexNumber)
      *
      * @param array|string $complexNumber the complex number for which you want the real coefficient
-     *                                    Or can be an array of values
+     *                      Or can be an array of values
      *
      * @return array|float|string (string if an error)
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function IMREAL($complexNumber)
+    public static function IMREAL($complexNumber): array|string|float
     {
         if (is_array($complexNumber)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $complexNumber);
@@ -112,7 +111,7 @@ class Complex
 
         try {
             $complex = new ComplexObject($complexNumber);
-        } catch (ComplexException $e) {
+        } catch (ComplexException) {
             return ExcelError::NAN();
         }
 

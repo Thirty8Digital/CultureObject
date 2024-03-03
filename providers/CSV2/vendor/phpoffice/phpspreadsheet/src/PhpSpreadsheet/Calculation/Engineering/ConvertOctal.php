@@ -15,34 +15,36 @@ class ConvertOctal extends ConvertBase
      * Excel Function:
      *        OCT2BIN(x[,places])
      *
-     * @param array|string $value  The octal number you want to convert. Number may not
-     *                             contain more than 10 characters. The most
-     *                             significant bit of number is the sign bit. The
-     *                             remaining 29 bits are magnitude bits. Negative
-     *                             numbers are represented using two's-complement
-     *                             notation. If number is negative, OCT2BIN ignores
-     *                             places and returns a 10-character binary number. If
-     *                             number is negative, it cannot be less than
-     *                             7777777000, and if number is positive, it cannot be
-     *                             greater than 777. If number is not a valid octal
-     *                             number, OCT2BIN returns the #NUM! error value. If
-     *                             OCT2BIN requires more than places characters, it
-     *                             returns the #NUM! error value. Or can be an array of
-     *                             values
-     * @param array|int    $places The number of characters to use. If places is omitted,
-     *                             OCT2BIN uses the minimum number of characters
-     *                             necessary. Places is useful for padding the return
-     *                             value with leading 0s (zeros). If places is not an
-     *                             integer, it is truncated. If places is nonnumeric,
-     *                             OCT2BIN returns the #VALUE! error value. If places is
-     *                             negative, OCT2BIN returns the #NUM! error value. Or
-     *                             can be an array of values
+     * @param array|bool|float|int|string $value The octal number you want to convert. Number may not
+     *                          contain more than 10 characters. The most significant
+     *                          bit of number is the sign bit. The remaining 29 bits
+     *                          are magnitude bits. Negative numbers are represented
+     *                          using two's-complement notation.
+     *                      If number is negative, OCT2BIN ignores places and returns
+     *                          a 10-character binary number.
+     *                      If number is negative, it cannot be less than 7777777000,
+     *                          and if number is positive, it cannot be greater than 777.
+     *                      If number is not a valid octal number, OCT2BIN returns
+     *                          the #NUM! error value.
+     *                      If OCT2BIN requires more than places characters, it
+     *                          returns the #NUM! error value.
+     *                      Or can be an array of values
+     * @param array|int $places The number of characters to use. If places is omitted,
+     *                          OCT2BIN uses the minimum number of characters necessary.
+     *                          Places is useful for padding the return value with
+     *                          leading 0s (zeros).
+     *                      If places is not an integer, it is truncated.
+     *                      If places is nonnumeric, OCT2BIN returns the #VALUE!
+     *                          error value.
+     *                      If places is negative, OCT2BIN returns the #NUM! error
+     *                          value.
+     *                      Or can be an array of values
      *
      * @return array|string Result, or an error
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toBinary($value, $places = null)
+    public static function toBinary($value, $places = null): array|string
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);
@@ -67,14 +69,14 @@ class ConvertOctal extends ConvertBase
      * Excel Function:
      *        OCT2DEC(x)
      *
-     * @param array|string $value The octal number you want to convert. Number may not contain
-     *                            more than 10 octal characters (30 bits). The most significant
-     *                            bit of number is the sign bit. The remaining 29 bits are
-     *                            magnitude bits. Negative numbers are represented using
-     *                            two's-complement notation.
-     *                            If number is not a valid octal number, OCT2DEC returns the
-     *                            #NUM! error value.
-     *                            Or can be an array of values
+     * @param array|bool|float|int|string $value The octal number you want to convert. Number may not contain
+     *                          more than 10 octal characters (30 bits). The most significant
+     *                          bit of number is the sign bit. The remaining 29 bits are
+     *                          magnitude bits. Negative numbers are represented using
+     *                          two's-complement notation.
+     *                      If number is not a valid octal number, OCT2DEC returns the
+     *                          #NUM! error value.
+     *                      Or can be an array of values
      *
      * @return array|string Result, or an error
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
@@ -116,29 +118,31 @@ class ConvertOctal extends ConvertBase
      * Excel Function:
      *        OCT2HEX(x[,places])
      *
-     * @param array|string $value  The octal number you want to convert. Number may not contain
-     *                             more than 10 octal characters (30 bits). The most
-     *                             significant bit of number is the sign bit. The remaining 29
-     *                             bits are magnitude bits. Negative numbers are represented
-     *                             using two's-complement notation. If number is negative,
-     *                             OCT2HEX ignores places and returns a 10-character
-     *                             hexadecimal number. If number is not a valid octal number,
-     *                             OCT2HEX returns the #NUM! error value. If OCT2HEX requires
-     *                             more than places characters, it returns the #NUM! error
-     *                             value. Or can be an array of values
-     * @param array|int    $places The number of characters to use. If places is omitted, OCT2HEX
-     *                             uses the minimum number of characters necessary. Places is
-     *                             useful for padding the return value with leading 0s (zeros).
-     *                             If places is not an integer, it is truncated. If places is
-     *                             nonnumeric, OCT2HEX returns the #VALUE! error value. If places
-     *                             is negative, OCT2HEX returns the #NUM! error value. Or can be
-     *                             an array of values
+     * @param array|bool|float|int|string $value The octal number you want to convert. Number may not contain
+     *                          more than 10 octal characters (30 bits). The most significant
+     *                          bit of number is the sign bit. The remaining 29 bits are
+     *                          magnitude bits. Negative numbers are represented using
+     *                          two's-complement notation.
+     *                      If number is negative, OCT2HEX ignores places and returns a
+     *                          10-character hexadecimal number.
+     *                      If number is not a valid octal number, OCT2HEX returns the
+     *                          #NUM! error value.
+     *                      If OCT2HEX requires more than places characters, it returns
+     *                          the #NUM! error value.
+     *                      Or can be an array of values
+     * @param array|int $places The number of characters to use. If places is omitted, OCT2HEX
+     *                          uses the minimum number of characters necessary. Places is useful
+     *                          for padding the return value with leading 0s (zeros).
+     *                      If places is not an integer, it is truncated.
+     *                      If places is nonnumeric, OCT2HEX returns the #VALUE! error value.
+     *                      If places is negative, OCT2HEX returns the #NUM! error value.
+     *                      Or can be an array of values
      *
      * @return array|string Result, or an error
      *         If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function toHex($value, $places = null)
+    public static function toHex($value, $places = null): array|string
     {
         if (is_array($value) || is_array($places)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $places);

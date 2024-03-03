@@ -43,34 +43,34 @@ class Font extends StyleBase
         foreach ($styleAttributes as $styleAttributeKey => $styleAttributeValue) {
             $styleAttributeValue = (string) $styleAttributeValue;
             switch ($styleAttributeKey) {
-            case 'FontName':
-                $style['font']['name'] = $styleAttributeValue;
+                case 'FontName':
+                    $style['font']['name'] = $styleAttributeValue;
 
-                break;
-            case 'Size':
-                $style['font']['size'] = $styleAttributeValue;
+                    break;
+                case 'Size':
+                    $style['font']['size'] = $styleAttributeValue;
 
-                break;
-            case 'Color':
-                $style['font']['color']['rgb'] = substr($styleAttributeValue, 1);
+                    break;
+                case 'Color':
+                    $style['font']['color']['rgb'] = substr($styleAttributeValue, 1);
 
-                break;
-            case 'Bold':
-                $style['font']['bold'] = $styleAttributeValue === '1';
+                    break;
+                case 'Bold':
+                    $style['font']['bold'] = $styleAttributeValue === '1';
 
-                break;
-            case 'Italic':
-                $style['font']['italic'] = $styleAttributeValue === '1';
+                    break;
+                case 'Italic':
+                    $style['font']['italic'] = $styleAttributeValue === '1';
 
-                break;
-            case 'Underline':
-                $style = $this->parseUnderline($style, $styleAttributeValue);
+                    break;
+                case 'Underline':
+                    $style = $this->parseUnderline($style, $styleAttributeValue);
 
-                break;
-            case 'VerticalAlign':
-                $style = $this->parseVerticalAlign($style, $styleAttributeValue);
+                    break;
+                case 'VerticalAlign':
+                    $style = $this->parseVerticalAlign($style, $styleAttributeValue);
 
-                break;
+                    break;
             }
         }
 

@@ -6,9 +6,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class PercentageFormatter extends BaseFormatter
 {
-    /**
-     * @param float|int $value 
-     */
+    /** @param float|int $value */
     public static function format($value, string $format): string
     {
         if ($format === NumberFormat::FORMAT_PERCENTAGE) {
@@ -40,13 +38,11 @@ class PercentageFormatter extends BaseFormatter
 
         $wholePartSize += $decimalPartSize + (int) ($decimalPartSize > 0);
         $replacement = "0{$wholePartSize}.{$decimalPartSize}";
-        $mask = (string) preg_replace('/[#0,]+\.?[?#0,]*/ui', "%{$replacement}f{$placeHolders}", $format);
+        $mask = (string) preg_replace('/[#0,]+\.?[?#0,]*/ui', "%{$replacement}F{$placeHolders}", $format);
 
-        /**
- * @var float 
-*/
+        /** @var float $valueFloat */
         $valueFloat = $value;
 
-        return sprintf($mask, round($valueFloat, $decimalPartSize));
+        return self::adjustSeparators(sprintf($mask, round($valueFloat, $decimalPartSize)));
     }
 }

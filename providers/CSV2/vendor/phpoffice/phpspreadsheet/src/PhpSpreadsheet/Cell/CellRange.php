@@ -4,18 +4,16 @@ namespace PhpOffice\PhpSpreadsheet\Cell;
 
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Stringable;
 
-class CellRange implements AddressRange
+/**
+ * @implements AddressRange<CellAddress>
+ */
+class CellRange implements AddressRange, Stringable
 {
-    /**
-     * @var CellAddress
-     */
-    protected $from;
+    protected CellAddress $from;
 
-    /**
-     * @var CellAddress
-     */
-    protected $to;
+    protected CellAddress $to;
 
     public function __construct(CellAddress $from, CellAddress $to)
     {
@@ -61,9 +59,7 @@ class CellRange implements AddressRange
         return new class ($cellAddress, $worksheet) extends CellAddress {
             public function nextRow(int $offset = 1): CellAddress
             {
-                /**
- * @var CellAddress $result 
-*/
+                /** @var CellAddress $result */
                 $result = parent::nextRow($offset);
                 $this->rowId = $result->rowId;
                 $this->cellAddress = $result->cellAddress;
@@ -73,9 +69,7 @@ class CellRange implements AddressRange
 
             public function previousRow(int $offset = 1): CellAddress
             {
-                /**
- * @var CellAddress $result 
-*/
+                /** @var CellAddress $result */
                 $result = parent::previousRow($offset);
                 $this->rowId = $result->rowId;
                 $this->cellAddress = $result->cellAddress;
@@ -85,9 +79,7 @@ class CellRange implements AddressRange
 
             public function nextColumn(int $offset = 1): CellAddress
             {
-                /**
- * @var CellAddress $result 
-*/
+                /** @var CellAddress $result */
                 $result = parent::nextColumn($offset);
                 $this->columnId = $result->columnId;
                 $this->columnName = $result->columnName;
@@ -98,9 +90,7 @@ class CellRange implements AddressRange
 
             public function previousColumn(int $offset = 1): CellAddress
             {
-                /**
- * @var CellAddress $result 
-*/
+                /** @var CellAddress $result */
                 $result = parent::previousColumn($offset);
                 $this->columnId = $result->columnId;
                 $this->columnName = $result->columnName;

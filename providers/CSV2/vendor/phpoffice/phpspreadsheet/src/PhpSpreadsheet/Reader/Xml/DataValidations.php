@@ -40,9 +40,7 @@ class DataValidations
     {
         $xmlX = $worksheet->children(Namespaces::URN_EXCEL);
         $sheet = $spreadsheet->getActiveSheet();
-        /**
- * @var callable 
-*/
+        /** @var callable $pregCallback */
         $pregCallback = [$this, 'replaceR1C1'];
         foreach ($xmlX->DataValidation as $dataValidation) {
             $cells = [];
@@ -60,114 +58,114 @@ class DataValidations
                 $tagValue = (string) $tagValue;
                 $tagValueLower = strtolower($tagValue);
                 switch ($tagName) {
-                case 'Range':
-                    foreach (explode(',', $tagValue) as $range) {
-                        $cell = '';
-                        if (preg_match('/^R(\d+)C(\d+):R(\d+)C(\d+)$/', (string) $range, $selectionMatches) === 1) {
-                            // range
-                            $firstCell = Coordinate::stringFromColumnIndex((int) $selectionMatches[2])
-                                . $selectionMatches[1];
-                            $cell = $firstCell
-                                . ':'
-                                . Coordinate::stringFromColumnIndex((int) $selectionMatches[4])
-                                . $selectionMatches[3];
-                            $this->thisRow = (int) $selectionMatches[1];
-                            $this->thisColumn = (int) $selectionMatches[2];
-                            $sheet->getCell($firstCell);
-                        } elseif (preg_match('/^R(\d+)C(\d+)$/', (string) $range, $selectionMatches) === 1) {
-                            // cell
-                            $cell = Coordinate::stringFromColumnIndex((int) $selectionMatches[2])
-                                . $selectionMatches[1];
-                            $sheet->getCell($cell);
-                            $this->thisRow = (int) $selectionMatches[1];
-                            $this->thisColumn = (int) $selectionMatches[2];
-                        } elseif (preg_match('/^C(\d+)$/', (string) $range, $selectionMatches) === 1) {
-                            // column
-                            $firstCell = Coordinate::stringFromColumnIndex((int) $selectionMatches[1])
-                                . '1';
-                            $cell = $firstCell
-                                . ':'
-                                . Coordinate::stringFromColumnIndex((int) $selectionMatches[1])
-                                . ((string) AddressRange::MAX_ROW);
-                            $this->thisColumn = (int) $selectionMatches[1];
-                            $sheet->getCell($firstCell);
-                        } elseif (preg_match('/^R(\d+)$/', (string) $range, $selectionMatches)) {
-                            // row
-                            $firstCell = 'A'
-                                . $selectionMatches[1];
-                            $cell = $firstCell
-                                . ':'
-                                . AddressRange::MAX_COLUMN
-                                . $selectionMatches[1];
-                            $this->thisRow = (int) $selectionMatches[1];
-                            $sheet->getCell($firstCell);
+                    case 'Range':
+                        foreach (explode(',', $tagValue) as $range) {
+                            $cell = '';
+                            if (preg_match('/^R(\d+)C(\d+):R(\d+)C(\d+)$/', (string) $range, $selectionMatches) === 1) {
+                                // range
+                                $firstCell = Coordinate::stringFromColumnIndex((int) $selectionMatches[2])
+                                    . $selectionMatches[1];
+                                $cell = $firstCell
+                                    . ':'
+                                    . Coordinate::stringFromColumnIndex((int) $selectionMatches[4])
+                                    . $selectionMatches[3];
+                                $this->thisRow = (int) $selectionMatches[1];
+                                $this->thisColumn = (int) $selectionMatches[2];
+                                $sheet->getCell($firstCell);
+                            } elseif (preg_match('/^R(\d+)C(\d+)$/', (string) $range, $selectionMatches) === 1) {
+                                // cell
+                                $cell = Coordinate::stringFromColumnIndex((int) $selectionMatches[2])
+                                    . $selectionMatches[1];
+                                $sheet->getCell($cell);
+                                $this->thisRow = (int) $selectionMatches[1];
+                                $this->thisColumn = (int) $selectionMatches[2];
+                            } elseif (preg_match('/^C(\d+)$/', (string) $range, $selectionMatches) === 1) {
+                                // column
+                                $firstCell = Coordinate::stringFromColumnIndex((int) $selectionMatches[1])
+                                    . '1';
+                                $cell = $firstCell
+                                    . ':'
+                                    . Coordinate::stringFromColumnIndex((int) $selectionMatches[1])
+                                    . ((string) AddressRange::MAX_ROW);
+                                $this->thisColumn = (int) $selectionMatches[1];
+                                $sheet->getCell($firstCell);
+                            } elseif (preg_match('/^R(\d+)$/', (string) $range, $selectionMatches)) {
+                                // row
+                                $firstCell = 'A'
+                                    . $selectionMatches[1];
+                                $cell = $firstCell
+                                    . ':'
+                                    . AddressRange::MAX_COLUMN
+                                    . $selectionMatches[1];
+                                $this->thisRow = (int) $selectionMatches[1];
+                                $sheet->getCell($firstCell);
+                            }
+
+                            $validation->setSqref($cell);
+                            $stRange = $sheet->shrinkRangeToFit($cell);
+                            $cells = array_merge($cells, Coordinate::extractAllCellReferencesInRange($stRange));
                         }
 
-                        $validation->setSqref($cell);
-                        $stRange = $sheet->shrinkRangeToFit($cell);
-                        $cells = array_merge($cells, Coordinate::extractAllCellReferencesInRange($stRange));
-                    }
+                        break;
+                    case 'Type':
+                        $validation->setType(self::TYPE_MAPPINGS[$tagValueLower] ?? $tagValueLower);
 
-                    break;
-                case 'Type':
-                    $validation->setType(self::TYPE_MAPPINGS[$tagValueLower] ?? $tagValueLower);
+                        break;
+                    case 'Qualifier':
+                        $validation->setOperator(self::OPERATOR_MAPPINGS[$tagValueLower] ?? $tagValueLower);
 
-                    break;
-                case 'Qualifier':
-                    $validation->setOperator(self::OPERATOR_MAPPINGS[$tagValueLower] ?? $tagValueLower);
+                        break;
+                    case 'InputTitle':
+                        $validation->setPromptTitle($tagValue);
 
-                    break;
-                case 'InputTitle':
-                    $validation->setPromptTitle($tagValue);
+                        break;
+                    case 'InputMessage':
+                        $validation->setPrompt($tagValue);
 
-                    break;
-                case 'InputMessage':
-                    $validation->setPrompt($tagValue);
+                        break;
+                    case 'InputHide':
+                        $validation->setShowInputMessage(false);
 
-                    break;
-                case 'InputHide':
-                    $validation->setShowInputMessage(false);
+                        break;
+                    case 'ErrorStyle':
+                        $validation->setErrorStyle($tagValueLower);
 
-                    break;
-                case 'ErrorStyle':
-                    $validation->setErrorStyle($tagValueLower);
+                        break;
+                    case 'ErrorTitle':
+                        $validation->setErrorTitle($tagValue);
 
-                    break;
-                case 'ErrorTitle':
-                    $validation->setErrorTitle($tagValue);
+                        break;
+                    case 'ErrorMessage':
+                        $validation->setError($tagValue);
 
-                    break;
-                case 'ErrorMessage':
-                    $validation->setError($tagValue);
+                        break;
+                    case 'ErrorHide':
+                        $validation->setShowErrorMessage(false);
 
-                    break;
-                case 'ErrorHide':
-                    $validation->setShowErrorMessage(false);
+                        break;
+                    case 'ComboHide':
+                        $validation->setShowDropDown(false);
 
-                    break;
-                case 'ComboHide':
-                    $validation->setShowDropDown(false);
+                        break;
+                    case 'UseBlank':
+                        $validation->setAllowBlank(true);
 
-                    break;
-                case 'UseBlank':
-                    $validation->setAllowBlank(true);
+                        break;
+                    case 'CellRangeList':
+                        // FIXME missing FIXME
 
-                    break;
-                case 'CellRangeList':
-                    // FIXME missing FIXME
+                        break;
+                    case 'Min':
+                    case 'Value':
+                        $tagValue = (string) preg_replace_callback(AddressHelper::R1C1_COORDINATE_REGEX, $pregCallback, $tagValue);
+                        $validation->setFormula1($tagValue);
 
-                    break;
-                case 'Min':
-                case 'Value':
-                    $tagValue = (string) preg_replace_callback(AddressHelper::R1C1_COORDINATE_REGEX, $pregCallback, $tagValue);
-                    $validation->setFormula1($tagValue);
+                        break;
+                    case 'Max':
+                        $tagValue = (string) preg_replace_callback(AddressHelper::R1C1_COORDINATE_REGEX, $pregCallback, $tagValue);
+                        $validation->setFormula2($tagValue);
 
-                    break;
-                case 'Max':
-                    $tagValue = (string) preg_replace_callback(AddressHelper::R1C1_COORDINATE_REGEX, $pregCallback, $tagValue);
-                    $validation->setFormula2($tagValue);
-
-                    break;
+                        break;
                 }
             }
 

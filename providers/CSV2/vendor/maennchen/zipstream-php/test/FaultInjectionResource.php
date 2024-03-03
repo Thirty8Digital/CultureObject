@@ -8,9 +8,7 @@ class FaultInjectionResource
 {
     public const NAME = 'zipstream-php-test-broken-resource';
 
-    /**
-     * @var resource 
-     */
+    /** @var resource */
     public $context;
 
     private array $injectFaults;
@@ -131,11 +129,9 @@ class FaultInjectionResource
 
     private static function createStreamContext(array $injectFaults)
     {
-        return stream_context_create(
-            [
+        return stream_context_create([
             self::NAME => ['injectFaults' => $injectFaults],
-            ]
-        );
+        ]);
     }
 
     private function shouldFail(string $function): bool

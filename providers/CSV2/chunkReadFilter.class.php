@@ -19,7 +19,7 @@ class ChunkReadFilter implements IReadFilter {
 		$this->end_row   = $start_row + $chunk_size;
 	}
 
-	public function readCell( $column, $row, $worksheet_name = '' ) {
+	public function readCell( string $column, int $row, string $worksheet_name = '' ): bool {
 		// Only read the heading row, and the rows that are configured in $this->_start_row and $this->_end_row
 		if ( ( $row == 1 ) || ( $row >= $this->start_row && $row < $this->end_row ) ) {
 			return true;

@@ -7,12 +7,11 @@ use PhpOffice\PhpSpreadsheet\Exception;
 class Scientific extends NumberBase implements Wizard
 {
     /**
-     * @param int     $decimals number of decimal places to display, in the range 0-30
-     * @param ?string $locale   Set the locale for the scientific format; or leave as the default null.
-     *                          Locale has no effect for Scientific Format values, and is retained here
-     *                          for compatibility with the other Wizards. If provided, Locale values
-     *                          must be a valid formatted locale string (e.g. 'en-GB', 'fr',
-     *                          uz-Arab-AF).
+     * @param int $decimals number of decimal places to display, in the range 0-30
+     * @param ?string $locale Set the locale for the scientific format; or leave as the default null.
+     *          Locale has no effect for Scientific Format values, and is retained here for compatibility
+     *              with the other Wizards.
+     *          If provided, Locale values must be a valid formatted locale string (e.g. 'en-GB', 'fr', uz-Arab-AF).
      *
      * @throws Exception If a provided locale code is not a valid format
      */

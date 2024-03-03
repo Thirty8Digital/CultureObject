@@ -56,14 +56,14 @@ class EndlessCycleStream implements StreamInterface
     public function seek(int $offset, int $whence = SEEK_SET): void
     {
         switch($whence) {
-        case SEEK_SET:
-            $this->offset = $offset;
-            break;
-        case SEEK_CUR:
-            $this->offset += $offset;
-            break;
-        case SEEK_END:
-            throw new RuntimeException('Infinite Stream!');
+            case SEEK_SET:
+                $this->offset = $offset;
+                break;
+            case SEEK_CUR:
+                $this->offset += $offset;
+                break;
+            case SEEK_END:
+                throw new RuntimeException('Infinite Stream!');
                 break;
         }
     }

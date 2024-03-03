@@ -25,9 +25,9 @@ class RgbTint
     /**
      * Convert red/green/blue to hue/luminance/saturation.
      *
-     * @param float $red   0.0 through 1.0
+     * @param float $red 0.0 through 1.0
      * @param float $green 0.0 through 1.0
-     * @param float $blue  0.0 through 1.0
+     * @param float $blue 0.0 through 1.0
      *
      * @return float[]
      */
@@ -61,22 +61,17 @@ class RgbTint
     }
 
     /**
-     * @var mixed 
-     */
-    private static $scrutinizerZeroPointZero = 0.0;
-
-    /**
      * Convert hue/luminance/saturation to red/green/blue.
      *
-     * @param float $hue        0.0 through 1.0
-     * @param float $luminance  0.0 through 1.0
+     * @param float $hue 0.0 through 1.0
+     * @param float $luminance 0.0 through 1.0
      * @param float $saturation 0.0 through 1.0
      *
      * @return float[]
      */
-    private static function hlsToRgb($hue, $luminance, $saturation): array
+    private static function hlsToRgb(float $hue, float $luminance, float $saturation): array
     {
-        if ($saturation === self::$scrutinizerZeroPointZero) {
+        if ($saturation === 0.0) {
             return [$luminance, $luminance, $luminance];
         }
         if ($luminance <= 0.5) {

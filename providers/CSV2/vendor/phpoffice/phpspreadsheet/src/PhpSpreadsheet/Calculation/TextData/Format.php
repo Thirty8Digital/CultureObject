@@ -25,19 +25,17 @@ class Format
      * This function converts a number to text using currency format, with the decimals rounded to the specified place.
      * The format used is $#,##0.00_);($#,##0.00)..
      *
-     * @param mixed $value    The value to format
-     *                        Or can be an array
-     *                        of values
+     * @param mixed $value The value to format
+     *                         Or can be an array of values
      * @param mixed $decimals The number of digits to display to the right of the decimal point (as an integer).
-     *                        If decimals is negative, number is rounded to the left of the decimal point.
-     *                        If you omit decimals, it is assumed to be 2
-     *                        Or can be an array of values
+     *                            If decimals is negative, number is rounded to the left of the decimal point.
+     *                            If you omit decimals, it is assumed to be 2
+     *                         Or can be an array of values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function DOLLAR($value = 0, $decimals = 2)
+    public static function DOLLAR(mixed $value = 0, mixed $decimals = 2)
     {
         if (is_array($value) || is_array($decimals)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $decimals);
@@ -68,19 +66,17 @@ class Format
     /**
      * FIXED.
      *
-     * @param mixed $value    The value to format
-     *                        Or can be an array
-     *                        of values
+     * @param mixed $value The value to format
+     *                         Or can be an array of values
      * @param mixed $decimals Integer value for the number of decimal places that should be formatted
-     *                        Or can be an array of values
+     *                         Or can be an array of values
      * @param mixed $noCommas Boolean value indicating whether the value should have thousands separators or not
-     *                        Or can be an array of values
+     *                         Or can be an array of values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function FIXEDFORMAT($value, $decimals = 2, $noCommas = false)
+    public static function FIXEDFORMAT(mixed $value, mixed $decimals = 2, mixed $noCommas = false): array|string
     {
         if (is_array($value) || is_array($decimals) || is_array($noCommas)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $decimals, $noCommas);
@@ -112,17 +108,15 @@ class Format
     /**
      * TEXT.
      *
-     * @param mixed $value  The value to format
-     *                      Or can be an array
-     *                      of values
+     * @param mixed $value The value to format
+     *                         Or can be an array of values
      * @param mixed $format A string with the Format mask that should be used
-     *                      Or can be an array of values
+     *                         Or can be an array of values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function TEXTFORMAT($value, $format)
+    public static function TEXTFORMAT(mixed $value, mixed $format): array|string
     {
         if (is_array($value) || is_array($format)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $format);
@@ -132,6 +126,7 @@ class Format
         $format = Helpers::extractString($format);
 
         if (!is_numeric($value) && Date::isDateTimeFormatCode($format)) {
+            // @phpstan-ignore-next-line
             $value = DateTimeExcel\DateValue::fromString($value) + DateTimeExcel\TimeValue::fromString($value);
         }
 
@@ -140,10 +135,8 @@ class Format
 
     /**
      * @param mixed $value Value to check
-     *
-     * @return mixed
      */
-    private static function convertValue($value, bool $spacesMeanZero = false)
+    private static function convertValue(mixed $value, bool $spacesMeanZero = false): mixed
     {
         $value = $value ?? 0;
         if (is_bool($value)) {
@@ -167,13 +160,13 @@ class Format
      * VALUE.
      *
      * @param mixed $value Value to check
-     *                     Or can be an array of values
+     *                         Or can be an array of values
      *
      * @return array|DateTimeInterface|float|int|string A string if arguments are invalid
      *         If an array of values is passed for the argument, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function VALUE($value = '')
+    public static function VALUE(mixed $value = '')
     {
         if (is_array($value)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $value);
@@ -200,7 +193,7 @@ class Format
             $dateSetting = Functions::getReturnDateType();
             Functions::setReturnDateType(Functions::RETURNDATE_EXCEL);
 
-            if (strpos($value, ':') !== false) {
+            if (str_contains($value, ':')) {
                 $timeValue = Functions::scalar(DateTimeExcel\TimeValue::fromString($value));
                 if ($timeValue !== ExcelError::VALUE()) {
                     Functions::setReturnDateType($dateSetting);
@@ -225,16 +218,13 @@ class Format
     /**
      * TEXT.
      *
-     * @param mixed $value  The value to format
-     *                      Or can be an array
-     *                      of values
-     * @param mixed $format
+     * @param mixed $value The value to format
+     *                         Or can be an array of values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function valueToText($value, $format = false)
+    public static function valueToText(mixed $value, mixed $format = false): array|string
     {
         if (is_array($value) || is_array($format)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $format);
@@ -255,18 +245,12 @@ class Format
         return (string) $value;
     }
 
-    /**
-     * @param mixed $decimalSeparator
-     */
-    private static function getDecimalSeparator($decimalSeparator): string
+    private static function getDecimalSeparator(mixed $decimalSeparator): string
     {
         return empty($decimalSeparator) ? StringHelper::getDecimalSeparator() : (string) $decimalSeparator;
     }
 
-    /**
-     * @param mixed $groupSeparator
-     */
-    private static function getGroupSeparator($groupSeparator): string
+    private static function getGroupSeparator(mixed $groupSeparator): string
     {
         return empty($groupSeparator) ? StringHelper::getThousandsSeparator() : (string) $groupSeparator;
     }
@@ -274,17 +258,14 @@ class Format
     /**
      * NUMBERVALUE.
      *
-     * @param mixed $value            The value to format
-     *                                Or can be an array
-     *                                of values
+     * @param mixed $value The value to format
+     *                         Or can be an array of values
      * @param mixed $decimalSeparator A string with the decimal separator to use, defaults to locale defined value
-     *                                Or can be an array of values
-     * @param mixed $groupSeparator   A string with the group/thousands separator to use, defaults to locale defined value
-     *                                Or can be an array of values
-     *
-     * @return array|float|string
+     *                         Or can be an array of values
+     * @param mixed $groupSeparator A string with the group/thousands separator to use, defaults to locale defined value
+     *                         Or can be an array of values
      */
-    public static function NUMBERVALUE($value = '', $decimalSeparator = null, $groupSeparator = null)
+    public static function NUMBERVALUE(mixed $value = '', mixed $decimalSeparator = null, mixed $groupSeparator = null): array|string|float
     {
         if (is_array($value) || is_array($decimalSeparator) || is_array($groupSeparator)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $decimalSeparator, $groupSeparator);

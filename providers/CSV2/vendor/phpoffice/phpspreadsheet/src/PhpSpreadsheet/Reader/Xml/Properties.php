@@ -8,10 +8,7 @@ use SimpleXMLElement;
 
 class Properties
 {
-    /**
-     * @var Spreadsheet
-     */
-    protected $spreadsheet;
+    protected Spreadsheet $spreadsheet;
 
     public function __construct(Spreadsheet $spreadsheet)
     {
@@ -57,54 +54,54 @@ class Properties
         string $stringValue
     ): void {
         switch ($propertyName) {
-        case 'Title':
-            $docProps->setTitle($stringValue);
+            case 'Title':
+                $docProps->setTitle($stringValue);
 
-            break;
-        case 'Subject':
-            $docProps->setSubject($stringValue);
+                break;
+            case 'Subject':
+                $docProps->setSubject($stringValue);
 
-            break;
-        case 'Author':
-            $docProps->setCreator($stringValue);
+                break;
+            case 'Author':
+                $docProps->setCreator($stringValue);
 
-            break;
-        case 'Created':
-            $docProps->setCreated($stringValue);
+                break;
+            case 'Created':
+                $docProps->setCreated($stringValue);
 
-            break;
-        case 'LastAuthor':
-            $docProps->setLastModifiedBy($stringValue);
+                break;
+            case 'LastAuthor':
+                $docProps->setLastModifiedBy($stringValue);
 
-            break;
-        case 'LastSaved':
-            $docProps->setModified($stringValue);
+                break;
+            case 'LastSaved':
+                $docProps->setModified($stringValue);
 
-            break;
-        case 'Company':
-            $docProps->setCompany($stringValue);
+                break;
+            case 'Company':
+                $docProps->setCompany($stringValue);
 
-            break;
-        case 'Category':
-            $docProps->setCategory($stringValue);
+                break;
+            case 'Category':
+                $docProps->setCategory($stringValue);
 
-            break;
-        case 'Manager':
-            $docProps->setManager($stringValue);
+                break;
+            case 'Manager':
+                $docProps->setManager($stringValue);
 
-            break;
-        case 'HyperlinkBase':
-            $docProps->setHyperlinkBase($stringValue);
+                break;
+            case 'HyperlinkBase':
+                $docProps->setHyperlinkBase($stringValue);
 
-            break;
-        case 'Keywords':
-            $docProps->setKeywords($stringValue);
+                break;
+            case 'Keywords':
+                $docProps->setKeywords($stringValue);
 
-            break;
-        case 'Description':
-            $docProps->setDescription($stringValue);
+                break;
+            case 'Description':
+                $docProps->setDescription($stringValue);
 
-            break;
+                break;
         }
     }
 
@@ -115,32 +112,32 @@ class Properties
         SimpleXMLElement $propertyAttributes
     ): void {
         switch ((string) $propertyAttributes) {
-        case 'boolean':
-            $propertyType = DocumentProperties::PROPERTY_TYPE_BOOLEAN;
-            $propertyValue = (bool) (string) $propertyValue;
+            case 'boolean':
+                $propertyType = DocumentProperties::PROPERTY_TYPE_BOOLEAN;
+                $propertyValue = (bool) (string) $propertyValue;
 
-            break;
-        case 'integer':
-            $propertyType = DocumentProperties::PROPERTY_TYPE_INTEGER;
-            $propertyValue = (int) $propertyValue;
+                break;
+            case 'integer':
+                $propertyType = DocumentProperties::PROPERTY_TYPE_INTEGER;
+                $propertyValue = (int) $propertyValue;
 
-            break;
-        case 'float':
-            $propertyType = DocumentProperties::PROPERTY_TYPE_FLOAT;
-            $propertyValue = (float) $propertyValue;
+                break;
+            case 'float':
+                $propertyType = DocumentProperties::PROPERTY_TYPE_FLOAT;
+                $propertyValue = (float) $propertyValue;
 
-            break;
-        case 'dateTime.tz':
-        case 'dateTime.iso8601tz':
-            $propertyType = DocumentProperties::PROPERTY_TYPE_DATE;
-            $propertyValue = trim((string) $propertyValue);
+                break;
+            case 'dateTime.tz':
+            case 'dateTime.iso8601tz':
+                $propertyType = DocumentProperties::PROPERTY_TYPE_DATE;
+                $propertyValue = trim((string) $propertyValue);
 
-            break;
-        default:
-            $propertyType = DocumentProperties::PROPERTY_TYPE_STRING;
-            $propertyValue = trim((string) $propertyValue);
+                break;
+            default:
+                $propertyType = DocumentProperties::PROPERTY_TYPE_STRING;
+                $propertyValue = trim((string) $propertyValue);
 
-            break;
+                break;
         }
 
         $docProps->setCustomProperty($propertyName, $propertyValue, $propertyType);

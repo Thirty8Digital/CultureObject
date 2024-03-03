@@ -14,19 +14,18 @@ class Search
     /**
      * FIND (case sensitive search).
      *
-     * @param mixed $needle   The string to look for
-     *                        Or can be an array of
-     *                        values
+     * @param mixed $needle The string to look for
+     *                         Or can be an array of values
      * @param mixed $haystack The string in which to look
-     *                        Or can be an array of values
-     * @param mixed $offset   Integer offset within $haystack to start searching from
-     *                        Or can be an array of values
+     *                         Or can be an array of values
+     * @param mixed $offset Integer offset within $haystack to start searching from
+     *                         Or can be an array of values
      *
      * @return array|int|string The offset where the first occurrence of needle was found in the haystack
      *         If an array of values is passed for the $value or $chars arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function sensitive($needle, $haystack, $offset = 1)
+    public static function sensitive(mixed $needle, mixed $haystack, mixed $offset = 1): array|string|int
     {
         if (is_array($needle) || is_array($haystack) || is_array($offset)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $needle, $haystack, $offset);
@@ -57,19 +56,18 @@ class Search
     /**
      * SEARCH (case insensitive search).
      *
-     * @param mixed $needle   The string to look for
-     *                        Or can be an array of
-     *                        values
+     * @param mixed $needle The string to look for
+     *                         Or can be an array of values
      * @param mixed $haystack The string in which to look
-     *                        Or can be an array of values
-     * @param mixed $offset   Integer offset within $haystack to start searching from
-     *                        Or can be an array of values
+     *                         Or can be an array of values
+     * @param mixed $offset Integer offset within $haystack to start searching from
+     *                         Or can be an array of values
      *
      * @return array|int|string The offset where the first occurrence of needle was found in the haystack
      *         If an array of values is passed for the $value or $chars arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function insensitive($needle, $haystack, $offset = 1)
+    public static function insensitive(mixed $needle, mixed $haystack, mixed $offset = 1): array|string|int
     {
         if (is_array($needle) || is_array($haystack) || is_array($offset)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $needle, $haystack, $offset);

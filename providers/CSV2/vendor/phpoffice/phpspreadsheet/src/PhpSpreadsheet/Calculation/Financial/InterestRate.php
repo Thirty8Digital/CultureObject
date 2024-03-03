@@ -17,12 +17,10 @@ class InterestRate
      * Excel Function:
      *        EFFECT(nominal_rate,npery)
      *
-     * @param mixed $nominalRate    Nominal interest rate as a float
+     * @param mixed $nominalRate Nominal interest rate as a float
      * @param mixed $periodsPerYear Integer number of compounding payments per year
-     *
-     * @return float|string
      */
-    public static function effective($nominalRate = 0, $periodsPerYear = 0)
+    public static function effective(mixed $nominalRate = 0, mixed $periodsPerYear = 0): string|float
     {
         $nominalRate = Functions::flattenSingleValue($nominalRate);
         $periodsPerYear = Functions::flattenSingleValue($periodsPerYear);
@@ -46,12 +44,12 @@ class InterestRate
      *
      * Returns the nominal interest rate given the effective rate and the number of compounding payments per year.
      *
-     * @param mixed $effectiveRate  Effective interest rate as a float
+     * @param mixed $effectiveRate Effective interest rate as a float
      * @param mixed $periodsPerYear Integer number of compounding payments per year
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function nominal($effectiveRate = 0, $periodsPerYear = 0)
+    public static function nominal(mixed $effectiveRate = 0, mixed $periodsPerYear = 0): string|float
     {
         $effectiveRate = Functions::flattenSingleValue($effectiveRate);
         $periodsPerYear = Functions::flattenSingleValue($periodsPerYear);

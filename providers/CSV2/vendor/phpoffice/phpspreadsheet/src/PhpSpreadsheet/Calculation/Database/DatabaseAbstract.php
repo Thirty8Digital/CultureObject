@@ -8,14 +8,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Internal\WildcardMatch;
 
 abstract class DatabaseAbstract
 {
-    /**
-     * @param array      $database
-     * @param int|string $field
-     * @param array      $criteria
-     *
-     * @return null|float|int|string
-     */
-    abstract public static function evaluate($database, $field, $criteria);
+    abstract public static function evaluate(array $database, array|null|int|string $field, array $criteria): null|float|int|string;
 
     /**
      * fieldExtract.
@@ -23,17 +16,16 @@ abstract class DatabaseAbstract
      * Extracts the column ID to use for the data field.
      *
      * @param mixed[] $database The range of cells that makes up the list or database.
-     *                          A database is a list of related data in which rows of related
-     *                          information are records, and columns of data are fields. The
-     *                          first row of the list contains labels for each column.
-     * @param mixed   $field    Indicates which column is used in the function. Enter the
-     *                          column label enclosed between double quotation marks,
-     *                          such as "Age" or "Yield," or a number (without quotation
-     *                          marks) that represents the position of the column within
-     *                          the list: 1 for the first column, 2 for the second
-     *                          column, and so on.
+     *                                        A database is a list of related data in which rows of related
+     *                                        information are records, and columns of data are fields. The
+     *                                        first row of the list contains labels for each column.
+     * @param mixed $field Indicates which column is used in the function. Enter the
+     *                                        column label enclosed between double quotation marks, such as
+     *                                        "Age" or "Yield," or a number (without quotation marks) that
+     *                                        represents the position of the column within the list: 1 for
+     *                                        the first column, 2 for the second column, and so on.
      */
-    protected static function fieldExtract(array $database, $field): ?int
+    protected static function fieldExtract(array $database, mixed $field): ?int
     {
         $field = strtoupper(Functions::flattenSingleValue($field) ?? '');
         if ($field === '') {
@@ -61,14 +53,14 @@ abstract class DatabaseAbstract
      * returns that subset of rows.
      *
      * @param mixed[] $database The range of cells that makes up the list or database.
-     *                          A database is a list of related data in which rows of related
-     *                          information are records, and columns of data are fields. The
-     *                          first row of the list contains labels for each column.
+     *                                        A database is a list of related data in which rows of related
+     *                                        information are records, and columns of data are fields. The
+     *                                        first row of the list contains labels for each column.
      * @param mixed[] $criteria The range of cells that contains the conditions you specify.
-     *                          You can use any range for the criteria argument, as long as it
-     *                          includes at least one column label and at least one cell below
-     *                          the column label in which you specify a condition for the
-     *                          column.
+     *                                        You can use any range for the criteria argument, as long as it
+     *                                        includes at least one column label and at least one cell below
+     *                                        the column label in which you specify a condition for the
+     *                                        column.
      *
      * @return mixed[]
      */
@@ -116,19 +108,14 @@ abstract class DatabaseAbstract
         }
 
         $rowQuery = array_map(
-            function ($rowValue) {
-                return (count($rowValue) > 1) ? 'AND(' . implode(',', $rowValue) . ')' : ($rowValue[0] ?? '');
-            },
+            fn ($rowValue): string => (count($rowValue) > 1) ? 'AND(' . implode(',', $rowValue) . ')' : ($rowValue[0] ?? ''),
             $baseQuery
         );
 
         return (count($rowQuery) > 1) ? 'OR(' . implode(',', $rowQuery) . ')' : ($rowQuery[0] ?? '');
     }
 
-    /**
-     * @param mixed $criterion
-     */
-    private static function buildCondition($criterion, string $criterionName): string
+    private static function buildCondition(mixed $criterion, string $criterionName): string
     {
         $ifCondition = Functions::ifCondition($criterion);
 
@@ -169,10 +156,7 @@ abstract class DatabaseAbstract
         return $database;
     }
 
-    /**
-     * @return mixed
-     */
-    private static function processCondition(string $criterion, array $fields, array $dataValues, string $conditions)
+    private static function processCondition(string $criterion, array $fields, array $dataValues, string $conditions): string
     {
         $key = array_search($criterion, $fields, true);
 
@@ -182,7 +166,7 @@ abstract class DatabaseAbstract
         } elseif ($dataValues[$key] !== null) {
             $dataValue = $dataValues[$key];
             // escape quotes if we have a string containing quotes
-            if (is_string($dataValue) && strpos($dataValue, '"') !== false) {
+            if (is_string($dataValue) && str_contains($dataValue, '"')) {
                 $dataValue = str_replace('"', '""', $dataValue);
             }
             $dataValue = (is_string($dataValue)) ? Calculation::wrapResult(strtoupper($dataValue)) : $dataValue;

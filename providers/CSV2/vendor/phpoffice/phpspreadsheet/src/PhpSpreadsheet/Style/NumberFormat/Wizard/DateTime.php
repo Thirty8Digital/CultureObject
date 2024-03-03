@@ -15,7 +15,7 @@ class DateTime extends DateTimeWizard
     protected array $formatBlocks;
 
     /**
-     * @param null|string|string[]  $separators
+     * @param null|string|string[] $separators
      *          If you want to use only a single format block, then pass a null as the separator argument
      * @param DateTimeWizard|string ...$formatBlocks
      */
@@ -28,10 +28,7 @@ class DateTime extends DateTimeWizard
         $this->formatBlocks = array_map([$this, 'mapFormatBlocks'], $formatBlocks);
     }
 
-    /**
-     * @param DateTimeWizard|string $value
-     */
-    private function mapFormatBlocks($value): string
+    private function mapFormatBlocks(DateTimeWizard|string $value): string
     {
         // Any date masking codes are returned as lower case values
         if (is_object($value)) {

@@ -16,22 +16,17 @@ class Confidence
      *
      * Returns the confidence interval for a population mean
      *
-     * @param mixed $alpha  As a float
-     *                      Or can be
-     *                      an array
-     *                      of values
+     * @param mixed $alpha As a float
+     *                      Or can be an array of values
      * @param mixed $stdDev Standard Deviation as a float
      *                      Or can be an array of values
-     * @param mixed $size   As an integer
-     *                      Or can be an
-     *                      array of
-     *                      values
+     * @param mixed $size As an integer
+     *                      Or can be an array of values
      *
-     * @return array|float|string
-     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function CONFIDENCE($alpha, $stdDev, $size)
+    public static function CONFIDENCE(mixed $alpha, mixed $stdDev, mixed $size)
     {
         if (is_array($alpha) || is_array($stdDev) || is_array($size)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $alpha, $stdDev, $size);
@@ -48,9 +43,7 @@ class Confidence
         if (($alpha <= 0) || ($alpha >= 1) || ($stdDev <= 0) || ($size < 1)) {
             return ExcelError::NAN();
         }
-        /**
- * @var float 
-*/
+        /** @var float $temp */
         $temp = Distributions\StandardNormal::inverse(1 - $alpha / 2);
 
         return Functions::scalar($temp * $stdDev / sqrt($size));

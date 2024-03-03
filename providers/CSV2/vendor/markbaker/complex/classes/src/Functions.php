@@ -13,11 +13,12 @@ class Functions
      *
      * This function is a synonym for rho()
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return float            The absolute (or rho) value of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    float            The absolute (or rho) value of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      *
-     * @see rho
+     * @see    rho
+     *
      */
     public static function abs($complex): float
     {
@@ -27,9 +28,9 @@ class Functions
     /**
      * Returns the inverse cosine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse cosine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse cosine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function acos($complex): Complex
     {
@@ -54,9 +55,9 @@ class Functions
      * Formula from Wolfram Alpha:
      *   cosh^(-1)z = ln(z + sqrt(z + 1) sqrt(z - 1)).
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse hyperbolic cosine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse hyperbolic cosine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function acosh($complex): Complex
     {
@@ -82,10 +83,10 @@ class Functions
     /**
      * Returns the inverse cotangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse cotangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse cotangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function acot($complex): Complex
     {
@@ -97,10 +98,10 @@ class Functions
     /**
      * Returns the inverse hyperbolic cotangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse hyperbolic cotangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse hyperbolic cotangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function acoth($complex): Complex
     {
@@ -112,10 +113,10 @@ class Functions
     /**
      * Returns the inverse cosecant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse cosecant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse cosecant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function acsc($complex): Complex
     {
@@ -131,10 +132,10 @@ class Functions
     /**
      * Returns the inverse hyperbolic cosecant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse hyperbolic cosecant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse hyperbolic cosecant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function acsch($complex): Complex
     {
@@ -154,11 +155,11 @@ class Functions
      *
      * This function is a synonym for theta()
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return float            The argument (or theta) value of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    float            The argument (or theta) value of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      *
-     * @see theta
+     * @see    theta
      */
     public static function argument($complex): float
     {
@@ -168,10 +169,10 @@ class Functions
     /**
      * Returns the inverse secant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse secant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse secant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function asec($complex): Complex
     {
@@ -187,10 +188,10 @@ class Functions
     /**
      * Returns the inverse hyperbolic secant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse hyperbolic secant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse hyperbolic secant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function asech($complex): Complex
     {
@@ -206,9 +207,9 @@ class Functions
     /**
      * Returns the inverse sine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse sine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse sine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function asin($complex): Complex
     {
@@ -230,9 +231,9 @@ class Functions
     /**
      * Returns the inverse hyperbolic sine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse hyperbolic sine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse hyperbolic sine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function asinh($complex): Complex
     {
@@ -254,10 +255,10 @@ class Functions
     /**
      * Returns the inverse tangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse tangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse tangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function atan($complex): Complex
     {
@@ -301,9 +302,9 @@ class Functions
      * Formula from Wolfram Alpha:
      *  tanh^(-1)z = 1/2 [ln(1 + z) - ln(1 - z)].
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse hyperbolic tangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse hyperbolic tangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function atanh($complex): Complex
     {
@@ -332,9 +333,9 @@ class Functions
     /**
      * Returns the complex conjugate of a complex number
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The conjugate of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The conjugate of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function conjugate($complex): Complex
     {
@@ -350,9 +351,9 @@ class Functions
     /**
      * Returns the cosine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The cosine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The cosine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function cos($complex): Complex
     {
@@ -374,9 +375,9 @@ class Functions
     /**
      * Returns the hyperbolic cosine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The hyperbolic cosine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The hyperbolic cosine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function cosh($complex): Complex
     {
@@ -396,10 +397,10 @@ class Functions
     /**
      * Returns the cotangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The cotangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The cotangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function cot($complex): Complex
     {
@@ -415,10 +416,10 @@ class Functions
     /**
      * Returns the hyperbolic cotangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The hyperbolic cotangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The hyperbolic cotangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function coth($complex): Complex
     {
@@ -430,10 +431,10 @@ class Functions
     /**
      * Returns the cosecant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The cosecant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The cosecant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function csc($complex): Complex
     {
@@ -449,10 +450,10 @@ class Functions
     /**
      * Returns the hyperbolic cosecant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The hyperbolic cosecant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The hyperbolic cosecant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function csch($complex): Complex
     {
@@ -468,9 +469,9 @@ class Functions
     /**
      * Returns the exponential of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The exponential of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The exponential of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function exp($complex): Complex
     {
@@ -492,10 +493,10 @@ class Functions
     /**
      * Returns the inverse of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The inverse of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The inverse of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    InvalidArgumentException    If function would result in a division by zero
      */
     public static function inverse($complex): Complex
     {
@@ -511,10 +512,10 @@ class Functions
     /**
      * Returns the natural logarithm of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The natural logarithm of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws InvalidArgumentException  If the real and the imaginary parts are both zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The natural logarithm of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    InvalidArgumentException  If the real and the imaginary parts are both zero
      */
     public static function ln($complex): Complex
     {
@@ -534,10 +535,10 @@ class Functions
     /**
      * Returns the base-2 logarithm of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The base-2 logarithm of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws InvalidArgumentException  If the real and the imaginary parts are both zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The base-2 logarithm of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    InvalidArgumentException  If the real and the imaginary parts are both zero
      */
     public static function log2($complex): Complex
     {
@@ -556,10 +557,10 @@ class Functions
     /**
      * Returns the common logarithm (base 10) of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The common logarithm (base 10) of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws InvalidArgumentException  If the real and the imaginary parts are both zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The common logarithm (base 10) of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    InvalidArgumentException  If the real and the imaginary parts are both zero
      */
     public static function log10($complex): Complex
     {
@@ -578,11 +579,12 @@ class Functions
     /**
      * Returns the negative of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The negative value of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The negative value of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      *
-     * @see rho
+     * @see    rho
+     *
      */
     public static function negative($complex): Complex
     {
@@ -598,10 +600,10 @@ class Functions
     /**
      * Returns a complex number raised to a power.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @param  float|integer $power   The power to raise this value to
-     * @return Complex          The complex argument raised to the real power.
-     * @throws Exception        If the power argument isn't a valid real
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @param     float|integer    $power      The power to raise this value to
+     * @return    Complex          The complex argument raised to the real power.
+     * @throws    Exception        If the power argument isn't a valid real
      */
     public static function pow($complex, $power): Complex
     {
@@ -629,9 +631,9 @@ class Functions
      * Returns the rho of a complex number.
      * This is the distance/radius from the centrepoint to the representation of the number in polar coordinates.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return float            The rho value of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    float            The rho value of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function rho($complex): float
     {
@@ -646,10 +648,10 @@ class Functions
     /**
      * Returns the secant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The secant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The secant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function sec($complex): Complex
     {
@@ -661,10 +663,10 @@ class Functions
     /**
      * Returns the hyperbolic secant of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The hyperbolic secant of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The hyperbolic secant of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function sech($complex): Complex
     {
@@ -676,9 +678,9 @@ class Functions
     /**
      * Returns the sine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The sine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The sine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function sin($complex): Complex
     {
@@ -698,9 +700,9 @@ class Functions
     /**
      * Returns the hyperbolic sine of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The hyperbolic sine of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The hyperbolic sine of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function sinh($complex): Complex
     {
@@ -720,9 +722,9 @@ class Functions
     /**
      * Returns the square root of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The Square root of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The Square root of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function sqrt($complex): Complex
     {
@@ -739,10 +741,10 @@ class Functions
     /**
      * Returns the tangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The tangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The tangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    InvalidArgumentException    If function would result in a division by zero
      */
     public static function tan($complex): Complex
     {
@@ -769,10 +771,10 @@ class Functions
     /**
      * Returns the hyperbolic tangent of a complex number.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return Complex          The hyperbolic tangent of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
-     * @throws \InvalidArgumentException    If function would result in a division by zero
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    Complex          The hyperbolic tangent of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
+     * @throws    \InvalidArgumentException    If function would result in a division by zero
      */
     public static function tanh($complex): Complex
     {
@@ -795,9 +797,9 @@ class Functions
      * Returns the theta of a complex number.
      *   This is the angle in radians from the real axis to the representation of the number in polar coordinates.
      *
-     * @param  Complex|mixed $complex Complex number or a numeric value.
-     * @return float            The theta value of the complex argument.
-     * @throws Exception        If argument isn't a valid real or complex number.
+     * @param     Complex|mixed    $complex    Complex number or a numeric value.
+     * @return    float            The theta value of the complex argument.
+     * @throws    Exception        If argument isn't a valid real or complex number.
      */
     public static function theta($complex): float
     {

@@ -13,12 +13,12 @@ class Unique
      * The UNIQUE function searches for value either from a one-row or one-column range or from an array.
      *
      * @param mixed $lookupVector The range of cells being searched
-     * @param mixed $byColumn     Whether the uniqueness should be determined by row (the default) or by column
-     * @param mixed $exactlyOnce  Whether the function should return only entries that occur just once in the list
+     * @param mixed $byColumn Whether the uniqueness should be determined by row (the default) or by column
+     * @param mixed $exactlyOnce Whether the function should return only entries that occur just once in the list
      *
      * @return mixed The unique values from the search range
      */
-    public static function unique($lookupVector, $byColumn = false, $exactlyOnce = false)
+    public static function unique(mixed $lookupVector, mixed $byColumn = false, mixed $exactlyOnce = false): mixed
     {
         if (!is_array($lookupVector)) {
             // Scalars are always returned "as is"
@@ -33,10 +33,7 @@ class Unique
             : self::uniqueByRow($lookupVector, $exactlyOnce);
     }
 
-    /**
-     * @return mixed
-     */
-    private static function uniqueByRow(array $lookupVector, bool $exactlyOnce)
+    private static function uniqueByRow(array $lookupVector, bool $exactlyOnce): mixed
     {
         // When not $byColumn, we count whole rows or values, not individual values
         //      so implode each row into a single string value
@@ -70,10 +67,7 @@ class Unique
         return (count($result) === 1) ? array_pop($result) : $result;
     }
 
-    /**
-     * @return mixed
-     */
-    private static function uniqueByColumn(array $lookupVector, bool $exactlyOnce)
+    private static function uniqueByColumn(array $lookupVector, bool $exactlyOnce): mixed
     {
         $flattenedLookupVector = Functions::flattenArray($lookupVector);
 
@@ -104,9 +98,7 @@ class Unique
     {
         $caseInsensitiveCounts = array_count_values(
             array_map(
-                function (string $value) {
-                    return StringHelper::strToUpper($value);
-                },
+                fn (string $value): string => StringHelper::strToUpper($value),
                 $caseSensitiveLookupValues
             )
         );
@@ -133,9 +125,7 @@ class Unique
     {
         return array_filter(
             $values,
-            function ($value) {
-                return $value === 1;
-            }
+            fn ($value): bool => $value === 1
         );
     }
 }

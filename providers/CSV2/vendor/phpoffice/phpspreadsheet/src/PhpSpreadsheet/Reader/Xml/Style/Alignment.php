@@ -30,26 +30,26 @@ class Alignment extends StyleBase
         foreach ($styleAttributes as $styleAttributeKey => $styleAttributeValue) {
             $styleAttributeValue = (string) $styleAttributeValue;
             switch ($styleAttributeKey) {
-            case 'Vertical':
-                if (self::identifyFixedStyleValue(self::VERTICAL_ALIGNMENT_STYLES, $styleAttributeValue)) {
-                    $style['alignment']['vertical'] = $styleAttributeValue;
-                }
+                case 'Vertical':
+                    if (self::identifyFixedStyleValue(self::VERTICAL_ALIGNMENT_STYLES, $styleAttributeValue)) {
+                        $style['alignment']['vertical'] = $styleAttributeValue;
+                    }
 
-                break;
-            case 'Horizontal':
-                if (self::identifyFixedStyleValue(self::HORIZONTAL_ALIGNMENT_STYLES, $styleAttributeValue)) {
-                    $style['alignment']['horizontal'] = $styleAttributeValue;
-                }
+                    break;
+                case 'Horizontal':
+                    if (self::identifyFixedStyleValue(self::HORIZONTAL_ALIGNMENT_STYLES, $styleAttributeValue)) {
+                        $style['alignment']['horizontal'] = $styleAttributeValue;
+                    }
 
-                break;
-            case 'WrapText':
-                $style['alignment']['wrapText'] = true;
+                    break;
+                case 'WrapText':
+                    $style['alignment']['wrapText'] = true;
 
-                break;
-            case 'Rotate':
-                $style['alignment']['textRotation'] = $styleAttributeValue;
+                    break;
+                case 'Rotate':
+                    $style['alignment']['textRotation'] = $styleAttributeValue;
 
-                break;
+                    break;
             }
         }
 

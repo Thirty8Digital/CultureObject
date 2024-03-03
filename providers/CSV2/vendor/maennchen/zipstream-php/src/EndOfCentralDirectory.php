@@ -20,9 +20,7 @@ abstract class EndOfCentralDirectory
         int $centralDirectoryStartOffsetOnDisk,
         string $zipFileComment,
     ): string {
-        /**
- * @psalm-suppress MixedArgument 
-*/
+        /** @psalm-suppress MixedArgument */
         return PackField::pack(
             new PackField(format: 'V', value: static::SIGNATURE),
             new PackField(format: 'v', value: $numberOfThisDisk),

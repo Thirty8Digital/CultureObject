@@ -18,9 +18,7 @@ abstract class EndOfCentralDirectoryLocator
         int $zip64centralDirectoryStartOffsetOnDisk,
         int $totalNumberOfDisks,
     ): string {
-        /**
- * @psalm-suppress MixedArgument 
-*/
+        /** @psalm-suppress MixedArgument */
         return PackField::pack(
             new PackField(format: 'V', value: static::SIGNATURE),
             new PackField(format: 'V', value: $numberOfTheDiskWithZip64CentralDirectoryStart),

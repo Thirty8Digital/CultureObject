@@ -40,9 +40,7 @@ class ResourceStream implements StreamInterface
     {
         $result = $this->stream;
         // According to the interface, the stream is left in an unusable state;
-        /**
- * @psalm-suppress PossiblyNullPropertyAssignmentValue 
-*/
+        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->stream = null;
         return $result;
     }

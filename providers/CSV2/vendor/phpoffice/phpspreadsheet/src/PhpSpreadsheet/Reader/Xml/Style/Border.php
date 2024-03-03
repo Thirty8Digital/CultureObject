@@ -57,16 +57,16 @@ class Border extends StyleBase
             foreach ($borderAttributes as $borderStyleKey => $borderStyleValuex) {
                 $borderStyleValue = (string) $borderStyleValuex;
                 switch ($borderStyleKey) {
-                case 'Position':
-                    [$borderPosition, $diagonalDirection] =
-                        $this->parsePosition($borderStyleValue, $diagonalDirection);
+                    case 'Position':
+                        [$borderPosition, $diagonalDirection]
+                            = $this->parsePosition($borderStyleValue, $diagonalDirection);
 
-                    break;
-                case 'Color':
-                    $borderColour = substr($borderStyleValue, 1);
-                    $thisBorder['color']['rgb'] = $borderColour;
+                        break;
+                    case 'Color':
+                        $borderColour = substr($borderStyleValue, 1);
+                        $thisBorder['color']['rgb'] = $borderColour;
 
-                    break;
+                        break;
                 }
             }
 

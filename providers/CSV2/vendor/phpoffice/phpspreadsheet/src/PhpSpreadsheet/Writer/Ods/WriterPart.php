@@ -8,17 +8,13 @@ abstract class WriterPart
 {
     /**
      * Parent Ods object.
-     *
-     * @var Ods
      */
-    private $parentWriter;
+    private Ods $parentWriter;
 
     /**
      * Get Ods writer.
-     *
-     * @return Ods
      */
-    public function getParentWriter()
+    public function getParentWriter(): Ods
     {
         return $this->parentWriter;
     }
@@ -30,4 +26,6 @@ abstract class WriterPart
     {
         $this->parentWriter = $writer;
     }
+
+    abstract public function write(): string;
 }

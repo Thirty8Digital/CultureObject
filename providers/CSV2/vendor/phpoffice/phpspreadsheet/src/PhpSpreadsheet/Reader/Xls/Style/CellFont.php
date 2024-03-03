@@ -9,21 +9,21 @@ class CellFont
     public static function escapement(Font $font, int $escapement): void
     {
         switch ($escapement) {
-        case 0x0001:
-            $font->setSuperscript(true);
+            case 0x0001:
+                $font->setSuperscript(true);
 
-            break;
-        case 0x0002:
-            $font->setSubscript(true);
+                break;
+            case 0x0002:
+                $font->setSubscript(true);
 
-            break;
+                break;
         }
     }
 
     /**
      * @var array<int, string>
      */
-    protected static $underlineMap = [
+    protected static array $underlineMap = [
         0x01 => Font::UNDERLINE_SINGLE,
         0x02 => Font::UNDERLINE_DOUBLE,
         0x21 => Font::UNDERLINE_SINGLEACCOUNTING,

@@ -8,10 +8,9 @@ use PhpOffice\PhpSpreadsheet\Exception;
 class Percentage extends NumberBase implements Wizard
 {
     /**
-     * @param int     $decimals number of decimal places to display, in the range 0-30
-     * @param ?string $locale   Set the locale for the percentage format; or leave as the default null.
-     *                          If provided, Locale values must be a valid formatted locale string
-     *                          (e.g. 'en-GB', 'fr', uz-Arab-AF).
+     * @param int $decimals number of decimal places to display, in the range 0-30
+     * @param ?string $locale Set the locale for the percentage format; or leave as the default null.
+     *          If provided, Locale values must be a valid formatted locale string (e.g. 'en-GB', 'fr', uz-Arab-AF).
      *
      * @throws Exception If a provided locale code is not a valid format
      */

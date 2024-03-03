@@ -12,13 +12,12 @@ class ErrorValue
      * IS_ERR.
      *
      * @param mixed $value Value to check
-     *                     Or can be an array of values
+     *                      Or can be an array of values
      *
-     * @return array|bool
-     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|bool If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function isErr($value = '')
+    public static function isErr(mixed $value = ''): array|bool
     {
         if (is_array($value)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $value);
@@ -31,13 +30,12 @@ class ErrorValue
      * IS_ERROR.
      *
      * @param mixed $value Value to check
-     *                     Or can be an array of values
+     *                      Or can be an array of values
      *
-     * @return array|bool
-     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|bool If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function isError($value = '')
+    public static function isError(mixed $value = ''): array|bool
     {
         if (is_array($value)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $value);
@@ -54,13 +52,12 @@ class ErrorValue
      * IS_NA.
      *
      * @param mixed $value Value to check
-     *                     Or can be an array of values
+     *                      Or can be an array of values
      *
-     * @return array|bool
-     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|bool If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function isNa($value = '')
+    public static function isNa(mixed $value = ''): array|bool
     {
         if (is_array($value)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $value);

@@ -12,17 +12,15 @@ class EndOfCentralDirectoryTest extends TestCase
     public function testSerializesCorrectly(): void
     {
         $this->assertSame(
-            bin2hex(
-                EndOfCentralDirectory::generate(
-                    numberOfThisDisk: 0x00,
-                    numberOfTheDiskWithCentralDirectoryStart: 0x00,
-                    numberOfCentralDirectoryEntriesOnThisDisk: 0x10,
-                    numberOfCentralDirectoryEntries: 0x10,
-                    sizeOfCentralDirectory: 0x22,
-                    centralDirectoryStartOffsetOnDisk: 0x33,
-                    zipFileComment: 'foo',
-                )
-            ),
+            bin2hex(EndOfCentralDirectory::generate(
+                numberOfThisDisk: 0x00,
+                numberOfTheDiskWithCentralDirectoryStart: 0x00,
+                numberOfCentralDirectoryEntriesOnThisDisk: 0x10,
+                numberOfCentralDirectoryEntries: 0x10,
+                sizeOfCentralDirectory: 0x22,
+                centralDirectoryStartOffsetOnDisk: 0x33,
+                zipFileComment: 'foo',
+            )),
             '504b0506' . // 4 bytes; end of central dir signature 0x06054b50
             '0000' . // 2 bytes; number of this disk
             '0000' . // 2 bytes; number of the disk with the start of the central directory

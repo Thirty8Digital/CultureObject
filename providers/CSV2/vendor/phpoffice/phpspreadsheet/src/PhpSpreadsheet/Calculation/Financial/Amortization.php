@@ -24,30 +24,30 @@ class Amortization
      * Excel Function:
      *        AMORDEGRC(cost,purchased,firstPeriod,salvage,period,rate[,basis])
      *
-     * @param mixed $cost        The float cost of the asset
-     * @param mixed $purchased   Date of the purchase of the asset
+     * @param mixed $cost The float cost of the asset
+     * @param mixed $purchased Date of the purchase of the asset
      * @param mixed $firstPeriod Date of the end of the first period
-     * @param mixed $salvage     The salvage value at the end of the life of the asset
-     * @param mixed $period      the period (float)
-     * @param mixed $rate        rate of depreciation (float)
-     * @param mixed $basis       The type of day count to use (int).
-     *                           0 or omitted    US (NASD) 30/360 1 
-     *                           Actual/actual 2       
-     *                           Actual/360 3              
-     *                           Actual/365 4               European
-     *                           30/360
+     * @param mixed $salvage The salvage value at the end of the life of the asset
+     * @param mixed $period the period (float)
+     * @param mixed $rate rate of depreciation (float)
+     * @param mixed $basis The type of day count to use (int).
+     *                         0 or omitted    US (NASD) 30/360
+     *                         1               Actual/actual
+     *                         2               Actual/360
+     *                         3               Actual/365
+     *                         4               European 30/360
      *
      * @return float|string (string containing the error type if there is an error)
      */
     public static function AMORDEGRC(
-        $cost,
-        $purchased,
-        $firstPeriod,
-        $salvage,
-        $period,
-        $rate,
-        $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD
-    ) {
+        mixed $cost,
+        mixed $purchased,
+        mixed $firstPeriod,
+        mixed $salvage,
+        mixed $period,
+        mixed $rate,
+        mixed $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD
+    ): string|float {
         $cost = Functions::flattenSingleValue($cost);
         $purchased = Functions::flattenSingleValue($purchased);
         $firstPeriod = Functions::flattenSingleValue($firstPeriod);
@@ -74,9 +74,7 @@ class Amortization
         if (is_string($yearFracx)) {
             return $yearFracx;
         }
-        /**
- * @var float 
-*/
+        /** @var float $yearFrac */
         $yearFrac = $yearFracx;
 
         $amortiseCoeff = self::getAmortizationCoefficient($rate);
@@ -91,13 +89,10 @@ class Amortization
             $fRest -= $fNRate;
 
             if ($fRest < 0.0) {
-                switch ($period - $n) {
-                case 0:
-                case 1:
-                    return round($cost * 0.5, 0);
-                default:
-                    return 0.0;
-                }
+                return match ($period - $n) {
+                    1 => round($cost * 0.5, 0),
+                    default => 0.0,
+                };
             }
             $cost -= $fNRate;
         }
@@ -115,29 +110,30 @@ class Amortization
      * Excel Function:
      *        AMORLINC(cost,purchased,firstPeriod,salvage,period,rate[,basis])
      *
-     * @param mixed $cost        The cost of the asset as a float
-     * @param mixed $purchased   Date of the purchase of the asset
+     * @param mixed $cost The cost of the asset as a float
+     * @param mixed $purchased Date of the purchase of the asset
      * @param mixed $firstPeriod Date of the end of the first period
-     * @param mixed $salvage     The salvage value at the end of the life of the asset
-     * @param mixed $period      The period as a float
-     * @param mixed $rate        Rate of depreciation as  float
-     * @param mixed $basis       Integer indicating the type of day count to use.
-     *                           0 or omitted    US (NASD) 30/360 1              
-     *                           Actual/actual 2               Actual/360 3      
-     *                           Actual/365 4               European
-     *                           30/360
+     * @param mixed $salvage The salvage value at the end of the life of the asset
+     * @param mixed $period The period as a float
+     * @param mixed $rate Rate of depreciation as  float
+     * @param mixed $basis Integer indicating the type of day count to use.
+     *                             0 or omitted    US (NASD) 30/360
+     *                             1               Actual/actual
+     *                             2               Actual/360
+     *                             3               Actual/365
+     *                             4               European 30/360
      *
      * @return float|string (string containing the error type if there is an error)
      */
     public static function AMORLINC(
-        $cost,
-        $purchased,
-        $firstPeriod,
-        $salvage,
-        $period,
-        $rate,
-        $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD
-    ) {
+        mixed $cost,
+        mixed $purchased,
+        mixed $firstPeriod,
+        mixed $salvage,
+        mixed $period,
+        mixed $rate,
+        mixed $basis = FinancialConstants::BASIS_DAYS_PER_YEAR_NASD
+    ): string|float {
         $cost = Functions::flattenSingleValue($cost);
         $purchased = Functions::flattenSingleValue($purchased);
         $firstPeriod = Functions::flattenSingleValue($firstPeriod);
@@ -168,12 +164,11 @@ class Amortization
         if (is_string($yearFracx)) {
             return $yearFracx;
         }
-        /**
- * @var float 
-*/
+        /** @var float $yearFrac */
         $yearFrac = $yearFracx;
 
-        if ($basis == FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL
+        if (
+            $basis == FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL
             && $yearFrac < 1
             && DateTimeExcel\Helpers::isLeapYear(Functions::scalar($purchasedYear))
         ) {

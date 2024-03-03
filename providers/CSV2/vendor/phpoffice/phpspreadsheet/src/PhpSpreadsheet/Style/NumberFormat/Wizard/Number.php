@@ -13,13 +13,12 @@ class Number extends NumberBase implements Wizard
     protected bool $thousandsSeparator = true;
 
     /**
-     * @param int     $decimals           number of decimal places to display, in the range 0-30
-     * @param bool    $thousandsSeparator indicator whether the thousands separator should be used, or not
-     * @param ?string $locale             Set the locale for the number format; or leave as the default null.
-     *                                    Locale has no effect for Number Format values, and is retained here
-     *                                    only for compatibility with the other Wizards. If provided, Locale
-     *                                    values must be a valid formatted locale string (e.g. 'en-GB', 'fr',
-     *                                    uz-Arab-AF).
+     * @param int $decimals number of decimal places to display, in the range 0-30
+     * @param bool $thousandsSeparator indicator whether the thousands separator should be used, or not
+     * @param ?string $locale Set the locale for the number format; or leave as the default null.
+     *          Locale has no effect for Number Format values, and is retained here only for compatibility
+     *              with the other Wizards.
+     *          If provided, Locale values must be a valid formatted locale string (e.g. 'en-GB', 'fr', uz-Arab-AF).
      *
      * @throws Exception If a provided locale code is not a valid format
      */

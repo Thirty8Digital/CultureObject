@@ -2,6 +2,8 @@
 
 namespace PhpOffice\PhpSpreadsheet\Chart\Renderer;
 
+use mitoteam\jpgraph\MtJpGraph;
+
 /**
  * Jpgraph is not officially maintained by Composer at packagist.org.
  *
@@ -19,8 +21,7 @@ class MtJpGraphRenderer extends JpGraphRendererBase
             return;
         }
 
-        \mitoteam\jpgraph\MtJpGraph::load(
-            [
+        MtJpGraph::load([
             'bar',
             'contour',
             'line',
@@ -30,8 +31,7 @@ class MtJpGraphRenderer extends JpGraphRendererBase
             'regstat',
             'scatter',
             'stock',
-            ], true
-        ); // enable Extended mode
+        ], true); // enable Extended mode
 
         $loaded = true;
     }

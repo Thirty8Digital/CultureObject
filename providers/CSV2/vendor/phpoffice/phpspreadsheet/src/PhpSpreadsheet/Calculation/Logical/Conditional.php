@@ -38,15 +38,15 @@ class Conditional
      *            If condition is FALSE and ReturnIfFalse is blank, then the value 0 (zero) is returned.
      *            ReturnIfFalse can be another formula.
      *
-     * @param mixed $condition     Condition to evaluate
-     * @param mixed $returnIfTrue  Value to return when condition is true
-     *                             Note that this can be an array value
+     * @param mixed $condition Condition to evaluate
+     * @param mixed $returnIfTrue Value to return when condition is true
+     *              Note that this can be an array value
      * @param mixed $returnIfFalse Optional value to return when condition is false
-     *                             Note that this can be an array value
+     *              Note that this can be an array value
      *
      * @return mixed The value of returnIfTrue or returnIfFalse determined by condition
      */
-    public static function statementIf($condition = true, $returnIfTrue = 0, $returnIfFalse = false)
+    public static function statementIf(mixed $condition = true, mixed $returnIfTrue = 0, mixed $returnIfFalse = false): mixed
     {
         $condition = ($condition === null) ? true : Functions::flattenSingleValue($condition);
 
@@ -86,7 +86,7 @@ class Conditional
      *
      * @return mixed The value of matched expression
      */
-    public static function statementSwitch(...$arguments)
+    public static function statementSwitch(mixed ...$arguments): mixed
     {
         $result = ExcelError::VALUE();
 
@@ -124,15 +124,15 @@ class Conditional
      *        =IFERROR(testValue,errorpart)
      *
      * @param mixed $testValue Value to check, is also the value returned when no error
-     *                         Or can be an array of values
+     *                      Or can be an array of values
      * @param mixed $errorpart Value to return when testValue is an error condition
-     *                         Note that this can be an array value to be returned
+     *              Note that this can be an array value to be returned
      *
      * @return mixed The value of errorpart or testValue determined by error condition
      *         If an array of values is passed as the $testValue argument, then the returned result will also be
      *            an array with the same dimensions
      */
-    public static function IFERROR($testValue = '', $errorpart = '')
+    public static function IFERROR(mixed $testValue = '', mixed $errorpart = ''): mixed
     {
         if (is_array($testValue)) {
             return self::evaluateArrayArgumentsSubset([self::class, __FUNCTION__], 1, $testValue, $errorpart);
@@ -151,16 +151,15 @@ class Conditional
      *        =IFNA(testValue,napart)
      *
      * @param mixed $testValue Value to check, is also the value returned when not an NA
-     *                         Or can be an array of values
-     * @param mixed $napart    Value to return when testValue is an NA condition
-     *                         Note that this can be an array value to be
-     *                         returned
+     *                      Or can be an array of values
+     * @param mixed $napart Value to return when testValue is an NA condition
+     *              Note that this can be an array value to be returned
      *
      * @return mixed The value of errorpart or testValue determined by error condition
      *         If an array of values is passed as the $testValue argument, then the returned result will also be
      *            an array with the same dimensions
      */
-    public static function IFNA($testValue = '', $napart = '')
+    public static function IFNA(mixed $testValue = '', mixed $napart = ''): mixed
     {
         if (is_array($testValue)) {
             return self::evaluateArrayArgumentsSubset([self::class, __FUNCTION__], 1, $testValue, $napart);
@@ -184,11 +183,11 @@ class Conditional
      *             Value returned if corresponding testValue (nth) was true
      *
      * @param mixed ...$arguments Statement arguments
-     *                            Note that this can be an array value to be returned
+     *              Note that this can be an array value to be returned
      *
      * @return mixed|string The value of returnIfTrue_n, if testValue_n was true. #N/A if none of testValues was true
      */
-    public static function IFS(...$arguments)
+    public static function IFS(mixed ...$arguments)
     {
         $argumentCount = count($arguments);
 

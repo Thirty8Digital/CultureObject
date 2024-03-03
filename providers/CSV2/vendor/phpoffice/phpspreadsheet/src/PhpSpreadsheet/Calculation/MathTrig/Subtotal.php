@@ -9,11 +9,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 
 class Subtotal
 {
-    /**
-     * @param mixed $cellReference
-     * @param mixed $args
-     */
-    protected static function filterHiddenArgs($cellReference, $args): array
+    protected static function filterHiddenArgs(mixed $cellReference, mixed $args): array
     {
         return array_filter(
             $args,
@@ -30,15 +26,11 @@ class Subtotal
         );
     }
 
-    /**
-     * @param mixed $cellReference
-     * @param mixed $args
-     */
-    protected static function filterFormulaArgs($cellReference, $args): array
+    protected static function filterFormulaArgs(mixed $cellReference, mixed $args): array
     {
         return array_filter(
             $args,
-            function ($index) use ($cellReference) {
+            function ($index) use ($cellReference): bool {
                 $explodeArray = explode('.', $index);
                 $row = $explodeArray[1] ?? '';
                 $column = $explodeArray[2] ?? '';
@@ -60,6 +52,9 @@ class Subtotal
         );
     }
 
+    /**
+     * @var array<int, callable>
+     */
     private const CALL_FUNCTIONS = [
         1 => [Statistical\Averages::class, 'average'], // 1 and 101
         [Statistical\Counts::class, 'COUNT'], // 2 and 102
@@ -79,18 +74,16 @@ class Subtotal
      *
      * Returns a subtotal in a list or database.
      *
-     * @param mixed   $functionType
+     * @param mixed $functionType
      *            A number 1 to 11 that specifies which function to
      *                    use in calculating subtotals within a range
      *                    list
      *            Numbers 101 to 111 shadow the functions of 1 to 11
      *                    but ignore any values in the range that are
      *                    in hidden rows
-     * @param mixed[] $args         A mixed data series of values
-     *
-     * @return float|string
+     * @param mixed[] $args A mixed data series of values
      */
-    public static function evaluate($functionType, ...$args)
+    public static function evaluate(mixed $functionType, ...$args): float|int|string
     {
         $cellReference = array_pop($args);
         $bArgs = Functions::flattenArrayIndexed($args);
@@ -124,9 +117,6 @@ class Subtotal
 
         $aArgs = self::filterFormulaArgs($cellReference, $aArgs);
         if (array_key_exists($subtotal, self::CALL_FUNCTIONS)) {
-            /**
- * @var callable 
-*/
             $call = self::CALL_FUNCTIONS[$subtotal];
 
             return call_user_func_array($call, $aArgs);

@@ -40,21 +40,21 @@ class Fill extends StyleBase
         foreach ($styleAttributes as $styleAttributeKey => $styleAttributeValuex) {
             $styleAttributeValue = (string) $styleAttributeValuex;
             switch ($styleAttributeKey) {
-            case 'Color':
-                $style['fill']['endColor']['rgb'] = substr($styleAttributeValue, 1);
-                $style['fill']['startColor']['rgb'] = substr($styleAttributeValue, 1);
+                case 'Color':
+                    $style['fill']['endColor']['rgb'] = substr($styleAttributeValue, 1);
+                    $style['fill']['startColor']['rgb'] = substr($styleAttributeValue, 1);
 
-                break;
-            case 'PatternColor':
-                $style['fill']['startColor']['rgb'] = substr($styleAttributeValue, 1);
+                    break;
+                case 'PatternColor':
+                    $style['fill']['startColor']['rgb'] = substr($styleAttributeValue, 1);
 
-                break;
-            case 'Pattern':
-                $lcStyleAttributeValue = strtolower((string) $styleAttributeValue);
-                $style['fill']['fillType']
-                    = self::FILL_MAPPINGS['fillType'][$lcStyleAttributeValue] ?? FillStyles::FILL_NONE;
+                    break;
+                case 'Pattern':
+                    $lcStyleAttributeValue = strtolower((string) $styleAttributeValue);
+                    $style['fill']['fillType']
+                        = self::FILL_MAPPINGS['fillType'][$lcStyleAttributeValue] ?? FillStyles::FILL_NONE;
 
-                break;
+                    break;
             }
         }
 

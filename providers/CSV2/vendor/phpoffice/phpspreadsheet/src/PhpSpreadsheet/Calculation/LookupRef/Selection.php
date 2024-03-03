@@ -19,12 +19,12 @@ class Selection
      * Excel Function:
      *        =CHOOSE(index_num, value1, [value2], ...)
      *
-     * @param mixed $chosenEntry   The entry to select from the list (indexed from 1)
+     * @param mixed $chosenEntry The entry to select from the list (indexed from 1)
      * @param mixed ...$chooseArgs Data values
      *
      * @return mixed The selected value
      */
-    public static function choose($chosenEntry, ...$chooseArgs)
+    public static function choose(mixed $chosenEntry, mixed ...$chooseArgs): mixed
     {
         if (is_array($chosenEntry)) {
             return self::evaluateArrayArgumentsSubset([self::class, __FUNCTION__], 1, $chosenEntry, ...$chooseArgs);

@@ -9,10 +9,8 @@ class Style
 {
     /**
      * Formats.
-     *
-     * @var array
      */
-    protected $styles = [];
+    protected array $styles = [];
 
     public function parseStyles(SimpleXMLElement $xml, array $namespaces): array
     {
@@ -38,54 +36,54 @@ class Style
                 $styleAttributes = $styleData->attributes($namespaces['ss']);
 
                 switch ($styleType) {
-                case 'Alignment':
-                    if ($styleAttributes) {
-                        $alignment = $alignmentStyleParser->parseStyle($styleAttributes);
-                    }
-
-                    break;
-                case 'Borders':
-                    $border = $borderStyleParser->parseStyle($styleData, $namespaces);
-
-                    break;
-                case 'Font':
-                    if ($styleAttributes) {
-                        $font = $fontStyleParser->parseStyle($styleAttributes);
-                    }
-
-                    break;
-                case 'Interior':
-                    if ($styleAttributes) {
-                        $fill = $fillStyleParser->parseStyle($styleAttributes);
-                    }
-
-                    break;
-                case 'NumberFormat':
-                    if ($styleAttributes) {
-                        $numberFormat = $numberFormatStyleParser->parseStyle($styleAttributes);
-                    }
-
-                    break;
-                case 'Protection':
-                    $locked = $hidden = null;
-                    $styleAttributesP = $styleData->attributes($namespaces['x']);
-                    if (isset($styleAttributes['Protected'])) {
-                        $locked = ((bool) (string) $styleAttributes['Protected']) ? Protection::PROTECTION_PROTECTED : Protection::PROTECTION_UNPROTECTED;
-                    }
-                    if (isset($styleAttributesP['HideFormula'])) {
-                        $hidden = ((bool) (string) $styleAttributesP['HideFormula']) ? Protection::PROTECTION_PROTECTED : Protection::PROTECTION_UNPROTECTED;
-                    }
-                    if ($locked !== null || $hidden !== null) {
-                        $protection['protection'] = [];
-                        if ($locked !== null) {
-                            $protection['protection']['locked'] = $locked;
+                    case 'Alignment':
+                        if ($styleAttributes) {
+                            $alignment = $alignmentStyleParser->parseStyle($styleAttributes);
                         }
-                        if ($hidden !== null) {
-                            $protection['protection']['hidden'] = $hidden;
-                        }
-                    }
 
-                    break;
+                        break;
+                    case 'Borders':
+                        $border = $borderStyleParser->parseStyle($styleData, $namespaces);
+
+                        break;
+                    case 'Font':
+                        if ($styleAttributes) {
+                            $font = $fontStyleParser->parseStyle($styleAttributes);
+                        }
+
+                        break;
+                    case 'Interior':
+                        if ($styleAttributes) {
+                            $fill = $fillStyleParser->parseStyle($styleAttributes);
+                        }
+
+                        break;
+                    case 'NumberFormat':
+                        if ($styleAttributes) {
+                            $numberFormat = $numberFormatStyleParser->parseStyle($styleAttributes);
+                        }
+
+                        break;
+                    case 'Protection':
+                        $locked = $hidden = null;
+                        $styleAttributesP = $styleData->attributes($namespaces['x']);
+                        if (isset($styleAttributes['Protected'])) {
+                            $locked = ((bool) (string) $styleAttributes['Protected']) ? Protection::PROTECTION_PROTECTED : Protection::PROTECTION_UNPROTECTED;
+                        }
+                        if (isset($styleAttributesP['HideFormula'])) {
+                            $hidden = ((bool) (string) $styleAttributesP['HideFormula']) ? Protection::PROTECTION_PROTECTED : Protection::PROTECTION_UNPROTECTED;
+                        }
+                        if ($locked !== null || $hidden !== null) {
+                            $protection['protection'] = [];
+                            if ($locked !== null) {
+                                $protection['protection']['locked'] = $locked;
+                            }
+                            if ($hidden !== null) {
+                                $protection['protection']['hidden'] = $hidden;
+                            }
+                        }
+
+                        break;
                 }
             }
 

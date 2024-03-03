@@ -24,7 +24,7 @@ class Percentiles
      *
      * @return float|string The result, or a string containing an error
      */
-    public static function PERCENTILE(...$args)
+    public static function PERCENTILE(mixed ...$args)
     {
         $aArgs = Functions::flattenArray($args);
 
@@ -68,13 +68,13 @@ class Percentiles
      *      rather than floored (as MS Excel), so value 3 for a value set of  1, 2, 3, 4 will return
      *      0.667 rather than 0.666
      *
-     * @param mixed $valueSet     An array of (float) values, or a reference to, a list of numbers
-     * @param mixed $value        The number whose rank you want to find
+     * @param mixed $valueSet An array of (float) values, or a reference to, a list of numbers
+     * @param mixed $value The number whose rank you want to find
      * @param mixed $significance The (integer) number of significant digits for the returned percentage value
      *
      * @return float|string (string if result is an error)
      */
-    public static function PERCENTRANK($valueSet, $value, $significance = 3)
+    public static function PERCENTRANK(mixed $valueSet, mixed $value, mixed $significance = 3): string|float
     {
         $valueSet = Functions::flattenArray($valueSet);
         $value = Functions::flattenSingleValue($value);
@@ -125,7 +125,7 @@ class Percentiles
      *
      * @return float|string The result, or a string containing an error
      */
-    public static function QUARTILE(...$args)
+    public static function QUARTILE(mixed ...$args)
     {
         $aArgs = Functions::flattenArray($args);
         $entry = array_pop($aArgs);
@@ -150,13 +150,13 @@ class Percentiles
      *
      * Returns the rank of a number in a list of numbers.
      *
-     * @param mixed $value    The number whose rank you want to find
+     * @param mixed $value The number whose rank you want to find
      * @param mixed $valueSet An array of float values, or a reference to, a list of numbers
-     * @param mixed $order    Order to sort the values in the value set
+     * @param mixed $order Order to sort the values in the value set
      *
      * @return float|string The result, or a string containing an error (0 = Descending, 1 = Ascending)
      */
-    public static function RANK($value, $valueSet, $order = self::RANK_SORT_DESCENDING)
+    public static function RANK(mixed $value, mixed $valueSet, mixed $order = self::RANK_SORT_DESCENDING)
     {
         $value = Functions::flattenSingleValue($value);
         $valueSet = Functions::flattenArray($valueSet);
@@ -188,9 +188,7 @@ class Percentiles
     {
         return array_filter(
             $dataSet,
-            function ($value): bool {
-                return is_numeric($value) && !is_string($value);
-            }
+            fn ($value): bool => is_numeric($value) && !is_string($value)
         );
     }
 
@@ -198,9 +196,7 @@ class Percentiles
     {
         return array_filter(
             $dataSet,
-            function ($value): bool {
-                return is_numeric($value);
-            }
+            fn ($value): bool => is_numeric($value)
         );
     }
 }
