@@ -20,6 +20,7 @@ At present the data you provide to CultureObject can be one of two flavours:
 
 1. A publicly queryable RESTy API
 2. A structured xml / json data file
+3. A CSV (with a header row for labels)
 
 The data "shape" - and how to deal with the data the plugin finds - is dealt with in what are called "providers". These are PHP classes which you'll find in the /providers directory.
 
