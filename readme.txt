@@ -14,7 +14,7 @@ CultureObject is an open source WordPress plugin designed to help you put your m
 
 CultureObject is an open source WordPress plugin designed to help you put your museum object records on the web.
 
-It supports a number of collection management systems (AdLib, CollectionSpace, CSV, CultureGrid, Emu, RAMM)
+It supports a number of collection management systems (AdLib, CollectionSpace, CSV, CultureGrid, Emu, RAMM) as well as uploading of CSV files.
 
 == Installation ==
 
