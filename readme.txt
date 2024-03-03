@@ -1,6 +1,6 @@
 === Culture Object ===
 Contributors: lgladdy
-Tags: collections, museum, culture, objects, object, sync
+Tags: museum, culture, objects, object, sync
 Requires at least: 6.2
 Tested up to: 6.5
 Stable tag: 4.1.1
