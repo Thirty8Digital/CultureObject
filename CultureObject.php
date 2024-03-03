@@ -6,6 +6,8 @@
  * Version: 4.2-beta1
  * Author: Liam Gladdy / Thirty8 Digital
  * Text Domain: culture-object
+ * Requires PHP: 8.1
+ * Requires at least: 6.2
  * Author URI: https://github.com/lgladdy
  * License: Apache 2 License
  */
