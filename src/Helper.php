@@ -30,7 +30,7 @@ class Helper extends Core {
 	}
 
 	function cos_remapped_field_name( $key ) {
-		echo cos_get_remapped_field_name( $key );
+		echo wp_kses_post( cos_get_remapped_field_name( $key ) );
 	}
 
 	function add_image_to_gallery_from_url( $url, $save_as, $stream_context = false, $post_parent = 0, $image_title = false ) {
