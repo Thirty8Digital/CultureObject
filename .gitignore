@@ -1,4 +1,5 @@
 .DS_Store
+.vscode
 tools/
 crowdin.yaml
 providers/GAC

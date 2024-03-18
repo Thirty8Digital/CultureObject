@@ -278,7 +278,14 @@ class CSV2 extends \CultureObject\Provider {
 		$object_reader->setReadFilter( $chunk_filter )->setContiguous( true );
 
 		$chunk_filter->setRows( $start + 1, $count );
-		$csv       = $object_reader->load( $path );
+
+		try {
+			$csv = $object_reader->load( $path );
+		} catch ( Exception $e ) {
+			$this->delete_uploaded_file();
+			throw new CSV2Exception( esc_html__( 'An error occurred when trying to load the CSV. Please reupload the file.', 'culture-object' ) );
+		}
+
 		$worksheet = $csv->getActiveSheet();
 
 		return $worksheet->toArray();
