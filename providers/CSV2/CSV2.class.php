@@ -30,11 +30,15 @@ class CSV2 extends \CultureObject\Provider {
 		$path = $this->has_uploaded_file();
 		if ( $path ) {
 			if ( is_file( $path ) ) {
-				$headers = $this->get_csv_chunk( $path, 1, 0 );
-				$headers = $headers[0];
-				$return  = array();
-				foreach ( $headers as $header ) {
-					$return[ $header ] = $header;
+				try {
+					$headers = $this->get_csv_chunk( $path, 1, 0 );
+					$headers = $headers[0];
+					$return  = array();
+					foreach ( $headers as $header ) {
+						$return[ $header ] = $header;
+					}
+				} catch ( Exception $e ) {
+					return array();
 				}
 				return $return;
 			} else {
