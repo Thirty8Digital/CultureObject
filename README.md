@@ -5,11 +5,15 @@ Welcome
 ---------------------
 CultureObject is an open source WordPress plugin designed to help you put your museum object records on the web.
 
+Documentation
+---------------------
+A regularly maintained documentation site can be found at https://docs.cultureobject.co.uk. 
+
 
 How it works
 ---------------------
 
-* Install it from here (and shortly the WordPress plugin repository)
+* Install it from here or the [WordPress plugin directory](https://wordpress.org/plugins/culture-object/)
 * Activate it
 * Point it at your data
 * Run the import
@@ -33,9 +37,7 @@ We use the main branch here for development. If you want a known working build, 
 
 Originally an in-house project at [Thirty8Digital](http://www.thirty8.co.uk) by [Liam Gladdy](https://gladdy.uk)
 
-We're currently building CultureObject into an expandable framework that will be listed in the WordPress plugin directory, and allow third-party plugins to add supply additional providers.
-
-Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers.
+Presently, if you want to write a custom provider, you'll need to follow the default providers in the providers directory with the abstract class in CultureObject/Provider.class.php also giving you some pointers. 
 
 Todo in 5.0
 ---------------------
