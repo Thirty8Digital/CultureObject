@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'thirty8digital/culture-object',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'c45754f675e09f717249311523780cb330c8662b',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '2743be44dcab2ccdb77f20671613d82e63cea24a',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'thirty8digital/culture-object' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'c45754f675e09f717249311523780cb330c8662b',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '2743be44dcab2ccdb77f20671613d82e63cea24a',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
