@@ -29,6 +29,8 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 
 = 4.2 =
 Improvement: Updated dependencies, modernised codebase. Now requires WordPress 6.2 and PHP 8.1
+Security: HPSpreadsheet to fix a vulnerability
+Security: Fixed several escaping security vulnerabilities
 
 = 4.1.1 =
 Improvement: Implement WordPress coding standards
