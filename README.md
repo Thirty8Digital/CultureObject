@@ -1,4 +1,4 @@
-CultureObject v4.2.0-beta1
+CultureObject v4.2.0
 ====================
 
 Welcome
@@ -57,6 +57,7 @@ Change Log
 ---------------------
 
 #### Version 4.2
+* Updated PHPSpreadsheet to fix a vulnerability
 * Modernise codebase to WordPress Code Standards
 * Fixed several escaping security vulnerabilities
 
