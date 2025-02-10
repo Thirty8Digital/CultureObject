@@ -206,7 +206,7 @@ class CultureObject extends Core {
 				'menu_icon'    => 'dashicons-list-view',
 				'supports'     => array( 'title', 'custom-fields', 'thumbnail' ),
 				'rewrite'      => array(
-					'slug'       => 'object',
+					'slug'       => apply_filters( 'co_object_slug ', 'object' ),
 					'with_front' => false,
 				),
 			)
