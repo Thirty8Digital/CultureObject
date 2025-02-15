@@ -272,20 +272,20 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "2.3.7",
+            "version": "2.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "cf357183b1d17a3862e8e4b9b056a556654dcae6"
+                "reference": "7a700683743bf1c4a21837c84b266916f1aa7d25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/cf357183b1d17a3862e8e4b9b056a556654dcae6",
-                "reference": "cf357183b1d17a3862e8e4b9b056a556654dcae6",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/7a700683743bf1c4a21837c84b266916f1aa7d25",
+                "reference": "7a700683743bf1c4a21837c84b266916f1aa7d25",
                 "shasum": ""
             },
             "require": {
-                "composer/pcre": "^3.2",
+                "composer/pcre": "^1 || ^2 || ^3",
                 "ext-ctype": "*",
                 "ext-dom": "*",
                 "ext-fileinfo": "*",
@@ -371,9 +371,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.3.7"
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.3.8"
             },
-            "time": "2025-01-26T04:53:06+00:00"
+            "time": "2025-02-08T03:01:45+00:00"
         },
         {
             "name": "psr/http-client",
@@ -590,10 +590,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
