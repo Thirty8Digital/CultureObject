@@ -50,8 +50,8 @@ class Settings extends Core {
 					throw new Exception\ProviderException(
 						sprintf(
 						/* Translators: %s: The name of the provider developer */
-							__( 'The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the provider developer, %s. To stop this breaking your site, the provider has been disabled.', 'culture-object' ),
-							$info['developer']
+							esc_html__( 'The activated provider plugin claims to support remappable fields, but doesn\'t provide the list of remappable fields. This should never happen in a production environment. Please contact the provider developer, %s. To stop this breaking your site, the provider has been disabled.', 'culture-object' ),
+							esc_html( $info['developer'] )
 						)
 					);
 				} else {
@@ -88,10 +88,10 @@ class Settings extends Core {
 	}
 
 	function add_menu_item() {
-		add_menu_page( __( 'Culture Object Settings', 'culture-object' ), 'Culture Object', 'administrator', 'cos_settings', array( $this, 'generate_settings_page' ), 'dashicons-update' );
-		$options_page = add_submenu_page( 'cos_settings', __( 'Main Settings', 'culture-object' ), __( 'Main Settings', 'culture-object' ), 'administrator', 'cos_settings', array( $this, 'generate_settings_page' ) );
+		add_menu_page( __( 'Culture Object Settings', 'culture-object' ), 'Culture Object', 'manage_options', 'cos_settings', array( $this, 'generate_settings_page' ), 'dashicons-update' );
+		$options_page = add_submenu_page( 'cos_settings', __( 'Main Settings', 'culture-object' ), __( 'Main Settings', 'culture-object' ), 'manage_options', 'cos_settings', array( $this, 'generate_settings_page' ) );
 
-		$provider_page = add_submenu_page( 'cos_settings', __( 'Provider Settings', 'culture-object' ), __( 'Provider Settings', 'culture-object' ), 'administrator', 'cos_provider_settings', array( $this, 'generate_provider_page' ) );
+		$provider_page = add_submenu_page( 'cos_settings', __( 'Provider Settings', 'culture-object' ), __( 'Provider Settings', 'culture-object' ), 'manage_options', 'cos_provider_settings', array( $this, 'generate_provider_page' ) );
 		add_action( 'load-' . $provider_page, array( $this, 'provide_load_action' ) );
 
 		$provider = $this->get_sync_provider();
@@ -104,7 +104,7 @@ class Settings extends Core {
 			$provider_class->register_settings();
 
 			if ( isset( $info['supports_remap'] ) && $info['supports_remap'] ) {
-				$remap_page = add_submenu_page( 'cos_settings', __( 'Field Remapping Settings', 'culture-object' ), __( 'Field Remapping Settings', 'culture-object' ), 'administrator', 'cos_remap_settings', array( $this, 'generate_remap_page' ) );
+				$remap_page = add_submenu_page( 'cos_settings', __( 'Field Remapping Settings', 'culture-object' ), __( 'Field Remapping Settings', 'culture-object' ), 'manage_options', 'cos_remap_settings', array( $this, 'generate_remap_page' ) );
 			}
 		}
 	}
@@ -194,17 +194,18 @@ class Settings extends Core {
 			default:
 				$message = '';
 		}
-		echo $message;
+		echo wp_kses_post( $message );
 	}
 
 	function generate_settings_sync_providers_input( $args ) {
 		$field     = $args['field'];
 		$value     = get_option( $field );
 		$providers = $this->find_providers();
-		echo '<select name="' . $field . '" id="' . $field . '">';
+		echo '<select name="' . esc_attr( $field ) . '" id="' . esc_attr( $field ) . '">';
 		foreach ( $providers as $provider ) {
-			$selected = ( $value == $provider['class'] ) ? ' selected="selected"' : '';
-			echo '<option value="' . $provider['class'] . '"' . $selected . '>' . $provider['info']['name'] . '</option>';
+			echo '<option value="' . esc_attr( $provider['class'] ) . '"';
+			echo ( $value == $provider['class'] ) ? ' selected="selected"' : '';
+			echo '>' . esc_html( $provider['info']['name'] ) . '</option>';
 		}
 		echo '</select>';
 	}
@@ -215,9 +216,9 @@ class Settings extends Core {
 		if ( empty( $value ) && isset( $args['default'] ) ) {
 			$value = $args['default'];
 		}
-		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ) );
 		if ( $field == 'cos_core_sync_key' ) {
-			echo '<br /><small>' . __( 'This key forms part of the sync URL for a little bit more security.', 'culture-object' ) . '</small>';
+			echo '<br /><small>' . esc_html__( 'This key forms part of the sync URL for a little bit more security.', 'culture-object' ) . '</small>';
 		}
 	}
 
@@ -228,12 +229,12 @@ class Settings extends Core {
 			$value = $args['default'];
 		}
 		if ( $value ) {
-			printf( '<input type="checkbox" name="%s" value="1" id="%s" checked="checked" />', $field, $field );
+			printf( '<input type="checkbox" name="%s" value="1" id="%s" checked="checked" />', esc_attr( $field ), esc_attr( $field ) );
 		} else {
-			printf( '<input type="checkbox" name="%s" value="1" id="%s" />', $field, $field );
+			printf( '<input type="checkbox" name="%s" value="1" id="%s" />', esc_attr( $field ), esc_attr( $field ) );
 		}
 		if ( $field == 'cos_core_import_images' ) {
-			echo '<br /><small>' . __( 'Your provider supports automatic importing of images to the WordPress Media Library.<br />Would you like to enable this?', 'culture-object' ) . '</small>';
+			echo '<br /><small>' . esc_html__( 'Your provider supports automatic importing of images to the WordPress Media Library.<br />Would you like to enable this?', 'culture-object' ) . '</small>';
 		}
 	}
 }

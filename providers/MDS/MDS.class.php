@@ -184,16 +184,16 @@ class MDS extends \CultureObject\Provider {
 		if ( $number_of_objects == 0 ) {
 			$import_status[] = 'Nothing to import';
 		} else {
-			foreach ( $result['data'] as $doc ) {
-				$identifier            = $doc['@admin']['id'];
-				$doc['_cos_object_id'] = $identifier;
+			foreach ( $result['data'] as $obj ) {
+				$identifier            = $obj['@admin']['id'];
+				$obj['_cos_object_id'] = $identifier;
 				$object_exists         = $this->object_exists( $identifier );
 				if ( ! $object_exists ) {
-					$current_objects[] = $this->create_object( $identifier, $doc );
+					$current_objects[] = $this->create_object( $identifier, $obj );
 					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . $identifier;
 					++$created;
 				} else {
-					$current_objects[] = $this->update_object( $identifier, $doc );
+					$current_objects[] = $this->update_object( $identifier, $obj );
 					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . $identifier;
 					++$updated;
 				}
@@ -276,18 +276,42 @@ class MDS extends \CultureObject\Provider {
 		return $return;
 	}
 
-	function create_object( $identifier, $doc ) {
-		$meta = array();
-		foreach ( $doc as $key => $value ) {
-			if ( empty( $value ) ) {
-				continue;
-			}
-			$key          = strtolower( $key );
-			$meta[ $key ] = $value;
+	function value_or_false( $fields, $key ) {
+		return isset( $fields[ $key ] ) ? $fields[ $key ] : false;
+	}
+
+	function build_mds_data( $obj ) {
+
+		$fields = array();
+		foreach ( $obj['@document']['units'] as $field ) {
+			$fields[ $field['type'] ] = $field['value'];
 		}
 
+		$data              = array();
+		$data['@document'] = $obj['@document'];
+		$data['@admin']    = $obj['@admin'];
+
+		$data['accession_number']  = $this->value_or_false( $fields, 'spectrum/object_number' );
+		$data['title']             = $this->value_or_false( $fields, 'spectrum/title' );
+		$data['name']              = $this->value_or_false( $fields, 'spectrum/object_name' );
+		$data['attribution']       = $this->value_or_false( $fields, 'spectrum/credit_line' );
+		$data['description']       = $this->value_or_false( $fields, 'spectrum/brief_description' );
+		$data['subjects']          = $this->value_or_false( $fields, 'spectrum/associated_concept' );
+		$data['production_date']   = $this->value_or_false( $fields, 'spectrum/object_production_date' );
+		$data['maker']             = $this->value_or_false( $fields, '' );
+		$data['materials']         = $this->value_or_false( $fields, 'spectrum/material' );
+		$data['related_place']     = $this->value_or_false( $fields, 'spectrum/associated_place' );
+		$data['related_person']    = $this->value_or_false( $fields, 'spectrum/associated_person' );
+		$data['organisation name'] = ! empty( $obj['@admin']['data_source']['organisation'] ) ? $obj['@admin']['data_source']['organisation'] : false;
+
+		return $data;
+	}
+
+	function create_object( $identifier, $obj ) {
+		$meta = $this->build_mds_data( $obj );
+
 		$post    = array(
-			'post_title'  => ! empty( $doc['name'] ) ? $this->concat_values( $doc['name'] ) : '',
+			'post_title'  => $meta['name'],
 			'post_name'   => $identifier,
 			'post_type'   => 'object',
 			'post_status' => 'publish',
@@ -298,20 +322,13 @@ class MDS extends \CultureObject\Provider {
 	}
 
 
-	function update_object( $identifier, $doc ) {
-		$meta = array();
-		foreach ( $doc as $key => $value ) {
-			if ( empty( $value ) ) {
-				continue;
-			}
-			$key          = strtolower( $key );
-			$meta[ $key ] = $value;
-		}
+	function update_object( $identifier, $obj ) {
+		$meta = $this->build_mds_data( $obj );
 
 		$existing_id = $this->existing_object_id( $identifier );
 		$post        = array(
 			'ID'          => $existing_id,
-			'post_title'  => ! empty( $doc['name'] ) ? $this->concat_values( $doc['name'] ) : '',
+			'post_title'  => $meta['name'],
 			'post_name'   => $identifier,
 			'post_type'   => 'object',
 			'post_status' => 'publish',
