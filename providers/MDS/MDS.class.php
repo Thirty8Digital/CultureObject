@@ -302,7 +302,7 @@ class MDS extends \CultureObject\Provider {
 		$data['materials']         = $this->value_or_false( $fields, 'spectrum/material' );
 		$data['related_place']     = $this->value_or_false( $fields, 'spectrum/associated_place' );
 		$data['related_person']    = $this->value_or_false( $fields, 'spectrum/associated_person' );
-		$data['organisation name'] = ! empty( $obj['@admin']['data_source']['organisation'] ) ? $obj['@admin']['data_source']['organisation'] : false;
+		$data['organisation_name'] = ! empty( $obj['@admin']['data_source']['organisation'] ) ? $obj['@admin']['data_source']['organisation'] : false;
 
 		return $data;
 	}
