@@ -280,6 +280,23 @@ class MDS extends \CultureObject\Provider {
 		return isset( $fields[ $key ] ) ? $fields[ $key ] : false;
 	}
 
+	function register_remappable_fields() {
+		return array(
+			'accession_number'  => 'Accession Number',
+			'title'             => 'Title',
+			'name'              => 'Name',
+			'attribution'       => 'Attribution',
+			'description'       => 'Description',
+			'subjects'          => 'Subjects',
+			'production_date'   => 'Production Date',
+			'maker'             => 'Maker',
+			'materials'         => 'Materials',
+			'related_place'     => 'Related Place',
+			'related_person'    => 'Related Person',
+			'organisation_name' => 'Organisation Name',
+		);
+	}
+
 	function build_mds_data( $obj ) {
 
 		$fields = array();
