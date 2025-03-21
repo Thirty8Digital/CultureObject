@@ -315,7 +315,7 @@ class MDS extends \CultureObject\Provider {
 		$data['description']       = $this->value_or_false( $fields, 'spectrum/brief_description' );
 		$data['subjects']          = $this->value_or_false( $fields, 'spectrum/associated_concept' );
 		$data['production_date']   = $this->value_or_false( $fields, 'spectrum/object_production_date' );
-		$data['maker']             = $this->value_or_false( $fields, '' );
+		$data['maker']             = $this->value_or_false( $fields, 'spectrum/object_production_person' );
 		$data['materials']         = $this->value_or_false( $fields, 'spectrum/material' );
 		$data['related_place']     = $this->value_or_false( $fields, 'spectrum/associated_place' );
 		$data['related_person']    = $this->value_or_false( $fields, 'spectrum/associated_person' );
