@@ -290,6 +290,7 @@ class MDS extends \CultureObject\Provider {
 			'brief_description'       		=> 'Brief Description',
 			'associated_concept'          	=> 'Associated Concept',
 			'object_production_date'   		=> 'Object Production Date',
+			'object_production_place'   	=> 'Object Production Place',
 			'object_production_person'     	=> 'Object Production Person',
 			'material'         				=> 'Material',
 			'associated_place'     			=> 'Associated Place',
@@ -317,6 +318,7 @@ class MDS extends \CultureObject\Provider {
 		$data['brief_description']       = $this->value_or_false( $fields, 'spectrum/brief_description' );
 		$data['associated_concept']          = $this->value_or_false( $fields, 'spectrum/associated_concept' );
 		$data['object_production_date']   = $this->value_or_false( $fields, 'spectrum/object_production_date' );
+		$data['object_production_place']   = $this->value_or_false( $fields, 'spectrum/object_production_place' );
 		$data['object_production_person']             = $this->value_or_false( $fields, 'spectrum/object_production_person' );
 		$data['material']         = $this->value_or_false( $fields, 'spectrum/material' );
 		$data['associated_place']     = $this->value_or_false( $fields, 'spectrum/associated_place' );
