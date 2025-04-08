@@ -295,8 +295,10 @@ class MDS extends \CultureObject\Provider {
 			'associated_place'     			=> 'Associated Place',
 			'associated_person'    			=> 'Associated Person',
 			'organisation' 					=> 'Organisation',
+			'all_data'						=> 'All Data',
 		);
 	}
+	
 
 	function build_mds_data( $obj ) {
 
@@ -308,7 +310,6 @@ class MDS extends \CultureObject\Provider {
 		$data              = array();
 		$data['@document'] = $obj['@document'];
 		$data['@admin']    = $obj['@admin'];
-
 		$data['object_number']  	= $this->value_or_false( $fields, 'spectrum/object_number' );
 		$data['title']             = $this->value_or_false( $fields, 'spectrum/title' );
 		$data['object_name']              = $this->value_or_false( $fields, 'spectrum/object_name' );
