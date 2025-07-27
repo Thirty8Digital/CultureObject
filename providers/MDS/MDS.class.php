@@ -8,12 +8,12 @@ class MDS extends \CultureObject\Provider {
 
 
 	private $provider = array(
-		'name'      => 'Museum Data Service',
-		'version'   => '1.0.0',
-		'supports_remap'  => true,
-		'developer' => 'The Museum Platform',
-		'cron'      => false,
-		'ajax'      => true,
+		'name'           => 'Museum Data Service',
+		'version'        => '1.0.0',
+		'supports_remap' => true,
+		'developer'      => 'The Museum Platform',
+		'cron'           => false,
+		'ajax'           => true,
 	);
 
 	function add_provider_assets() {
@@ -283,22 +283,22 @@ class MDS extends \CultureObject\Provider {
 
 	function register_remappable_fields() {
 		return array(
-			'object_number'  				=> 'Object Number',
-			'title'             			=> 'Title',
-			'object_name'              		=> 'Object Name',
-			'credit_line'       			=> 'Credit Line',
-			'brief_description'       		=> 'Brief Description',
-			'associated_concept'          	=> 'Associated Concept',
-			'object_production_date'   		=> 'Object Production Date',
-			'object_production_place'   	=> 'Object Production Place',
-			'object_production_person'     	=> 'Object Production Person',
-			'material'         				=> 'Material',
-			'associated_place'     			=> 'Associated Place',
-			'associated_person'    			=> 'Associated Person',
-			'organisation' 					=> 'Organisation',
+			'object_number'            => 'Object Number',
+			'title'                    => 'Title',
+			'object_name'              => 'Object Name',
+			'credit_line'              => 'Credit Line',
+			'brief_description'        => 'Brief Description',
+			'associated_concept'       => 'Associated Concept',
+			'object_production_date'   => 'Object Production Date',
+			'object_production_place'  => 'Object Production Place',
+			'object_production_person' => 'Object Production Person',
+			'material'                 => 'Material',
+			'associated_place'         => 'Associated Place',
+			'associated_person'        => 'Associated Person',
+			'organisation'             => 'Organisation',
 		);
 	}
-	
+
 
 	function build_mds_data( $obj ) {
 
@@ -310,20 +310,20 @@ class MDS extends \CultureObject\Provider {
 		$data              = array();
 		$data['@document'] = $obj['@document'];
 		$data['@admin']    = $obj['@admin'];
-		
-		$data['object_number']  	= $this->value_or_false( $fields, 'spectrum/object_number' );
-		$data['title']             = $this->value_or_false( $fields, 'spectrum/title' );
+
+		$data['object_number']            = $this->value_or_false( $fields, 'spectrum/object_number' );
+		$data['title']                    = $this->value_or_false( $fields, 'spectrum/title' );
 		$data['object_name']              = $this->value_or_false( $fields, 'spectrum/object_name' );
-		$data['credit_line']       = $this->value_or_false( $fields, 'spectrum/credit_line' );
-		$data['brief_description']       = $this->value_or_false( $fields, 'spectrum/brief_description' );
-		$data['associated_concept']          = $this->value_or_false( $fields, 'spectrum/associated_concept' );
+		$data['credit_line']              = $this->value_or_false( $fields, 'spectrum/credit_line' );
+		$data['brief_description']        = $this->value_or_false( $fields, 'spectrum/brief_description' );
+		$data['associated_concept']       = $this->value_or_false( $fields, 'spectrum/associated_concept' );
 		$data['object_production_date']   = $this->value_or_false( $fields, 'spectrum/object_production_date' );
-		$data['object_production_place']   = $this->value_or_false( $fields, 'spectrum/object_production_place' );
-		$data['object_production_person']             = $this->value_or_false( $fields, 'spectrum/object_production_person' );
-		$data['material']         = $this->value_or_false( $fields, 'spectrum/material' );
-		$data['associated_place']     = $this->value_or_false( $fields, 'spectrum/associated_place' );
-		$data['associated_person']    = $this->value_or_false( $fields, 'spectrum/associated_person' );
-		$data['organisation'] = ! empty( $obj['@admin']['data_source']['organisation'] ) ? $obj['@admin']['data_source']['organisation'] : false;
+		$data['object_production_place']  = $this->value_or_false( $fields, 'spectrum/object_production_place' );
+		$data['object_production_person'] = $this->value_or_false( $fields, 'spectrum/object_production_person' );
+		$data['material']                 = $this->value_or_false( $fields, 'spectrum/material' );
+		$data['associated_place']         = $this->value_or_false( $fields, 'spectrum/associated_place' );
+		$data['associated_person']        = $this->value_or_false( $fields, 'spectrum/associated_person' );
+		$data['organisation']             = ! empty( $obj['@admin']['data_source']['organisation'] ) ? $obj['@admin']['data_source']['organisation'] : false;
 
 		return $data;
 	}
@@ -349,7 +349,7 @@ class MDS extends \CultureObject\Provider {
 		$existing_id = $this->existing_object_id( $identifier );
 		$post        = array(
 			'ID'          => $existing_id,
-			'post_title'  => $meta['name'],
+			'post_title'  => $meta['object_name'],
 			'post_name'   => $identifier,
 			'post_type'   => 'object',
 			'post_status' => 'publish',
