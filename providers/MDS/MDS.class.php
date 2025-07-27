@@ -115,15 +115,15 @@ class MDS extends \CultureObject\Provider {
 			throw new MDSException( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$resume    = $_POST['resume'];
-		$import_id = $_POST['import_id'];
+		$resume    = sanitize_text_field( wp_unslash( $_POST['resume'] ) );
+		$import_id = sanitize_text_field( wp_unslash( $_POST['import_id'] ) );
 		$result    = array();
 
-		if ( $resume == 'start' ) {
+		if ( $resume === 'start' ) {
 			$resume = false;
 		}
 
-		if ( $resume == 'cleanup' ) {
+		if ( $resume === 'cleanup' ) {
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_mds_import_' . $import_id, array() );
@@ -131,7 +131,7 @@ class MDS extends \CultureObject\Provider {
 			delete_option( 'cos_mds_import_' . $import_id, array() );
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
-			$cleanup = isset( $_POST['perform_cleanup'] ) && $_POST['perform_cleanup'];
+			$cleanup = isset( $_POST['perform_cleanup'] ) && (bool) $_POST['perform_cleanup'];
 
 			$result = $this->import_page( $resume );
 

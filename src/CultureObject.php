@@ -102,8 +102,10 @@ class CultureObject extends Core {
 	function should_ajax_sync() {
 
 		if ( isset( $_POST['key'] ) ) {
-			if ( wp_verify_nonce( $_POST['nonce'], 'cos_ajax_import_request' ) ) {
-				if ( get_option( 'cos_core_sync_key' ) == $_POST['key'] ) {
+			$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+			if ( wp_verify_nonce( $nonce, 'cos_ajax_import_request' ) ) {
+				$sync_key = sanitize_text_field( wp_unslash( $_POST['key'] ) );
+				if ( get_option( 'cos_core_sync_key' ) === $sync_key ) {
 					$provider = $this->get_sync_provider();
 					if ( $provider ) {
 						if ( ! class_exists( $provider['class'] ) ) {
@@ -154,7 +156,7 @@ class CultureObject extends Core {
 				$result            = array();
 				$result['state']   = 'error';
 				$result['message'] = esc_html__( 'Security Violation', 'culture-object' );
-				$result['detail']  = esc_html__( 'Nonce verification failed: ', 'culture-object' ) . $_POST['nonce'];
+				$result['detail']  = esc_html__( 'Nonce verification failed: ', 'culture-object' ) . esc_html( $nonce );
 				echo wp_json_encode( $result );
 				wp_die();
 			}
