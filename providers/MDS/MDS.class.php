@@ -44,7 +44,6 @@ class MDS extends \CultureObject\Provider {
 	}
 
 	function generate_settings_group_content() {
-
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
@@ -54,11 +53,6 @@ class MDS extends \CultureObject\Provider {
 			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
-
-		$authority = get_option( 'cos_provider_feed_url' );
-		if ( ! empty( $authority ) ) {
-			echo '<p>' . esc_html__( 'MDS\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.', 'culture-object' ) . '</p>';
-		}
 	}
 
 	function execute_init_action() {

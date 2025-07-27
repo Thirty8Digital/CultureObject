@@ -277,17 +277,17 @@
                 },
                 {
                         "name": "phpoffice/phpspreadsheet",
-                        "version": "2.3.8",
-                        "version_normalized": "2.3.8.0",
+                        "version": "2.3.10",
+                        "version_normalized": "2.3.10.0",
                         "source": {
                                 "type": "git",
                                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                                "reference": "7a700683743bf1c4a21837c84b266916f1aa7d25"
+                                "reference": "22058ce75b774bf40ceefcadd090a424d558f1ca"
                         },
                         "dist": {
                                 "type": "zip",
-                                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/7a700683743bf1c4a21837c84b266916f1aa7d25",
-                                "reference": "7a700683743bf1c4a21837c84b266916f1aa7d25",
+                                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/22058ce75b774bf40ceefcadd090a424d558f1ca",
+                                "reference": "22058ce75b774bf40ceefcadd090a424d558f1ca",
                                 "shasum": ""
                         },
                         "require": {
@@ -333,7 +333,7 @@
                                 "mpdf/mpdf": "Option for rendering PDF with PDF Writer",
                                 "tecnickcom/tcpdf": "Option for rendering PDF with PDF Writer"
                         },
-                        "time": "2025-02-08T03:01:45+00:00",
+                        "time": "2025-07-23T04:43:28+00:00",
                         "type": "library",
                         "installation-source": "dist",
                         "autoload": {
@@ -379,7 +379,7 @@
                         ],
                         "support": {
                                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.3.8"
+                                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.3.10"
                         },
                         "install-path": "../phpoffice/phpspreadsheet"
                 },
