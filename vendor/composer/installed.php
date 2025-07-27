@@ -3,7 +3,7 @@
         'name' => 'thirty8digital/culture-object',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2743be44dcab2ccdb77f20671613d82e63cea24a',
+        'reference' => '9461da7a8351c9cc6182a977ed0d40103658701c',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'thirty8digital/culture-object' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2743be44dcab2ccdb77f20671613d82e63cea24a',
+            'reference' => '9461da7a8351c9cc6182a977ed0d40103658701c',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

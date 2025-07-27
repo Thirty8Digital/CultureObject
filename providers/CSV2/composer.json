@@ -11,5 +11,10 @@
             "email": "liam@gladdy.co.uk"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "config": {
+        "platform": {
+            "php": "8.1"
+        }
+    }
 }

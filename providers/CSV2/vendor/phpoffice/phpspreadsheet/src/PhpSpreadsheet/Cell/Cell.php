@@ -58,10 +58,7 @@ class Cell implements Stringable
      */
     private int $xfIndex = 0;
 
-    /**
-     * Attributes of the formula.
-     */
-    private mixed $formulaAttributes = null;
+    private ?array $formulaAttributes = null;
 
     private IgnoredErrors $ignoredErrors;
 
@@ -316,7 +313,21 @@ class Cell implements Stringable
         $this->updateInCollection();
         $cellCoordinate = $this->getCoordinate();
         self::updateIfCellIsTableHeader($this->getParent()?->getParent(), $this, $oldValue, $value);
-        $this->getWorksheet()->applyStylesFromArray($cellCoordinate, ['quotePrefix' => $quotePrefix]);
+        $worksheet = $this->getWorksheet();
+        $spreadsheet = $worksheet->getParent();
+        if (isset($spreadsheet) && $spreadsheet->getIndex($worksheet, true) >= 0) {
+            $originalSelected = $worksheet->getSelectedCells();
+            $activeSheetIndex = $spreadsheet->getActiveSheetIndex();
+            $style = $this->getStyle();
+            $oldQuotePrefix = $style->getQuotePrefix();
+            if ($oldQuotePrefix !== $quotePrefix) {
+                $style->setQuotePrefix($quotePrefix);
+            }
+            $worksheet->setSelectedCells($originalSelected);
+            if ($activeSheetIndex >= 0) {
+                $spreadsheet->setActiveSheetIndex($activeSheetIndex);
+            }
+        }
 
         return $this->getParent()?->get($cellCoordinate) ?? $this;
     }
@@ -787,22 +798,14 @@ class Cell implements Stringable
         return $this->updateInCollection();
     }
 
-    /**
-     * Set the formula attributes.
-     *
-     * @return $this
-     */
-    public function setFormulaAttributes(mixed $attributes): self
+    public function setFormulaAttributes(?array $attributes): self
     {
         $this->formulaAttributes = $attributes;
 
         return $this;
     }
 
-    /**
-     * Get the formula attributes.
-     */
-    public function getFormulaAttributes(): mixed
+    public function getFormulaAttributes(): ?array
     {
         return $this->formulaAttributes;
     }

@@ -36,17 +36,17 @@ class CultureObject extends Core {
 		$version = 'PHP' == $flag ? $php : $wp;
 		deactivate_plugins( basename( __FILE__ ) );
 
-		$error_type   = __( 'Plugin Activation Error', 'culture-object' );
+		$error_type   = esc_html__( 'Plugin Activation Error', 'culture-object' );
 		$error_string = sprintf(
 			/* Translators: 1: Either WordPress or PHP, depending on the version mismatch 2: Required version number */
-			__( 'Culture Object requires %1$s version %2$s or greater.', 'culture-object' ),
+			esc_html__( 'Culture Object requires %1$s version %2$s or greater.', 'culture-object' ),
 			$flag,
 			$version
 		);
 
 		wp_die(
-			'<p>' . $error_string . '</p>',
-			$error_type,
+			'<p>' . wp_kses_post( $error_string ) . '</p>',
+			wp_kses_post( $error_type ),
 			array(
 				'response'  => 200,
 				'back_link' => true,
@@ -64,8 +64,8 @@ class CultureObject extends Core {
 		if ( defined( 'CO_CLI_CRON' ) && CO_CLI_CRON ) {
 			$cli_cron = true;
 		}
-		if ( $cli_cron || ( isset( $_GET['perform_culture_object_sync'] ) && isset( $_GET['key'] ) ) ) {
-			if ( $cli_cron || ( get_option( 'cos_core_sync_key' ) == $_GET['key'] ) ) {
+		if ( $cli_cron || ( isset( $_GET['perform_culture_object_sync'] ) && isset( $_GET['key'] ) ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
+			if ( $cli_cron || ( get_option( 'cos_core_sync_key' ) == $_GET['key'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
 				$provider = $this->get_sync_provider();
 				if ( $provider ) {
 					if ( ! class_exists( $provider['class'] ) ) {
@@ -77,9 +77,9 @@ class CultureObject extends Core {
 					if ( ! $info['cron'] ) {
 						die(
 							sprintf(
-							/* Translators: %s: is the name of the provider. */
-								__( 'Culture Object provider (%s) does not support automated sync.', 'culture-object' ),
-								$info['name']
+								/* Translators: %s: is the name of the provider. */
+								esc_html__( 'Culture Object provider (%s) does not support automated sync.', 'culture-object' ),
+								esc_html( $info['name'] )
 							)
 						);
 					}
@@ -87,11 +87,11 @@ class CultureObject extends Core {
 					try {
 						$provider_class->perform_sync();
 					} catch ( Exception\ProviderException $e ) {
-						echo __( 'A sync exception occurred during sync', 'culture-object' ) . ':<br />';
-						echo $e->getMessage();
+						echo esc_html__( 'A sync exception occurred during sync', 'culture-object' ) . ':<br />';
+						echo wp_kses_post( $e->getMessage() );
 					} catch ( Exception\Exception $e ) {
-						echo __( 'An unknown exception occurred during sync', 'culture-object' ) . ':<br />';
-						echo $e->getMessage();
+						echo esc_html__( 'An unknown exception occurred during sync', 'culture-object' ) . ':<br />';
+						echo wp_kses_post( $e->getMessage() );
 					}
 					die( 'Sync Complete' . PHP_EOL );
 				}
@@ -116,60 +116,60 @@ class CultureObject extends Core {
 							die(
 								sprintf(
 								/* Translators: %s: is the name of the provider. */
-									__( 'Culture Object provider (%s) does not support AJAX sync.', 'culture-object' ),
-									$info['name']
+									esc_html__( 'Culture Object provider (%s) does not support AJAX sync.', 'culture-object' ),
+									esc_html( $info['name'] )
 								)
 							);
 						}
 
 						try {
 							$result = $provider_class->perform_ajax_sync();
-							echo json_encode( $result );
+							echo wp_json_encode( $result );
 							wp_die();
 						} catch ( Exception\ProviderException $e ) {
 							$result            = array();
 							$result['state']   = 'error';
-							$result['message'] = urlencode( __( 'A sync exception occurred during sync', 'culture-object' ) );
-							$result['detail']  = urlencode( $e->getMessage() );
-							echo json_encode( $result );
+							$result['message'] = esc_html__( 'A sync exception occurred during sync', 'culture-object' );
+							$result['detail']  = esc_html( $e->getMessage() );
+							echo wp_json_encode( $result );
 							wp_die();
 						} catch ( Exception\Exception $e ) {
 							$result            = array();
 							$result['state']   = 'error';
-							$result['message'] = urlencode( __( 'An unknown exception occurred during sync', 'culture-object' ) );
-							$result['detail']  = urlencode( $e->getMessage() );
-							echo json_encode( $result );
+							$result['message'] = esc_html__( 'An unknown exception occurred during sync', 'culture-object' );
+							$result['detail']  = esc_html( $e->getMessage() );
+							echo wp_json_encode( $result );
 							wp_die();
 						}
 					}
 				} else {
 					$result            = array();
 					$result['state']   = 'error';
-					$result['message'] = __( 'Security Violation', 'culture-object' );
-					$result['detail']  = __( 'Invalid Sync Key', 'culture-object' );
-					echo json_encode( $result );
+					$result['message'] = esc_html__( 'Security Violation', 'culture-object' );
+					$result['detail']  = esc_html__( 'Invalid Sync Key', 'culture-object' );
+					echo wp_json_encode( $result );
 					wp_die();
 				}
 			} else {
 				$result            = array();
 				$result['state']   = 'error';
-				$result['message'] = __( 'Security Violation', 'culture-object' );
-				$result['detail']  = __( 'Nonce verification failed: ' . $_POST['nonce'], 'culture-object' );
-				echo json_encode( $result );
+				$result['message'] = esc_html__( 'Security Violation', 'culture-object' );
+				$result['detail']  = esc_html__( 'Nonce verification failed: ', 'culture-object' ) . $_POST['nonce'];
+				echo wp_json_encode( $result );
 				wp_die();
 			}
 		}
 
 		$result            = array();
 		$result['state']   = 'error';
-		$result['message'] = urlencode( __( 'An unknown error occurred during AJAX sync', 'culture-object' ) );
-		$result['detail']  = __( 'An unknown error occurred during AJAX sync', 'culture-object' );
-		echo json_encode( $result );
+		$result['message'] = esc_html__( 'An unknown error occurred during AJAX sync', 'culture-object' );
+		$result['detail']  = esc_html__( 'An unknown error occurred during AJAX sync', 'culture-object' );
+		echo wp_json_encode( $result );
 		wp_die();
 	}
 
 	function purge_objects() {
-		if ( is_admin() && isset( $_GET['perform_cos_debug_purge'] ) ) {
+		if ( is_admin() && isset( $_GET['perform_cos_debug_purge'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
 			$all_objects = get_posts(
 				array(
 					'post_status'    => 'any',
@@ -180,7 +180,7 @@ class CultureObject extends Core {
 			foreach ( $all_objects as $obj ) {
 				wp_delete_post( $obj->ID, true );
 			}
-			wp_die( __( 'Deleted all COS objects.', 'culture-object' ) );
+			wp_die( esc_html__( 'Deleted all COS objects.', 'culture-object' ) );
 		}
 	}
 
@@ -190,15 +190,15 @@ class CultureObject extends Core {
 			'object',
 			array(
 				'labels'       => array(
-					'name'               => __( 'Objects', 'culture-object' ),
-					'singular_name'      => __( 'Object', 'culture-object' ),
-					'add_new_item'       => __( 'Add new object', 'culture-object' ),
-					'edit_item'          => __( 'Edit object', 'culture-object' ),
-					'new_item'           => __( 'New object', 'culture-object' ),
-					'view_item'          => __( 'View object', 'culture-object' ),
-					'search_items'       => __( 'Search objects', 'culture-object' ),
-					'not_found'          => __( 'No objects found', 'culture-object' ),
-					'not_found_in_trash' => __( 'No objects found in the trash', 'culture-object' ),
+					'name'               => esc_html__( 'Objects', 'culture-object' ),
+					'singular_name'      => esc_html__( 'Object', 'culture-object' ),
+					'add_new_item'       => esc_html__( 'Add new object', 'culture-object' ),
+					'edit_item'          => esc_html__( 'Edit object', 'culture-object' ),
+					'new_item'           => esc_html__( 'New object', 'culture-object' ),
+					'view_item'          => esc_html__( 'View object', 'culture-object' ),
+					'search_items'       => esc_html__( 'Search objects', 'culture-object' ),
+					'not_found'          => esc_html__( 'No objects found', 'culture-object' ),
+					'not_found_in_trash' => esc_html__( 'No objects found in the trash', 'culture-object' ),
 				),
 				'public'       => true,
 				'has_archive'  => true,
@@ -221,16 +221,16 @@ class CultureObject extends Core {
 
 		$messages['object'] = array(
 			0  => '',
-			1  => sprintf( __( 'Object updated.', 'culture-object' ) . ' <a href="%s">' . __( 'View object', 'culture-object' ) . '</a>', esc_url( get_permalink( $post_ID ) ) ),
-			2  => __( 'Custom field updated.', 'culture-object' ),
-			3  => __( 'Custom field deleted.', 'culture-object' ),
-			4  => __( 'Object updated.', 'culture-object' ),
-			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Object restored to revision from %s', 'culture-object' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( 'Object published.', 'culture-object' ) . ' <a href="%s">' . __( 'View object', 'culture-object' ) . '</a>', esc_url( get_permalink( $post_ID ) ) ),
-			7  => __( 'Object saved.', 'culture-object' ),
-			8  => sprintf( __( 'Object submitted.', 'culture-object' ) . ' <a target="_blank" href="%s">' . __( 'Preview object', 'culture-object' ) . '</a>', esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
-			9  => sprintf( __( 'Object scheduled for', 'culture-object' ) . ': <strong>%1$s</strong>. <a target="_blank" href="%2$s">' . __( 'Preview object', 'culture-object' ) . '</a>', date_i18n( __( 'M j, Y @ G:i', 'culture-object' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
-			10 => sprintf( __( 'Object draft updated.', 'culture-object' ) . ' <a target="_blank" href="%s">' . __( 'Preview object', 'culture-object' ) . '</a>', esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+			1  => sprintf( esc_html__( 'Object updated.', 'culture-object' ) . ' <a href="%s">' . esc_html__( 'View object', 'culture-object' ) . '</a>', esc_url( get_permalink( $post_ID ) ) ),
+			2  => esc_html__( 'Custom field updated.', 'culture-object' ),
+			3  => esc_html__( 'Custom field deleted.', 'culture-object' ),
+			4  => esc_html__( 'Object updated.', 'culture-object' ),
+			5  => isset( $_GET['revision'] ) ? sprintf( esc_html__( 'Object restored to revision from %s', 'culture-object' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
+			6  => sprintf( esc_html__( 'Object published.', 'culture-object' ) . ' <a href="%s">' . esc_html__( 'View object', 'culture-object' ) . '</a>', esc_url( get_permalink( $post_ID ) ) ),
+			7  => esc_html__( 'Object saved.', 'culture-object' ),
+			8  => sprintf( esc_html__( 'Object submitted.', 'culture-object' ) . ' <a target="_blank" href="%s">' . esc_html__( 'Preview object', 'culture-object' ) . '</a>', esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+			9  => sprintf( esc_html__( 'Object scheduled for', 'culture-object' ) . ': <strong>%1$s</strong>. <a target="_blank" href="%2$s">' . esc_html__( 'Preview object', 'culture-object' ) . '</a>', date_i18n( esc_html__( 'M j, Y @ G:i', 'culture-object' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
+			10 => sprintf( esc_html__( 'Object draft updated.', 'culture-object' ) . ' <a target="_blank" href="%s">' . esc_html__( 'Preview object', 'culture-object' ) . '</a>', esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
 		);
 
 		return $messages;
