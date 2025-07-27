@@ -134,9 +134,9 @@ class SWCE extends \CultureObject\Provider {
 			throw new SWCEException( __( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$start     = $_POST['start'];
-		$import_id = $_POST['import_id'];
-		$since     = $_POST['since'];
+		$start     = sanitize_text_field( wp_unslash( $_POST['start'] ) );
+		$import_id = sanitize_text_field( wp_unslash( $_POST['import_id'] ) );
+		$since     = isset( $_POST['since'] ) ? sanitize_text_field( wp_unslash( $_POST['since'] ) ) : '';
 		if ( empty( $since ) ) {
 			$since = '';
 		}
@@ -144,7 +144,7 @@ class SWCE extends \CultureObject\Provider {
 
 		update_option( 'cos_swce_import_since', $since );
 
-		if ( $start == 'cleanup' ) {
+		if ( $start === 'cleanup' ) {
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_swce_import_' . $import_id, array() );
@@ -152,7 +152,7 @@ class SWCE extends \CultureObject\Provider {
 			delete_option( 'cos_swce_import_' . $import_id, array() );
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
-			$cleanup = isset( $_POST['perform_cleanup'] ) && $_POST['perform_cleanup'];
+			$cleanup = isset( $_POST['perform_cleanup'] ) && (bool) $_POST['perform_cleanup'];
 
 			$result = $this->import_page( $start, $since );
 
