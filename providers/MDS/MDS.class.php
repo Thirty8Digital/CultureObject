@@ -324,6 +324,7 @@ class MDS extends \CultureObject\Provider {
 
 	function create_object( $identifier, $obj ) {
 		$meta = $this->build_mds_data( $obj );
+		$meta['_cos_object_id'] = $identifier;
 
 		$post    = array(
 			'post_title'  => $meta['object_name'],
@@ -339,6 +340,7 @@ class MDS extends \CultureObject\Provider {
 
 	function update_object( $identifier, $obj ) {
 		$meta = $this->build_mds_data( $obj );
+		$meta['_cos_object_id'] = $identifier;
 
 		$existing_id = $this->existing_object_id( $identifier );
 		$post        = array(
