@@ -434,8 +434,35 @@ class Modes extends \CultureObject\Provider {
 			delete_option( 'cos_modes_uploaded_file_path' );
 		}
 
-		$file_name = preg_replace( '/[^A-Za-z0-9_\-.]/', '_', $file['name'] );
+		// Use basename to strip any directory components and sanitize filename safely
+		$original_name = basename( $file['name'] );
+		$file_name     = preg_replace( '/[^A-Za-z0-9_\-]/', '_', pathinfo( $original_name, PATHINFO_FILENAME ) );
+		$extension     = pathinfo( $original_name, PATHINFO_EXTENSION );
+
+		// Ensure we have a valid filename
+		if ( empty( $file_name ) ) {
+			$file_name = 'uploaded_file';
+		}
+
+		// Add extension back if it's safe
+		if ( ! empty( $extension ) && preg_match( '/^[a-zA-Z0-9]+$/', $extension ) ) {
+			$file_name .= '.' . $extension;
+		} else {
+			$file_name .= '.xml'; // Default to XML extension for Modes
+		}
+
+		// Generate unique filename to prevent conflicts
+		$file_name = wp_unique_filename( $upload_dir, $file_name );
 		$full_path = $upload_dir . $file_name;
+
+		// Validate the final path is within the upload directory
+		$upload_dir_real = realpath( $upload_dir );
+		$full_path_real  = realpath( dirname( $full_path ) ) . DIRECTORY_SEPARATOR . basename( $full_path );
+
+		if ( ! $upload_dir_real || strpos( $full_path_real, $upload_dir_real ) !== 0 ) {
+			throw new ModesException( __( 'Invalid file path detected.', 'culture-object' ) );
+		}
+
 		if ( move_uploaded_file( $file['tmp_name'], $full_path ) ) {
 			update_option( 'cos_modes_uploaded_file_path', $full_path );
 			return;
