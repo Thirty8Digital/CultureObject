@@ -59,6 +59,7 @@ Change Log
 #### Version 4.3
 * Add new MDS provider
 * Bump third party dependencies
+* Fixed several escaping potential security vulnerabilities
 
 #### Version 4.2
 * Updated PHPSpreadsheet to fix a vulnerability

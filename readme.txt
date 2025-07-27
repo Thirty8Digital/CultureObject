@@ -30,6 +30,7 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 = 4.3 =
 New: Add new MDS provider
 General: Bump third party dependencies
+Security: Fixed several escaping potential security vulnerabilities
 
 = 4.2 =
 Improvement: Updated dependencies, modernised codebase. Now requires WordPress 6.2 and PHP 8.1
