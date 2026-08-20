@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Reader;
 
+use Closure;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 use PhpOffice\PhpSpreadsheet\Reader\Security\XmlScanner;
@@ -51,7 +52,13 @@ abstract class BaseReader implements IReader
      * Improper specification of these within a spreadsheet
      * can subject the caller to security exploits.
      */
-    protected bool $allowExternalImages = true;
+    protected bool $allowExternalImages = false;
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    protected bool $createBlankSheetIfNoneRead = false;
 
     /**
      * IReadFilter instance.
@@ -62,6 +69,9 @@ abstract class BaseReader implements IReader
     protected $fileHandle;
 
     protected ?XmlScanner $securityScanner = null;
+
+    /** @var null|Closure(string):bool function to return whether image path is okay */
+    protected ?Closure $isWhitelisted = null;
 
     public function __construct()
     {
@@ -152,9 +162,10 @@ abstract class BaseReader implements IReader
     }
 
     /**
-     * Allow external images. Use with caution.
-     * Improper specification of these within a spreadsheet
-     * can subject the caller to security exploits.
+     * USE WITH CAUTION (and in conjunction with setIsWhiteListed)!
+     * Allow external images;
+     * these can be specified within a spreadsheet
+     * in a way that can subject the caller to security exploits.
      */
     public function setAllowExternalImages(bool $allowExternalImages): self
     {
@@ -166,6 +177,33 @@ abstract class BaseReader implements IReader
     public function getAllowExternalImages(): bool
     {
         return $this->allowExternalImages;
+    }
+
+    /**
+     * USE WITH CAUTION!
+     * Supply a callback to determine whether a path should be whitelisted,
+     * used in conjunction with setAllowExternalImages;
+     * supplying a method which might return true
+     * can subject the caller to security exploits.
+     *
+     * @param Closure(string):bool $isWhitelisted
+     */
+    public function setIsWhitelisted(Closure $isWhitelisted): self
+    {
+        $this->isWhitelisted = $isWhitelisted;
+
+        return $this;
+    }
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    public function setCreateBlankSheetIfNoneRead(bool $createBlankSheetIfNoneRead): self
+    {
+        $this->createBlankSheetIfNoneRead = $createBlankSheetIfNoneRead;
+
+        return $this;
     }
 
     public function getSecurityScanner(): ?XmlScanner
@@ -201,6 +239,9 @@ abstract class BaseReader implements IReader
         }
         if (((bool) ($flags & self::DONT_ALLOW_EXTERNAL_IMAGES)) === true) {
             $this->setAllowExternalImages(false);
+        }
+        if (((bool) ($flags & self::CREATE_BLANK_SHEET_IF_NONE_READ)) === true) {
+            $this->setCreateBlankSheetIfNoneRead(true);
         }
     }
 
