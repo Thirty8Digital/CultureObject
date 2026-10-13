@@ -362,7 +362,7 @@ class Xls extends BaseReader
      * The current MD5 context state.
      * It is never set in the program, so code which uses it is suspect.
      */
-    private string $md5Ctxt; // @phpstan-ignore-line
+    private string $md5Ctxt;
 
     private int $textObjRef;
 
@@ -700,6 +700,7 @@ class Xls extends BaseReader
 
         // Parse the individual sheets
         $this->activeSheetSet = false;
+        $sheetCreated = false;
         foreach ($this->sheets as $sheet) {
             $selectedCells = '';
             if ($sheet['sheetType'] != 0x00) {
@@ -714,6 +715,7 @@ class Xls extends BaseReader
 
             // add sheet to PhpSpreadsheet object
             $this->phpSheet = $this->spreadsheet->createSheet();
+            $sheetCreated = true;
             //    Use false for $updateFormulaCellReferences to prevent adjustment of worksheet references in formula
             //        cells... during the load, all formulae should be correct, and we're simply bringing the worksheet
             //        name in line with the formula, not the reverse
@@ -1114,6 +1116,9 @@ class Xls extends BaseReader
             if ($selectedCells !== '') {
                 $this->phpSheet->setSelectedCells($selectedCells);
             }
+        }
+        if ($this->createBlankSheetIfNoneRead && !$sheetCreated) {
+            $this->spreadsheet->createSheet();
         }
         if ($this->activeSheetSet === false) {
             $this->spreadsheet->setActiveSheetIndex(0);
@@ -4436,9 +4441,9 @@ class Xls extends BaseReader
         if ($this->getReadFilter() !== null) {
             $includeCellRange = false;
             $rangeBoundaries = Coordinate::getRangeBoundaries($cellRangeAddress);
-            ++$rangeBoundaries[1][0];
+            StringHelper::stringIncrement($rangeBoundaries[1][0]);
             for ($row = $rangeBoundaries[0][1]; $row <= $rangeBoundaries[1][1]; ++$row) {
-                for ($column = $rangeBoundaries[0][0]; $column != $rangeBoundaries[1][0]; ++$column) {
+                for ($column = $rangeBoundaries[0][0]; $column != $rangeBoundaries[1][0]; StringHelper::stringIncrement($column)) {
                     if ($this->getReadFilter()->readCell($column, $row, $this->phpSheet->getTitle())) {
                         $includeCellRange = true;
 

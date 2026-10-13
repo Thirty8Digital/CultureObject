@@ -117,13 +117,6 @@ class Html extends BaseWriter
     protected bool $isPdf = false;
 
     /**
-     * Is the current writer creating mPDF?
-     *
-     * @deprecated 2.0.1 use instanceof Mpdf instead
-     */
-    protected bool $isMPdf = false;
-
-    /**
      * Generate the Navigation block.
      */
     private bool $generateSheetNavigationBlock = true;
@@ -502,7 +495,7 @@ class Html extends BaseWriter
                             $rowData[$column] = ($sheet->getCellCollection()->has($cellAddress)) ? $cellAddress : '';
                         }
                         ++$column;
-                        ++$colStr;
+                        StringHelper::stringIncrement($colStr);
                     }
                     $html .= $this->generateRow($sheet, $rowData, $row - 1, $cellType);
                 }
@@ -764,8 +757,8 @@ class Html extends BaseWriter
                     $totalHeight += ($height >= 0) ? $height : $defaultRowHeight;
                 }
                 $rightEdge = $brCoordinate[2];
-                ++$rightEdge;
-                for ($column = $tlCoordinate[2]; $column !== $rightEdge; ++$column) {
+                StringHelper::stringIncrement($rightEdge);
+                for ($column = $tlCoordinate[2]; $column !== $rightEdge; StringHelper::stringIncrement($column)) {
                     $width = $sheet->getColumnDimension($column)->getWidth();
                     $width = ($width < 0) ? self::DEFAULT_CELL_WIDTH_PIXELS : SharedDrawing::cellDimensionToPixels($sheet->getColumnDimension($column)->getWidth(), $this->defaultFont);
                     $totalWidth += $width;
@@ -860,7 +853,7 @@ class Html extends BaseWriter
             if ($this->shouldGenerateColumn($sheet, $colStr)) {
                 $css['table.sheet' . $sheetIndex . ' col.col' . $column]['width'] = self::DEFAULT_CELL_WIDTH_POINTS . 'pt';
             }
-            ++$colStr;
+            StringHelper::stringIncrement($colStr);
         }
 
         // col elements, loop through columnDimensions and set width
@@ -1688,7 +1681,7 @@ class Html extends BaseWriter
         }
 
         // convert to PCDATA
-        $result = htmlspecialchars($value, Settings::htmlEntityFlags());
+        $result = htmlspecialchars($value, ENT_NOQUOTES);
 
         // color span tag
         if ($color !== null) {
