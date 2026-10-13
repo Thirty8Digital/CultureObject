@@ -3,7 +3,7 @@ Contributors: lgladdy
 Tags: museum, culture, objects, object, sync
 Requires at least: 6.2
 Tested up to: 6.5
-Stable tag: 4.3
+Stable tag: 4.4
 Requires PHP: 8.1
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,17 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 4.4 =
+Security: Fixed the debug object purge endpoint being callable without authentication. It now requires the manage_options capability and a nonce
+Security: CSV2 and Modes uploads now force a safe file extension, are stored in a directory that denies direct web access, and no longer trust the client supplied file type
+Security: Image imports only fetch over http(s) and now sanitise the file name, require an image file type, and ignore path components supplied by the remote server
+Security: Sync key comparison is now timing safe and an empty sync key no longer authenticates; new sync keys are generated with wp_generate_password
+Security: AJAX sync, and the AdLib, Emu, CSV2 and Modes upload handlers, now check user capabilities as well as nonces
+Security: cron.php can no longer be run over the web
+Security: Updated PhpSpreadsheet to 2.4.8 (fixes CVE-2026-59931, CVE-2026-59932 and CVE-2026-59933) and composer/pcre to 3.4.0
+Fix: The co_object_slug filter name contained a trailing space so it could never be used
+Fix: Activation version check now matches the plugin header (PHP 8.1, WordPress 6.2)
 
 = 4.3 =
 New: Add new MDS provider

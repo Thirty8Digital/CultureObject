@@ -1,4 +1,4 @@
-CultureObject v4.3.0
+CultureObject v4.4.0
 ====================
 
 Welcome
@@ -55,6 +55,15 @@ In order to enable field mapping, your theme must declare support for 'cos-remap
 
 Change Log
 ---------------------
+
+#### Version 4.4
+* Security: debug object purge endpoint now requires `manage_options` and a nonce (previously callable unauthenticated via admin-ajax.php)
+* Security: CSV2 and Modes uploads force a safe extension, are stored in a web-denied directory and no longer trust the client file type
+* Security: image imports only fetch over http(s), sanitise file names, require an image type and ignore remote supplied paths
+* Security: timing-safe sync key comparison, empty key no longer authenticates, stronger key generation
+* Security: capability checks added to AJAX sync and the AdLib, Emu, CSV2 and Modes upload handlers; `cron.php` is CLI only
+* Security: updated PhpSpreadsheet to 2.4.8 (CVE-2026-59931/59932/59933) and composer/pcre to 3.4.0
+* Fix `co_object_slug` filter name (trailing space) and the activation PHP/WordPress version check
 
 #### Version 4.3
 * Add new MDS provider
