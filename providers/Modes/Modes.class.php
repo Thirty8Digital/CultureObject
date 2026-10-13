@@ -229,7 +229,7 @@ class Modes extends \CultureObject\Provider {
             	</label>
             </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id=\"' . esc_attr( uniqid( '', true ) ) . '\" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
+		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
 		esc_html_e( 'Process Import', 'culture-object' );
 		echo '" />';
 
@@ -365,8 +365,12 @@ class Modes extends \CultureObject\Provider {
 						$import_status[] = esc_html__( "Failed to import image as the selected field doesn't contain a valid URL", 'culture-object' );
 					} else {
 						$image_id = $helper->add_image_to_gallery_from_url( $obj[ $image_field ], (string) $obj[ $id_field ], $context, 0, false, true );
-						set_post_thumbnail( $obj_id, $image_id );
-						$import_status[] = esc_html__( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] ) . ' [' . intval( $obj_id ) . ']';
+						if ( $image_id ) {
+							set_post_thumbnail( $obj_id, $image_id );
+							$import_status[] = esc_html__( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] ) . ' [' . intval( $obj_id ) . ']';
+						} else {
+							$import_status[] = esc_html__( 'Failed to download image. Check it is accessible.', 'culture-object' );
+						}
 					}
 				}
 			}
@@ -421,10 +425,6 @@ class Modes extends \CultureObject\Provider {
 					intval( $file['error'] )
 				)
 			);
-		}
-
-		if ( ! in_array( $file['type'], array( 'text/xml', 'application/xml' ), true ) ) {
-			throw new ModesException( esc_html__( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
 		}
 
 		$current_path = $this->has_uploaded_file();

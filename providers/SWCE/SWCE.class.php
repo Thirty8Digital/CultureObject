@@ -428,7 +428,7 @@ class SWCE extends \CultureObject\Provider {
         	</label>
         </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id=\"' . esc_attr( uniqid( '', true ) ) . '\" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
+		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
 		esc_html_e( 'Begin Import', 'culture-object' );
 		echo '" />';
 		echo '</div>';

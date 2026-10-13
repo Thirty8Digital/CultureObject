@@ -142,7 +142,8 @@ class Helper extends Core {
 		if ( '' === $name ) {
 			$name = 'uploaded_file';
 		}
-		return wp_unique_filename( $upload_dir, $name . '.' . $extension );
+		// Random suffix: the file lives under the web root, so its URL must not be guessable (matters on servers that ignore .htaccess).
+		return wp_unique_filename( $upload_dir, $name . '-' . wp_generate_password( 12, false ) . '.' . $extension );
 	}
 
 	/**
@@ -183,7 +184,7 @@ class Helper extends Core {
 				$response_headers[] = 'content-disposition: ' . wp_remote_retrieve_header( $response, 'content-disposition' );
 			}
 		} else {
-			$img              = @file_get_contents( $url, false, $stream_context ); //phpcs:ignore WordPress.WP.AlternativeFunctions,WordPress.PHP.NoSilencedErrors
+			$img              = @file_get_contents( $url, false, is_resource( $stream_context ) ? $stream_context : null ); //phpcs:ignore WordPress.WP.AlternativeFunctions,WordPress.PHP.NoSilencedErrors
 			$response_headers = function_exists( 'http_get_last_response_headers' ) ? http_get_last_response_headers() : ( $http_response_header ?? array() );
 		}
 		if ( $img ) {
@@ -195,21 +196,22 @@ class Helper extends Core {
 				}
 			}
 
-			// Never trust the remote or provider supplied name: strip paths, sanitise, and require an allowed image type.
+			// Never trust the remote or provider supplied name or type: inspect the downloaded bytes itself.
+			// getimagesizefromstring() parses real image headers, so non-image content is refused whatever it is called.
+			$image_info = @getimagesizefromstring( $img ); //phpcs:ignore WordPress.PHP.NoSilencedErrors
+			$mime       = is_array( $image_info ) && ! empty( $image_info['mime'] ) ? $image_info['mime'] : '';
+			$mime_ext   = array_search( $mime, get_allowed_mime_types(), true );
+			if ( '' === $mime || 0 !== strpos( $mime, 'image/' ) || ! $mime_ext ) {
+				return false;
+			}
+
+			// Keep the sanitised name, but make the extension match what the file really is.
 			$save_as  = sanitize_file_name( basename( (string) $save_as ) );
 			$filetype = wp_check_filetype( $save_as );
-			if ( empty( $filetype['type'] ) || 0 !== strpos( $filetype['type'], 'image/' ) ) {
-				// No usable image extension in the name; fall back to sniffing the downloaded bytes.
-				$finfo = new \finfo( FILEINFO_MIME_TYPE );
-				$mime  = $finfo->buffer( $img );
-				$ext   = array_search( $mime, wp_get_mime_types(), true );
-				if ( ! $ext || 0 !== strpos( $mime, 'image/' ) ) {
-					return false;
-				}
-				$ext      = explode( '|', $ext )[0];
-				$save_as  = sanitize_file_name( pathinfo( $save_as, PATHINFO_FILENAME ) . '.' . $ext );
+			if ( $filetype['type'] !== $mime ) {
+				$save_as  = sanitize_file_name( pathinfo( $save_as, PATHINFO_FILENAME ) . '.' . explode( '|', $mime_ext )[0] );
 				$filetype = wp_check_filetype( $save_as );
-				if ( empty( $filetype['type'] ) ) {
+				if ( $filetype['type'] !== $mime ) {
 					return false;
 				}
 			}

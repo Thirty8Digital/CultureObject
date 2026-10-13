@@ -701,8 +701,6 @@ class CSV2 extends \CultureObject\Provider {
 
 	function save_upload() {
 
-		$valid_file_types = array( 'text/csv', 'application/vnd.ms-excel' );
-
 		$helper = new \CultureObject\Helper();
 
 		$file = $_FILES['cos_csv_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified before this method is called.
@@ -714,10 +712,6 @@ class CSV2 extends \CultureObject\Provider {
 					esc_html( $file['error'] )
 				)
 			);
-		}
-
-		if ( ! in_array( $file['type'], $valid_file_types, true ) ) {
-			throw new CSV2Exception( esc_html__( 'Unable to import. You didn\'t upload a CSV file', 'culture-object' ) );
 		}
 
 		$current_path = $this->has_uploaded_file();

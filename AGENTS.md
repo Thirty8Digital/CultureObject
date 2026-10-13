@@ -71,11 +71,8 @@ AdLib, CollectionSpace, CSV2 (upload; uses PhpSpreadsheet via its own `providers
 
 ## Known inconsistencies / gotchas
 
-- `CultureObject::check_versions()` (`src/CultureObject.php`) still checks PHP 7.3 / WP 4.5, while the plugin header and readme require PHP 8.1 / WP 6.2. Also it uses `basename( __FILE__ )` for `deactivate_plugins`, which points at `CultureObject.php` inside `src/`, not the plugin main file.
-- `register_post_type` uses `apply_filters( 'co_object_slug ', 'object' )` with a **trailing space in the hook name**, so the documented filter never fires under `co_object_slug`.
-- `README.md` still says "Currently v4.1" and mentions `CultureObject/Provider.class.php` (now `src/Provider.php`).
 - `Settings::register_settings()` throws a `ProviderException` from an `admin_init` callback if a remap provider lacks `register_remappable_fields()`.
 - `Helper::add_image_to_gallery_from_url()` uses `file_get_contents` (http/https only, sanitised filename, image types only); providers fetching remote data use `file_get_contents` rather than `wp_remote_get`.
 - `js/culture-object-sync.js` is a stub (alerts the raw response); provider `assets/admin.js` do the real AJAX work.
-- Run the official WordPress.org Plugin Check with `bin/plugin-check.sh` (needs Docker; builds a `.distignore`d copy in `build/`, spins up WordPress + MariaDB from `.dev/plugin-check/`, `--vendor` includes bundled libraries, `--down` removes the stack). Also run `phpcs --standard=phpcs.ruleset.xml --ignore='*/vendor/*,*/build/*' .`. Both should be clean before a release; the only known Plugin Check error is the Apache 2 vs GPL license mismatch.
+- Run the official WordPress.org Plugin Check with `bin/plugin-check.sh` (needs Docker; builds a `.distignore`d copy in `build/`, spins up WordPress + MariaDB from `.dev/plugin-check/`, `--vendor` includes bundled libraries, `--down` removes the stack). Also run `phpcs --standard=phpcs.ruleset.xml --ignore='*/vendor/*,*/build/*' .`. Run both before a release.
 - The "Delete all objects" button on Main Settings (only shown with `?enable_purge=true`) POSTs `cos_purge_objects`, handled by `purge_objects()`; it requires `manage_options` and a nonce. It deletes **all** `object` posts.
