@@ -103,7 +103,7 @@ class CultureObject extends Core {
 	 * Timing-safe comparison against the stored sync key. An empty stored key never matches.
 	 *
 	 * @param mixed $supplied The key supplied with the request.
-	 * @return bool
+	 * @return boolean
 	 */
 	function is_valid_sync_key( $supplied ) {
 		$stored = get_option( 'cos_core_sync_key' );

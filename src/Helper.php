@@ -38,7 +38,7 @@ class Helper extends Core {
 	 * files or remote feeds, so WordPress' protected (underscore prefixed) keys are refused.
 	 *
 	 * @param string $key Meta key.
-	 * @return bool
+	 * @return boolean
 	 */
 	function is_safe_meta_key( $key ) {
 		$key = (string) $key;
@@ -73,9 +73,9 @@ class Helper extends Core {
 	 * Builds a safe destination filename for a provider upload. The extension is forced to one of
 	 * the allowed values rather than trusted from the client.
 	 *
-	 * @param string $original_name   Client supplied file name.
-	 * @param string $upload_dir      Destination directory.
-	 * @param array  $allowed_exts    Allowed extensions, the first is the default.
+	 * @param string $original_name Client supplied file name.
+	 * @param string $upload_dir    Destination directory.
+	 * @param array  $allowed_exts  Allowed extensions, the first is the default.
 	 * @return string|false File name, or false if the extension is not allowed.
 	 */
 	function get_safe_upload_filename( $original_name, $upload_dir, $allowed_exts ) {
@@ -97,14 +97,14 @@ class Helper extends Core {
 	/**
 	 * Downloads an image from a URL and adds it to the media library.
 	 *
-	 * @param string        $url            Image URL.
-	 * @param string        $save_as        Suggested file name.
-	 * @param resource|bool $stream_context Optional stream context (e.g. for authenticated sources).
-	 * @param int           $post_parent    Parent post ID.
-	 * @param string|bool   $image_title    Attachment title.
-	 * @param bool          $untrusted_url  True when the URL comes from uploaded data. The download then uses
-	 *                                      wp_safe_remote_get(), which refuses internal hosts, including via redirects.
-	 * @return int|false Attachment ID or false.
+	 * @param string           $url            Image URL.
+	 * @param string           $save_as        Suggested file name.
+	 * @param resource|boolean $stream_context Optional stream context (e.g. for authenticated sources).
+	 * @param integer          $post_parent    Parent post ID.
+	 * @param string|boolean   $image_title    Attachment title.
+	 * @param boolean          $untrusted_url  True when the URL comes from uploaded data. The download then uses
+	 *                                         wp_safe_remote_get(), which refuses internal hosts, including via redirects.
+	 * @return integer|false Attachment ID or false.
 	 */
 	function add_image_to_gallery_from_url( $url, $save_as, $stream_context = false, $post_parent = 0, $image_title = false, $untrusted_url = false ) {
 		// Image URLs come from imported data, so only ever fetch over http(s) (not file://, php://, etc).
@@ -155,8 +155,8 @@ class Helper extends Core {
 				if ( ! $ext || 0 !== strpos( $mime, 'image/' ) ) {
 					return false;
 				}
-				$ext     = explode( '|', $ext )[0];
-				$save_as = sanitize_file_name( pathinfo( $save_as, PATHINFO_FILENAME ) . '.' . $ext );
+				$ext      = explode( '|', $ext )[0];
+				$save_as  = sanitize_file_name( pathinfo( $save_as, PATHINFO_FILENAME ) . '.' . $ext );
 				$filetype = wp_check_filetype( $save_as );
 				if ( empty( $filetype['type'] ) ) {
 					return false;
@@ -167,7 +167,7 @@ class Helper extends Core {
 			$file_location = $upload_dir['path'] . '/' . $save_as;
 			file_put_contents( $file_location, $img ); //phpcs:ignore WordPress.WP.AlternativeFunctions
 
-			$image_title = $image_title ?: preg_replace( '/\.[^.]+$/', '', basename( $file_location ) );
+			$image_title = $image_title ? $image_title : preg_replace( '/\.[^.]+$/', '', basename( $file_location ) );
 
 			// Prepare an array of post data for the attachment.
 			$attachment = array(
