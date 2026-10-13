@@ -23,8 +23,8 @@ class CultureObject extends Core {
 
 	static function check_versions() {
 		global $wp_version;
-		$wp  = '4.5';
-		$php = '7.3';
+		$wp  = '6.2';
+		$php = '8.1';
 
 		if ( version_compare( PHP_VERSION, $php, '<' ) ) {
 			$flag = 'PHP';
@@ -65,7 +65,7 @@ class CultureObject extends Core {
 			$cli_cron = true;
 		}
 		if ( $cli_cron || ( isset( $_GET['perform_culture_object_sync'] ) && isset( $_GET['key'] ) ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
-			if ( $cli_cron || ( get_option( 'cos_core_sync_key' ) == $_GET['key'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
+			if ( $cli_cron || $this->is_valid_sync_key( $_GET['key'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput -- Compared against the stored key, never output.
 				$provider = $this->get_sync_provider();
 				if ( $provider ) {
 					if ( ! class_exists( $provider['class'] ) ) {
@@ -99,7 +99,32 @@ class CultureObject extends Core {
 		}
 	}
 
+	/**
+	 * Timing-safe comparison against the stored sync key. An empty stored key never matches.
+	 *
+	 * @param mixed $supplied The key supplied with the request.
+	 * @return boolean
+	 */
+	function is_valid_sync_key( $supplied ) {
+		$stored = get_option( 'cos_core_sync_key' );
+		if ( ! is_string( $stored ) || '' === $stored || ! is_string( $supplied ) ) {
+			return false;
+		}
+		return hash_equals( $stored, $supplied );
+	}
+
 	function should_ajax_sync() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json(
+				array(
+					'state'   => 'error',
+					'message' => esc_html__( 'Security Violation', 'culture-object' ),
+					'detail'  => esc_html__( 'You do not have permission to perform this sync.', 'culture-object' ),
+				),
+				403
+			);
+		}
 
 		if ( isset( $_POST['key'] ) ) {
 			$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
@@ -156,7 +181,7 @@ class CultureObject extends Core {
 				$result            = array();
 				$result['state']   = 'error';
 				$result['message'] = esc_html__( 'Security Violation', 'culture-object' );
-				$result['detail']  = esc_html__( 'Nonce verification failed: ', 'culture-object' ) . esc_html( $nonce );
+				$result['detail']  = esc_html__( 'Nonce verification failed.', 'culture-object' );
 				echo wp_json_encode( $result );
 				wp_die();
 			}
@@ -171,19 +196,26 @@ class CultureObject extends Core {
 	}
 
 	function purge_objects() {
-		if ( is_admin() && isset( $_GET['perform_cos_debug_purge'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
-			$all_objects = get_posts(
-				array(
-					'post_status'    => 'any',
-					'post_type'      => 'object',
-					'posts_per_page' => -1,
-				)
-			);
-			foreach ( $all_objects as $obj ) {
-				wp_delete_post( $obj->ID, true );
-			}
-			wp_die( esc_html__( 'Deleted all COS objects.', 'culture-object' ) );
+		if ( ! is_admin() || ! isset( $_POST['cos_purge_objects'] ) ) {
+			return;
 		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to do that.', 'culture-object' ), '', array( 'response' => 403 ) );
+		}
+		check_admin_referer( 'cos_purge_objects' );
+
+		$all_objects = get_posts(
+			array(
+				'post_status'    => 'any',
+				'post_type'      => 'object',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+		foreach ( $all_objects as $object_id ) {
+			wp_delete_post( $object_id, true );
+		}
+		wp_die( esc_html__( 'Deleted all COS objects.', 'culture-object' ), '', array( 'back_link' => true ) );
 	}
 
 	function wordpress_init() {
@@ -208,7 +240,7 @@ class CultureObject extends Core {
 				'menu_icon'    => 'dashicons-list-view',
 				'supports'     => array( 'title', 'custom-fields', 'thumbnail' ),
 				'rewrite'      => array(
-					'slug'       => apply_filters( 'co_object_slug ', 'object' ),
+					'slug'       => apply_filters( 'co_object_slug', 'object' ),
 					'with_front' => false,
 				),
 			)
@@ -227,6 +259,7 @@ class CultureObject extends Core {
 			2  => esc_html__( 'Custom field updated.', 'culture-object' ),
 			3  => esc_html__( 'Custom field deleted.', 'culture-object' ),
 			4  => esc_html__( 'Object updated.', 'culture-object' ),
+			/* translators: %s: Title of the revision */
 			5  => isset( $_GET['revision'] ) ? sprintf( esc_html__( 'Object restored to revision from %s', 'culture-object' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
 			6  => sprintf( esc_html__( 'Object published.', 'culture-object' ) . ' <a href="%s">' . esc_html__( 'View object', 'culture-object' ) . '</a>', esc_url( get_permalink( $post_ID ) ) ),
 			7  => esc_html__( 'Object saved.', 'culture-object' ),

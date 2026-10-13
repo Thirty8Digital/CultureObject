@@ -23,7 +23,7 @@ class CSV2 extends \CultureObject\Provider {
 	);
 
 	function __construct() {
-		require 'vendor/autoload.php';
+		require_once __DIR__ . '/vendor/autoload.php';
 	}
 
 	function register_remappable_fields() {
@@ -121,7 +121,7 @@ class CSV2 extends \CultureObject\Provider {
 			}
 		}
 		if ( isset( $_POST['delete_uploaded_file'] ) && isset( $_POST['cos_csv_nonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cos_csv_nonce'], 'cos_csv_delete_uploaded_file' ) ) {
+			if ( wp_verify_nonce( $_POST['cos_csv_nonce'], 'cos_csv_delete_uploaded_file' ) && current_user_can( 'upload_files' ) ) {
 				$this->delete_uploaded_file();
 			} else {
 				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
@@ -301,10 +301,10 @@ class CSV2 extends \CultureObject\Provider {
 			throw new CSV2Exception( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$start     = $_POST['start'];
-		$import_id = $_POST['import_id'];
+		$start     = ( 'cleanup' === $_POST['start'] ) ? 'cleanup' : max( 0, intval( $_POST['start'] ) );
+		$import_id = sanitize_key( wp_unslash( $_POST['import_id'] ) );
 
-		if ( $start == 'cleanup' ) {
+		if ( 'cleanup' === $start ) {
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_csv2_import_' . $import_id, array() );
@@ -423,12 +423,12 @@ class CSV2 extends \CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$obj_id            = $this->create_object( $doc, $fields, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc[ $title_field ];
+					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] );
 					++$created;
 				} else {
 					$obj_id            = $this->update_object( $doc, $fields, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc[ $title_field ];
+					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] );
 					++$updated;
 				}
 
@@ -441,7 +441,7 @@ class CSV2 extends \CultureObject\Provider {
 					$doc[ $image_field ] = trim( $doc[ $image_field ] );
 					if ( has_post_thumbnail( $obj_id ) ) {
 						$import_status[] = __( 'Skipping image import for object as it already has a post thumbnail', 'culture-object' );
-					} elseif ( filter_var( $doc[ $image_field ], FILTER_VALIDATE_URL ) ) {
+					} elseif ( filter_var( $doc[ $image_field ], FILTER_VALIDATE_URL ) && wp_http_validate_url( $doc[ $image_field ] ) ) { // Uploaded data is untrusted: refuse internal/loopback hosts (see the http_request_host_is_external filter).
 
 							// Trusted extensions
 							$presumed_extension = pathinfo( $doc[ $image_field ], PATHINFO_EXTENSION );
@@ -449,21 +449,18 @@ class CSV2 extends \CultureObject\Provider {
 							$ext                = false;
 
 						if ( ! in_array( $presumed_extension, $trusted_extensions, true ) ) {
-							// Try to parse the extension from content headers - if we don't think we can trust pathinfo.
-							$headers = get_headers( $doc[ $image_field ], 1 );
-							if ( isset( $headers['Content-Type'] ) ) {
-								$ext = $this->mime2ext( $headers['Content-Type'] );
-							}
+							// Not a trusted extension: leave it to the image helper, which checks the downloaded file's real type.
+							$presumed_extension = '';
 						}
 						if ( ! $ext ) {
 							$ext = $presumed_extension;
 						}
 
 							$save_path = $obj_id . '.' . $ext;
-							$image_id  = $helper->add_image_to_gallery_from_url( $doc[ $image_field ], $save_path, $context, $obj_id, trim( $doc[ $title_field ] ) );
+							$image_id  = $helper->add_image_to_gallery_from_url( $doc[ $image_field ], $save_path, $context, $obj_id, trim( $doc[ $title_field ] ), true );
 						if ( $image_id ) {
 							set_post_thumbnail( $obj_id, $image_id );
-							$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . $doc[ $title_field ] . ' [' . $image_id . ']';
+							$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] ) . ' [' . intval( $image_id ) . ']';
 						} else {
 							$import_status[] = __( 'Failed to download image. Check it is accessible.', 'culture-object' );
 						}
@@ -704,14 +701,7 @@ class CSV2 extends \CultureObject\Provider {
 
 	function save_upload() {
 
-		$valid_file_types = array( 'text/csv', 'application/vnd.ms-excel' );
-
-		$upload     = wp_upload_dir();
-		$upload_dir = $upload['basedir'];
-		$upload_dir = $upload_dir . '/culture-object/';
-		if ( ! is_dir( $upload_dir ) ) {
-			mkdir( $upload_dir, 0700 ); //phpcs:ignore WordPress.WP.AlternativeFunctions
-		}
+		$helper = new \CultureObject\Helper();
 
 		$file = $_FILES['cos_csv_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified before this method is called.
 		if ( $file['error'] !== 0 ) {
@@ -724,51 +714,18 @@ class CSV2 extends \CultureObject\Provider {
 			);
 		}
 
-		if ( ! in_array( $file['type'], $valid_file_types, true ) ) {
-			throw new CSV2Exception( esc_html__( 'Unable to import. You didn\'t upload a CSV file', 'culture-object' ) );
-		}
-
 		$current_path = $this->has_uploaded_file();
 		if ( $current_path && is_file( $current_path ) ) {
 			wp_delete_file( $current_path );
 			delete_option( 'cos_csv2_uploaded_file_path' );
 		}
 
-		// Use basename to strip any directory components and sanitize filename safely
-		$original_name = basename( $file['name'] );
-		$file_name     = preg_replace( '/[^A-Za-z0-9_\-]/', '_', pathinfo( $original_name, PATHINFO_FILENAME ) );
-		$extension     = pathinfo( $original_name, PATHINFO_EXTENSION );
-
-		// Ensure we have a valid filename
-		if ( empty( $file_name ) ) {
-			$file_name = 'uploaded_file';
+		// The extension is forced to an allowed value; never trust the client supplied name or type.
+		$stored_path = $helper->store_protected_upload( $file, array( 'csv', 'txt' ) );
+		if ( false === $stored_path ) {
+			throw new CSV2Exception( esc_html__( 'Unable to import. Could not save the CSV file. Check it has a .csv extension.', 'culture-object' ) );
 		}
-
-		// Add extension back if it's safe
-		if ( ! empty( $extension ) && preg_match( '/^[a-zA-Z0-9]+$/', $extension ) ) {
-			$file_name .= '.' . $extension;
-		} else {
-			$file_name .= '.csv'; // Default to CSV extension
-		}
-
-		// Generate unique filename to prevent conflicts
-		$file_name = wp_unique_filename( $upload_dir, $file_name );
-		$full_path = $upload_dir . $file_name;
-
-		// Validate the final path is within the upload directory
-		$upload_dir_real = realpath( $upload_dir );
-		$full_path_real  = realpath( dirname( $full_path ) ) . DIRECTORY_SEPARATOR . basename( $full_path );
-
-		if ( ! $upload_dir_real || strpos( $full_path_real, $upload_dir_real ) !== 0 ) {
-			throw new CSV2Exception( esc_html__( 'Invalid file path detected.', 'culture-object' ) );
-		}
-
-		if ( move_uploaded_file( $file['tmp_name'], $full_path ) ) {
-			update_option( 'cos_csv2_uploaded_file_path', $full_path );
-			return;
-		} else {
-			throw new CSV2Exception( esc_html__( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
-		}
+		update_option( 'cos_csv2_uploaded_file_path', $stored_path );
 	}
 
 	function delete_uploaded_file() {
@@ -828,6 +785,10 @@ class CSV2 extends \CultureObject\Provider {
 	function update_object_meta( $post_id, $doc, $fields ) {
 		foreach ( $fields as $key => $value ) {
 			if ( ! empty( $value ) ) {
+				// Column headers come from uploaded data: never write WordPress' protected (underscore prefixed) meta.
+				if ( '_cos_object_id' !== trim( $value ) && is_protected_meta( trim( $value ), 'post' ) ) {
+					continue;
+				}
 				update_post_meta( $post_id, trim( $value ), trim( $doc[ $key ] ) );
 			}
 		}

@@ -22,9 +22,9 @@ class Settings extends Core {
 
 		add_settings_section( 'cos_core_settings', __( 'Main Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_settings' );
 
-		register_setting( 'cos_settings', 'cos_core_sync_provider' );
-		register_setting( 'cos_settings', 'cos_core_sync_key' );
-		register_setting( 'cos_settings', 'cos_core_import_images' );
+		register_setting( 'cos_settings', 'cos_core_sync_provider', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+		register_setting( 'cos_settings', 'cos_core_sync_key', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+		register_setting( 'cos_settings', 'cos_core_import_images', array( 'sanitize_callback' => 'absint' ) );
 
 		add_settings_field( 'cos_core_sync_provider', __( 'Sync Provider', 'culture-object' ), array( $this, 'generate_settings_sync_providers_input' ), 'cos_settings', 'cos_core_settings', array( 'field' => 'cos_core_sync_provider' ) );
 
@@ -59,7 +59,7 @@ class Settings extends Core {
 					add_settings_section( 'cos_remaps', 'Field Mappings', array( $this, 'generate_settings_group_content' ), 'cos_remap_settings' );
 					if ( current_theme_supports( 'cos-remaps' ) && $fields ) {
 						foreach ( $fields as $field_key => $field_default ) {
-							register_setting( 'cos_remap_settings', 'cos_remap_' . strtolower( $field_key ) );
+							register_setting( 'cos_remap_settings', 'cos_remap_' . strtolower( $field_key ), array( 'sanitize_callback' => 'sanitize_text_field' ) );
 							add_settings_field(
 								'cos_remap_' . strtolower( $field_key ),
 								$field_key,

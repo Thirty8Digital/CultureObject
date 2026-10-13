@@ -2,8 +2,8 @@
 Contributors: lgladdy
 Tags: museum, culture, objects, object, sync
 Requires at least: 6.2
-Tested up to: 6.5
-Stable tag: 4.3
+Tested up to: 7.1
+Stable tag: 4.4
 Requires PHP: 8.1
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,26 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 * Point in wonder at your beautiful new site before heading to the pub to celebrate.
 
 == Changelog ==
+
+= 4.4 =
+Security: Fixed the debug object purge endpoint being callable without authentication. It is now a nonce protected POST that requires manage_options, triggered from a Delete all objects button on the settings page (visit the Main Settings page with ?enable_purge=true to reveal it)
+Security: CSV2 and Modes uploads now force a safe file extension, are stored in a directory that denies direct web access, and no longer trust the client supplied file type
+Security: Image imports only fetch over http(s) and now sanitise the file name, require an image file type, and ignore path components supplied by the remote server
+Security: Sync key comparison is now timing safe and an empty sync key no longer authenticates; new sync keys are generated with wp_generate_password
+Security: AJAX sync, and the AdLib, Emu, CSV2 and Modes upload handlers, now check user capabilities as well as nonces
+Security: cron.php can no longer be run over the web
+Security: Fixed a cross-site scripting issue where imported titles and identifiers (for example from an uploaded CSV, Modes or AdLib/Emu file) were shown unescaped in the admin import log, which could be used by a lower privileged user to run script in an administrator's session
+Security: CSV2 and Modes image downloads now use wp_safe_remote_get (including for redirects), so uploaded data can no longer make the server request internal or loopback addresses. Use the http_request_host_is_external filter if your images are hosted on an internal address
+Security: Imported field names that match WordPress protected (underscore prefixed) meta keys are no longer written, for all providers
+Security: Sanitised the start and import_id values in the CSV2, IndexPlus and Modes AJAX sync (the Modes value was used in an XPath query)
+Improvement: Passes the WordPress.org Plugin Check (translation text domains and translator comments, setting sanitisation callbacks, direct access protection, and uploads now use wp_handle_upload). Tested up to WordPress 7.1
+Improvement: Output escaping and WordPress coding standards fixes across the admin screens and legacy providers (AdLib, CultureGrid, Emu, IndexPlus, Modes, RAMM, SWCE); the plugin now passes the WordPress coding standards with no errors
+Fix: Provider errors that included a remote response body no longer pass it through sprintf as part of the format string
+Fix: The Emu import button did not submit the form because it used $ instead of jQuery
+Fix: CSV2 now loads its own bundled autoloader by absolute path
+Security: Updated PhpSpreadsheet to 2.4.8 (fixes CVE-2026-59931, CVE-2026-59932 and CVE-2026-59933) and composer/pcre to 3.4.0
+Fix: The co_object_slug filter name contained a trailing space so it could never be used
+Fix: Activation version check now matches the plugin header (PHP 8.1, WordPress 6.2)
 
 = 4.3 =
 New: Add new MDS provider

@@ -1,0 +1,14 @@
+.claude
+.dev
+.git
+.gitignore
+.DS_Store
+.vscode
+AGENTS.md
+CLAUDE.md
+bin
+crowdin.yaml
+languages/.gitkeep
+phpcs.ruleset.xml
+tools
+build

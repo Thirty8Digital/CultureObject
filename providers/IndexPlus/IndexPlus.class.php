@@ -25,8 +25,8 @@ class IndexPlus extends \CultureObject\Provider {
 		wp_register_script( 'indexplus_admin_js', $js_url, array( 'jquery', 'jquery-ui-core', 'jquery-ui-progressbar' ), '1.0.0', true );
 		wp_enqueue_script( 'indexplus_admin_js' );
 
-		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css' );
-		wp_enqueue_style( 'indexplus_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time() );
+		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css', array(), '1.0.0' );
+		wp_enqueue_style( 'indexplus_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time(), array(), '1.0.0' );
 	}
 
 	function get_provider_information() {
@@ -34,12 +34,12 @@ class IndexPlus extends \CultureObject\Provider {
 	}
 
 	function register_settings() {
-		add_settings_section( 'cos_provider_settings', __( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
+		add_settings_section( 'cos_provider_settings', esc_html__( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_feed_url1' );
-		register_setting( 'cos_provider_settings', 'cos_provider_feed_url2' );
-		register_setting( 'cos_provider_settings', 'cos_provider_feed_url3' );
-		register_setting( 'cos_provider_settings', 'cos_provider_feed_url4' );
+		register_setting( 'cos_provider_settings', 'cos_provider_feed_url1', array( 'sanitize_callback' => 'esc_url_raw' ) );
+		register_setting( 'cos_provider_settings', 'cos_provider_feed_url2', array( 'sanitize_callback' => 'esc_url_raw' ) );
+		register_setting( 'cos_provider_settings', 'cos_provider_feed_url3', array( 'sanitize_callback' => 'esc_url_raw' ) );
+		register_setting( 'cos_provider_settings', 'cos_provider_feed_url4', array( 'sanitize_callback' => 'esc_url_raw' ) );
 
 		add_settings_field( 'cos_provider_feed_url1', 'Index+ REST API URL', array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_feed_url1' ) );
 		add_settings_field( 'cos_provider_feed_url2', 'Index+ REST API URL', array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_feed_url2' ) );
@@ -52,32 +52,32 @@ class IndexPlus extends \CultureObject\Provider {
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+			esc_html__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+			esc_html( $this->provider['version'] ),
+			esc_html( $this->provider['name'] ),
+			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
 
 		$authority = get_option( 'cos_provider_feed_url' );
 		if ( ! empty( $authority ) ) {
-			echo '<p>' . __( 'IndexPlus\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.', 'culture-object' ) . '</p>';
+			echo '<p>' . esc_html__( 'IndexPlus\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.', 'culture-object' ) . '</p>';
 		}
 	}
 
 	function execute_init_action() {
 		$labels = array(
-			'name'              => _x( 'Object Categories', 'taxonomy general name' ),
-			'singular_name'     => _x( 'Object Category', 'taxonomy singular name' ),
-			'search_items'      => __( 'Search Object Categories' ),
-			'all_items'         => __( 'All Object Categories' ),
-			'parent_item'       => __( 'Parent Object Category' ),
-			'parent_item_colon' => __( 'Parent Object Category:' ),
-			'edit_item'         => __( 'Edit Object Category' ),
-			'update_item'       => __( 'Update Object Category' ),
-			'add_new_item'      => __( 'Add New Object Category' ),
-			'new_item_name'     => __( 'New Object Category Name' ),
-			'menu_name'         => __( 'Object Category' ),
+			'name'              => esc_html_x( 'Object Categories', 'taxonomy general name', 'culture-object' ),
+			'singular_name'     => esc_html_x( 'Object Category', 'taxonomy singular name', 'culture-object' ),
+			'search_items'      => esc_html__( 'Search Object Categories', 'culture-object' ),
+			'all_items'         => esc_html__( 'All Object Categories', 'culture-object' ),
+			'parent_item'       => esc_html__( 'Parent Object Category', 'culture-object' ),
+			'parent_item_colon' => esc_html__( 'Parent Object Category:', 'culture-object' ),
+			'edit_item'         => esc_html__( 'Edit Object Category', 'culture-object' ),
+			'update_item'       => esc_html__( 'Update Object Category', 'culture-object' ),
+			'add_new_item'      => esc_html__( 'Add New Object Category', 'culture-object' ),
+			'new_item_name'     => esc_html__( 'New Object Category Name', 'culture-object' ),
+			'menu_name'         => esc_html__( 'Object Category', 'culture-object' ),
 		);
 
 		$args = array(
@@ -100,9 +100,7 @@ class IndexPlus extends \CultureObject\Provider {
 		// we allow 1 dimensional array returns and flatten with 3 pipe characters
 		foreach ( $arr as $key => $value ) {
 			if ( is_array( $value ) ) {
-				// echo "key is ".$key."<br>";
 				$arr[ $key ] = implode( '|||', $value );
-				// echo "value is ".$arr[$key]."<br>";
 			}
 		}
 
@@ -116,10 +114,12 @@ class IndexPlus extends \CultureObject\Provider {
 			if ( isset( $data['result']['found'] ) ) {
 				return $data;
 			} else {
-				throw new IndexPlusException( sprintf( __( '%s returned an invalid JSON response', 'culture-object' ), 'IndexPlus' ) );
+				/* translators: %s: Provider name */
+				throw new IndexPlusException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'IndexPlus' ) );
 			}
 		} else {
-			throw new IndexPlusException( sprintf( __( '%s returned an invalid response: ', 'culture-object' ) . $json, 'IndexPlus' ) );
+			/* translators: 1: Provider name 2: Excerpt of the response returned by the provider */
+			throw new IndexPlusException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'IndexPlus', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}
 
@@ -127,18 +127,19 @@ class IndexPlus extends \CultureObject\Provider {
 		$field       = $args['field'];
 		$value       = get_option( $field );
 		$placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
-		printf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr( $value ), $placeholder );
+		printf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ), esc_attr( $placeholder ) );
 	}
 
+	//phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified by CultureObject before provider method is called.
 	function perform_ajax_sync() {
 
 		if ( ! isset( $_POST['start'] ) || ! isset( $_POST['import_id'] ) ) {
-			throw new IndexPlusException( __( 'Invalid AJAX import request', 'culture-object' ) );
+			throw new IndexPlusException( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$start     = $_POST['start'];
-		$service   = intval( $_POST['service'] );
-		$import_id = $_POST['import_id'];
+		$start     = ( 'cleanup' === $_POST['start'] ) ? 'cleanup' : max( 0, intval( $_POST['start'] ) );
+		$service   = isset( $_POST['service'] ) ? intval( $_POST['service'] ) : 1;
+		$import_id = sanitize_key( wp_unslash( $_POST['import_id'] ) );
 		$result    = array();
 
 		if ( $start === 'cleanup' ) {
@@ -177,13 +178,20 @@ class IndexPlus extends \CultureObject\Provider {
 		}
 	}
 
+	//phpcs:enable WordPress.Security.NonceVerification.Missing
+
 	function import_page( $service, $offset ) {
 		$url = get_option( 'cos_provider_feed_url' . $service );
 		if ( empty( $url ) ) {
-			$return                  = array();
-			$return['total_objects'] = $return['next_start'] = $return['imported_count'] = $return['updated'] = $return['processed_count'] = $return['created'] = 0;
-			$return['chunk_objects'] = array();
-			$return['import_status'] = array( 'Service URL ' . $service . ' is invalid or not provided' );
+			$return                    = array();
+			$return['total_objects']   = 0;
+			$return['next_start']      = 0;
+			$return['imported_count']  = 0;
+			$return['updated']         = 0;
+			$return['processed_count'] = 0;
+			$return['created']         = 0;
+			$return['chunk_objects']   = array();
+			$return['import_status']   = array( 'Service URL ' . $service . ' is invalid or not provided' );
 			return $return;
 		}
 
@@ -192,7 +200,8 @@ class IndexPlus extends \CultureObject\Provider {
 		$result = $this->perform_request( $url );
 
 		$current_objects   = array();
-		$updated           = $created = 0;
+		$updated           = 0;
+		$created           = 0;
 		$number_of_objects = count( $result['result']['items'] );
 
 		foreach ( $result['result']['items'] as $doc ) {
@@ -201,11 +210,11 @@ class IndexPlus extends \CultureObject\Provider {
 			$object_exists         = $this->object_exists( $doc['uniqueID'] );
 			if ( ! $object_exists ) {
 				$current_objects[] = $this->create_object( $doc );
-				$import_status[]   = __( 'Created object for service URL', 'culture-object' ) . ' ' . $service . ': ' . $doc['uniqueID'];
+				$import_status[]   = esc_html__( 'Created object for service URL', 'culture-object' ) . ' ' . intval( $service ) . ': ' . esc_html( $doc['uniqueID'] );
 				++$created;
 			} else {
 				$current_objects[] = $this->update_object( $doc );
-				$import_status[]   = __( 'Updated object for service URL', 'culture-object' ) . ' ' . $service . ': ' . $doc['uniqueID'];
+				$import_status[]   = esc_html__( 'Updated object for service URL', 'culture-object' ) . ' ' . intval( $service ) . ': ' . esc_html( $doc['uniqueID'] );
 				++$updated;
 			}
 		}
@@ -223,7 +232,7 @@ class IndexPlus extends \CultureObject\Provider {
 	}
 
 	function perform_sync() {
-		throw new IndexPlusException( __( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
+		throw new IndexPlusException( esc_html__( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
 	}
 
 	function get_current_object_ids() {
@@ -254,8 +263,8 @@ class IndexPlus extends \CultureObject\Provider {
 			wp_delete_post( $remove_id, true );
 			$import_delete[] = sprintf(
 				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
-				__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
-				$remove_id,
+				esc_html__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
+				intval( $remove_id ),
 				'CSV'
 			);
 			++$deleted;
@@ -295,7 +304,11 @@ class IndexPlus extends \CultureObject\Provider {
 	}
 
 	function update_object_meta( $post_id, $doc ) {
+		$helper = new \CultureObject\Helper();
 		foreach ( $doc as $key => $value ) {
+			if ( ! $helper->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			if ( is_array( $value ) ) {
 				$value = $value[0];
 			}
@@ -341,10 +354,10 @@ class IndexPlus extends \CultureObject\Provider {
 
 		$this->output_js_localization();
 
-		echo '<h3>' . __( 'AJAX Import', 'culture-object' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'AJAX Import', 'culture-object' ) . '</h3>';
 
 		echo '<div id="hide-on-import">';
-		echo '<p>' . __( 'Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object' ) . '</p>';
+		echo '<p>' . esc_html__( 'Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object' ) . '</p>';
 
 		echo '<fieldset>
         	<label for="perform_cleanup">
@@ -353,12 +366,12 @@ class IndexPlus extends \CultureObject\Provider {
         	</label>
         </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid( '', true ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . wp_create_nonce( 'cos_ajax_import_request' ) . '" type="button" class="button button-primary" value="';
-		_e( 'Begin Import', 'culture-object' );
+		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
+		esc_html_e( 'Begin Import', 'culture-object' );
 		echo '" />';
 		echo '</div>';
 
-		echo '<div id="csv_import_progressbar"><div class="progress-label">' . __( 'Starting Import...', 'culture-object' ) . '</div></div>';
+		echo '<div id="csv_import_progressbar"><div class="progress-label">' . esc_html__( 'Starting Import...', 'culture-object' ) . '</div></div>';
 		echo '<div id="csv_import_detail"></div>';
 	}
 

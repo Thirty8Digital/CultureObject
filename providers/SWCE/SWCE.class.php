@@ -26,8 +26,8 @@ class SWCE extends \CultureObject\Provider {
 		wp_register_script( 'swce_admin_js', $js_url, array( 'jquery', 'jquery-ui-core', 'jquery-ui-progressbar' ), '1.0.0', true );
 		wp_enqueue_script( 'swce_admin_js' );
 
-		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css' );
-		wp_enqueue_style( 'swce_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time() );
+		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css', array(), '1.0.0' );
+		wp_enqueue_style( 'swce_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time(), array(), '1.0.0' );
 	}
 
 	function get_provider_information() {
@@ -35,17 +35,17 @@ class SWCE extends \CultureObject\Provider {
 	}
 
 	function register_settings() {
-		add_settings_section( 'cos_provider_settings', __( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
+		add_settings_section( 'cos_provider_settings', esc_html__( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_site_id' );
-		register_setting( 'cos_provider_settings', 'cos_provider_api_token' );
-		register_setting( 'cos_provider_settings', 'cos_provider_category_slug' );
+		register_setting( 'cos_provider_settings', 'cos_provider_site_id', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+		register_setting( 'cos_provider_settings', 'cos_provider_api_token', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+		register_setting( 'cos_provider_settings', 'cos_provider_category_slug', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 
-		add_settings_field( 'cos_provider_site_id', __( 'SWCE Site ID', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_site_id' ) );
+		add_settings_field( 'cos_provider_site_id', esc_html__( 'SWCE Site ID', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_site_id' ) );
 
 		add_settings_field(
 			'cos_provider_category_slug',
-			__( 'SWCE Category Slug', 'culture-object' ),
+			esc_html__( 'SWCE Category Slug', 'culture-object' ),
 			array( $this, 'generate_settings_field_input_text' ),
 			'cos_provider_settings',
 			'cos_provider_settings',
@@ -55,7 +55,7 @@ class SWCE extends \CultureObject\Provider {
 			)
 		);
 
-		add_settings_field( 'cos_provider_api_token', __( 'SWCE API Token', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_api_token' ) );
+		add_settings_field( 'cos_provider_api_token', esc_html__( 'SWCE API Token', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_api_token' ) );
 	}
 
 	function generate_settings_group_content() {
@@ -63,32 +63,32 @@ class SWCE extends \CultureObject\Provider {
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+			esc_html__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+			esc_html( $this->provider['version'] ),
+			esc_html( $this->provider['name'] ),
+			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
 
 		$authority = get_option( 'cos_provider_feed_url' );
 		if ( ! empty( $authority ) ) {
-			echo '<p>' . __( 'SWCE\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.', 'culture-object' ) . '</p>';
+			echo '<p>' . esc_html__( 'SWCE\'s JSON data takes a while to generate, so we\'re unable to show a preview here, and import could take a very long time.', 'culture-object' ) . '</p>';
 		}
 	}
 
 	function execute_init_action() {
 		$labels = array(
-			'name'              => _x( 'Object Categories', 'taxonomy general name' ),
-			'singular_name'     => _x( 'Object Category', 'taxonomy singular name' ),
-			'search_items'      => __( 'Search Object Categories' ),
-			'all_items'         => __( 'All Object Categories' ),
-			'parent_item'       => __( 'Parent Object Category' ),
-			'parent_item_colon' => __( 'Parent Object Category:' ),
-			'edit_item'         => __( 'Edit Object Category' ),
-			'update_item'       => __( 'Update Object Category' ),
-			'add_new_item'      => __( 'Add New Object Category' ),
-			'new_item_name'     => __( 'New Object Category Name' ),
-			'menu_name'         => __( 'Object Category' ),
+			'name'              => esc_html_x( 'Object Categories', 'taxonomy general name', 'culture-object' ),
+			'singular_name'     => esc_html_x( 'Object Category', 'taxonomy singular name', 'culture-object' ),
+			'search_items'      => esc_html__( 'Search Object Categories', 'culture-object' ),
+			'all_items'         => esc_html__( 'All Object Categories', 'culture-object' ),
+			'parent_item'       => esc_html__( 'Parent Object Category', 'culture-object' ),
+			'parent_item_colon' => esc_html__( 'Parent Object Category:', 'culture-object' ),
+			'edit_item'         => esc_html__( 'Edit Object Category', 'culture-object' ),
+			'update_item'       => esc_html__( 'Update Object Category', 'culture-object' ),
+			'add_new_item'      => esc_html__( 'Add New Object Category', 'culture-object' ),
+			'new_item_name'     => esc_html__( 'New Object Category Name', 'culture-object' ),
+			'menu_name'         => esc_html__( 'Object Category', 'culture-object' ),
 		);
 
 		$args = array(
@@ -114,10 +114,12 @@ class SWCE extends \CultureObject\Provider {
 			if ( isset( $data['total'] ) ) {
 				return $data;
 			} else {
-				throw new SWCEException( sprintf( __( '%s returned an invalid JSON response', 'culture-object' ), 'SWCE' ) );
+				/* translators: %s: Provider name */
+				throw new SWCEException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'SWCE' ) );
 			}
 		} else {
-			throw new SWCEException( sprintf( __( '%s returned an invalid response: ', 'culture-object' ) . $json, 'SWCE' ) );
+			/* translators: 1: Provider name 2: Excerpt of the response returned by the provider */
+			throw new SWCEException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'SWCE', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}
 
@@ -125,13 +127,14 @@ class SWCE extends \CultureObject\Provider {
 		$field       = $args['field'];
 		$value       = get_option( $field );
 		$placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
-		printf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', $field, $field, esc_attr( $value ), $placeholder );
+		printf( '<input type="text" name="%s" id="%s" value="%s" placeholder="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ), esc_attr( $placeholder ) );
 	}
 
+	//phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified by CultureObject before provider method is called.
 	function perform_ajax_sync() {
 
 		if ( ! isset( $_POST['start'] ) || ! isset( $_POST['import_id'] ) ) {
-			throw new SWCEException( __( 'Invalid AJAX import request', 'culture-object' ) );
+			throw new SWCEException( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
 		$start     = sanitize_text_field( wp_unslash( $_POST['start'] ) );
@@ -175,15 +178,17 @@ class SWCE extends \CultureObject\Provider {
 		}
 	}
 
+	//phpcs:enable WordPress.Security.NonceVerification.Missing
+
 	function import_page( $page, $since, $per_page = 100 ) {
 		$token = get_option( 'cos_provider_api_token' );
 		if ( empty( $token ) ) {
-			throw new SWCEException( __( "You haven't yet configured your API token in the Culture Object Sync settings", 'culture-object' ) );
+			throw new SWCEException( esc_html__( "You haven't yet configured your API token in the Culture Object Sync settings", 'culture-object' ) );
 		}
 
 		$site = get_option( 'cos_provider_site_id' );
 		if ( empty( $site ) && intval( $site ) !== 0 ) {
-			throw new SWCEException( __( "You haven't yet configured your Site ID in the Culture Object Sync settings", 'culture-object' ) );
+			throw new SWCEException( esc_html__( "You haven't yet configured your Site ID in the Culture Object Sync settings", 'culture-object' ) );
 		}
 
 		$category = get_option( 'cos_provider_category_slug' );
@@ -194,12 +199,13 @@ class SWCE extends \CultureObject\Provider {
 			$since = '';
 		}
 
-		$url = 'https://api.swcollectionsexplorer.org.uk/api/v1/objects?per_page=' . $per_page . '&api_token=' . urlencode( $token ) . '&site=' . urlencode( $site ) . '&category=' . urlencode( $category ) . '&since=' . urlencode( $since ) . '&page=' . intval( $page );
+		$url = 'https://api.swcollectionsexplorer.org.uk/api/v1/objects?per_page=' . $per_page . '&api_token=' . rawurlencode( $token ) . '&site=' . rawurlencode( $site ) . '&category=' . rawurlencode( $category ) . '&since=' . rawurlencode( $since ) . '&page=' . intval( $page );
 
 		$result = $this->perform_request( $url );
 
 		$current_objects   = array();
-		$updated           = $created = 0;
+		$updated           = 0;
+		$created           = 0;
 		$number_of_objects = count( $result['data'] );
 
 		if ( $number_of_objects == 0 ) {
@@ -210,11 +216,11 @@ class SWCE extends \CultureObject\Provider {
 				$object_exists         = $this->object_exists( $doc['accession-loan-no'] );
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['accession-loan-no'];
+					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['accession-loan-no'] );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['accession-loan-no'];
+					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['accession-loan-no'] );
 					++$updated;
 				}
 			}
@@ -237,7 +243,7 @@ class SWCE extends \CultureObject\Provider {
 	}
 
 	function perform_sync() {
-		throw new SWCEException( __( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
+		throw new SWCEException( esc_html__( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
 	}
 
 	function get_current_object_ids() {
@@ -264,8 +270,8 @@ class SWCE extends \CultureObject\Provider {
 			wp_delete_post( $remove_id, true );
 			$import_delete[] = sprintf(
 				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
-				__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
-				$remove_id,
+				esc_html__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
+				intval( $remove_id ),
 				'SWCE'
 			);
 			++$deleted;
@@ -284,7 +290,8 @@ class SWCE extends \CultureObject\Provider {
 		$doc['site-id']   = $doc['site']['id'];
 		unset( $doc['site'] );
 
-		$meta = $tax = array();
+		$meta = array();
+		$tax  = array();
 		$term = term_exists( $doc['category']['name'], 'object_category' );
 		if ( ! $term ) {
 			$term = wp_insert_term( $doc['category']['name'], 'object_category' );
@@ -298,7 +305,10 @@ class SWCE extends \CultureObject\Provider {
 			if ( empty( $value ) ) {
 				continue;
 			}
-			$key          = strtolower( $key );
+			$key = strtolower( $key );
+			if ( ! ( new \CultureObject\Helper() )->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			$meta[ $key ] = $value;
 		}
 
@@ -320,7 +330,8 @@ class SWCE extends \CultureObject\Provider {
 		$doc['site-id']   = $doc['site']['id'];
 		unset( $doc['site'] );
 
-		$meta = $tax = array();
+		$meta = array();
+		$tax  = array();
 		$term = term_exists( $doc['category']['name'], 'object_category' );
 		if ( ! $term ) {
 			$term = wp_insert_term( $doc['category']['name'], 'object_category' );
@@ -334,7 +345,10 @@ class SWCE extends \CultureObject\Provider {
 			if ( empty( $value ) ) {
 				continue;
 			}
-			$key          = strtolower( $key );
+			$key = strtolower( $key );
+			if ( ! ( new \CultureObject\Helper() )->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			$meta[ $key ] = $value;
 		}
 
@@ -369,7 +383,7 @@ class SWCE extends \CultureObject\Provider {
 		);
 		$posts = get_posts( $args );
 		if ( count( $posts ) == 0 ) {
-			throw new Exception( __( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
+			throw new Exception( esc_html__( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
 		}
 		return $posts[0]->ID;
 	}
@@ -390,12 +404,12 @@ class SWCE extends \CultureObject\Provider {
 
 		$this->output_js_localization();
 
-		echo '<h3>' . __( 'AJAX Import', 'culture-object' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'AJAX Import', 'culture-object' ) . '</h3>';
 
 		echo '<div id="hide-on-import">';
-		echo '<p>' . __( 'Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object' ) . '</p>';
+		echo '<p>' . esc_html__( 'Once you have saved your settings above, you can begin your import by clicking below.', 'culture-object' ) . '</p>';
 
-		$op = esc_attr( get_option( 'cos_swce_import_since' ) );
+		$op = get_option( 'cos_swce_import_since' );
 		if ( empty( $op ) || $op == 'false' ) {
 			$op = '';
 		}
@@ -403,7 +417,7 @@ class SWCE extends \CultureObject\Provider {
 		echo '<fieldset>
             <label for="since">
                 <span>' . esc_attr__( 'Only process objects modified or created since this date', 'culture-object' ) . '</span>
-                <input name="since" type="textbox" id="since" value="' . $op . '" placeholder="2019-01-01" /><br />
+                <input name="since" type="textbox" id="since" value="' . esc_attr( $op ) . '" placeholder="2019-01-01" /><br />
                 <span class="note">If you enter a date here, the perform cleanup option will be ignored.</span>
             </label>
         </fieldset>
@@ -414,12 +428,12 @@ class SWCE extends \CultureObject\Provider {
         	</label>
         </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid( '', true ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . wp_create_nonce( 'cos_ajax_import_request' ) . '" type="button" class="button button-primary" value="';
-		_e( 'Begin Import', 'culture-object' );
+		echo '<input id="csv_perform_ajax_import" data-import-id="' . esc_attr( uniqid( '', true ) ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
+		esc_html_e( 'Begin Import', 'culture-object' );
 		echo '" />';
 		echo '</div>';
 
-		echo '<div id="csv_import_progressbar"><div class="progress-label">' . __( 'Starting Import...', 'culture-object' ) . '</div></div>';
+		echo '<div id="csv_import_progressbar"><div class="progress-label">' . esc_html__( 'Starting Import...', 'culture-object' ) . '</div></div>';
 		echo '<div id="csv_import_detail"></div>';
 	}
 

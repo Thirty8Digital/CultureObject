@@ -20,40 +20,39 @@ class Emu extends CultureObject\Provider {
 
 	function execute_load_action() {
 		if ( isset( $_FILES['cos_emu_import_file'] ) && isset( $_POST['cos_emu_nonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cos_emu_nonce'], 'cos_emu_import' ) ) {
+			if ( wp_verify_nonce( $_POST['cos_emu_nonce'], 'cos_emu_import' ) && current_user_can( 'upload_files' ) ) {
 				$this->perform_sync();
 			} else {
-				wp_die( __( 'Security Violation.', 'culture-object' ) );
+				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
 			}
 		}
 	}
 
 	function register_settings() {
-		return;
 	}
 
 	function generate_settings_outside_form_html() {
 
-		echo '<h3>' . __( 'Provider Settings', 'culture-object' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'Provider Settings', 'culture-object' ) . '</h3>';
 
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+			esc_html__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+			esc_html( $this->provider['version'] ),
+			esc_html( $this->provider['name'] ),
+			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
 
 		$show_message = get_transient( 'cos_emu_show_message' );
 		if ( $show_message ) {
 			echo '<p><strong>';
-			_e( 'Your CSV import was successful', 'culture-object' );
+			esc_html_e( 'Your CSV import was successful', 'culture-object' );
 			echo '</strong></p>';
 
 			echo '<a href="#" id="show_emu_import_log">';
-			_e( 'Show Log', 'culture-object' );
+			esc_html_e( 'Show Log', 'culture-object' );
 			echo '</a>';
 
 			?>
@@ -70,10 +69,10 @@ class Emu extends CultureObject\Provider {
 
 			echo '<div id="emu_import_log" style="display: none">';
 			if ( get_transient( 'cos_emu_status' ) ) {
-				echo implode( '<br />', get_transient( 'cos_emu_status' ) );
+				echo wp_kses_post( implode( '<br />', get_transient( 'cos_emu_status' ) ) );
 			}
 			if ( get_transient( 'cos_emu_deleted' ) ) {
-				echo implode( '<br />', get_transient( 'cos_emu_deleted' ) );
+				echo wp_kses_post( implode( '<br />', get_transient( 'cos_emu_deleted' ) ) );
 			}
 			echo '</div>';
 
@@ -81,18 +80,18 @@ class Emu extends CultureObject\Provider {
 			delete_transient( 'cos_emu_status' );
 			delete_transient( 'cos_emu_deleted' );
 		} else {
-			echo '<p>' . __( 'You need to upload the JSON export file from emu in order to import.', 'culture-object' ) . '</p>';
+			echo '<p>' . esc_html__( 'You need to upload the JSON export file from emu in order to import.', 'culture-object' ) . '</p>';
 
 			echo '<form id="emu_import_form" method="post" action="" enctype="multipart/form-data">';
 			echo '<input type="file" name="cos_emu_import_file" />';
-			echo '<input type="hidden" name="cos_emu_nonce" value="' . wp_create_nonce( 'cos_emu_import' ) . '" /><br /><br />';
+			echo '<input type="hidden" name="cos_emu_nonce" value="' . esc_attr( wp_create_nonce( 'cos_emu_import' ) ) . '" /><br /><br />';
 			echo '<input id="emu_import_submit" type="button" class="button button-primary" value="Import Emu Dump" />';
 			echo '</form>';
 			echo '<script>
             jQuery("#emu_import_submit").click(function(e) {
-                $("#csv_import_submit").val("' . esc_html__( 'Importing... This may take some time...', 'culture-object' ) . '");
-                $("#emu_import_submit").addClass("button-disabled");
-                window.setTimeout(\'$("#emu_import_form").submit();\',100);
+                jQuery("#emu_import_submit").val("' . esc_html__( 'Importing... This may take some time...', 'culture-object' ) . '");
+                jQuery("#emu_import_submit").addClass("button-disabled");
+                window.setTimeout(\'jQuery("#emu_import_form").submit();\',100);
             });
             </script>';
 		}
@@ -101,7 +100,7 @@ class Emu extends CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ) );
 	}
 
 	function perform_sync() {
@@ -112,25 +111,24 @@ class Emu extends CultureObject\Provider {
 
 		$previous_posts = $this->get_current_object_ids();
 
-		$file = $_FILES['cos_emu_import_file'];
+		$file = $_FILES['cos_emu_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in execute_load_action().
 		if ( $file['error'] !== 0 ) {
 			throw new Exception(
 				sprintf(
 				/* Translators: %s: The numeric error code PHP reported for an upload failure */
-					__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
-					$file['error']
+					esc_html__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
+					intval( $file['error'] )
 				)
 			);
-			return;
 		}
 		$data = file_get_contents( $file['tmp_name'] );
 		if ( ! $data ) {
-			throw new Exception( __( 'Unable to import: File upload corrupt', 'culture-object' ) );
-			return;
+			throw new Exception( esc_html__( 'Unable to import: File upload corrupt', 'culture-object' ) );
 		}
 
 		$data    = json_decode( $data, true );
-		$created = $updated = 0;
+		$created = 0;
+		$updated = 0;
 
 		$number_of_objects = 0;
 
@@ -146,11 +144,11 @@ class Emu extends CultureObject\Provider {
 
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['Name'];
+					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['Name'] );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['Name'];
+					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['Name'] );
 					++$updated;
 				}
 			}
@@ -165,7 +163,7 @@ class Emu extends CultureObject\Provider {
 			'cos_message',
 			sprintf(
 			/* Translators: 1: The name/type of import - usually the provider name. 2: The number of created objects. 3: The number of updated objects. 4: The number of deleted objects. 5: The number of seconds the whole process took to complete */
-				__( '%1$s import completed with %2$d objects created, %3$d updated and %4$d deleted in %5$d seconds.', 'culture-object' ),
+				esc_html__( '%1$s import completed with %2$d objects created, %3$d updated and %4$d deleted in %5$d seconds.', 'culture-object' ),
 				'Emu',
 				$created,
 				$updated,
@@ -202,8 +200,8 @@ class Emu extends CultureObject\Provider {
 			wp_delete_post( $remove_id, true );
 			$import_delete[] = sprintf(
 			/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
-				__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
-				$remove_id,
+				esc_html__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
+				intval( $remove_id ),
 				'emu'
 			);
 			++$deleted;
@@ -242,8 +240,12 @@ class Emu extends CultureObject\Provider {
 	function update_object_meta( $post_id, $doc ) {
 		$doc['identifier'] = $doc['ID'];
 		unset( $doc['ID'] );
+		$helper = new \CultureObject\Helper();
 		foreach ( $doc as $key => $value ) {
 			$key = strtolower( $key );
+			if ( ! $helper->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			if ( is_array( $value ) ) {
 				$value = array_filter( $value );
 				$value = array_unique( $value, SORT_REGULAR );
@@ -272,21 +274,21 @@ class Emu extends CultureObject\Provider {
 		);
 		$posts = get_posts( $args );
 		if ( count( $posts ) == 0 ) {
-			throw new Exception( __( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
+			throw new Exception( esc_html__( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
 		}
 		return $posts[0]->ID;
 	}
 
-	function flattenWithKeys( array $array, array $path = array() ) {
+	function flattenWithKeys( array $fields, array $path = array() ) {
 		$result = array();
 
-		foreach ( $array as $key => $value ) {
-			$currentPath = array_merge( $path, array( $key ) );
+		foreach ( $fields as $key => $value ) {
+			$current_path = array_merge( $path, array( $key ) );
 
 			if ( is_array( $value ) ) {
-				$result = array_merge( $result, $this->flattenWithKeys( $value, $currentPath ) );
+				$result = array_merge( $result, $this->flattenWithKeys( $value, $current_path ) );
 			} else {
-				$result[ join( '_', $currentPath ) ] = $value;
+				$result[ join( '_', $current_path ) ] = $value;
 			}
 		}
 
