@@ -64,6 +64,8 @@ Change Log
 * Security: CSV2 and Modes image downloads use `wp_safe_remote_get` (including redirects), so uploaded data can't reach internal hosts (use the `http_request_host_is_external` filter for images on internal hosts)
 * Security: imported field names matching protected (underscore) meta keys are no longer written, for all providers
 * Security: sanitised `start`/`import_id` in CSV2, IndexPlus and Modes AJAX sync (Modes used it in an XPath query)
+* Output escaping and WordPress coding standards fixes across admin screens and the legacy providers; PHPCS is now clean
+* Fix provider errors passing a remote response body through `sprintf` as the format string
 * Fix the Emu import button (used `$` instead of `jQuery`) and CSV2's relative autoloader path
 * Security: timing-safe sync key comparison, empty key no longer authenticates, stronger key generation
 * Security: capability checks added to AJAX sync and the AdLib, Emu, CSV2 and Modes upload handlers; `cron.php` is CLI only

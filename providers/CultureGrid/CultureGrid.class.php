@@ -18,11 +18,11 @@ class CultureGrid extends \CultureObject\Provider {
 	}
 
 	function register_settings() {
-		add_settings_section( 'cos_provider_settings', __( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
+		add_settings_section( 'cos_provider_settings', esc_html__( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
 		register_setting( 'cos_provider_settings', 'cos_provider_search_authority' );
 
-		add_settings_field( 'cos_provider_search_authority', __( 'CultureGrid Search Authority', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_search_authority' ) );
+		add_settings_field( 'cos_provider_search_authority', esc_html__( 'CultureGrid Search Authority', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_search_authority' ) );
 	}
 
 	function generate_settings_group_content() {
@@ -30,33 +30,33 @@ class CultureGrid extends \CultureObject\Provider {
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+			esc_html__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+			esc_html( $this->provider['version'] ),
+			esc_html( $this->provider['name'] ),
+			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
 
 		$authority = get_option( 'cos_provider_search_authority' );
 		if ( ! empty( $authority ) ) {
-			$url               = 'http://www.culturegrid.org.uk/index/select?fl=*&wt=json&rows=1&indent=on&q=authority:' . urlencode( $authority ) . '&start=0';
+			$url               = 'http://www.culturegrid.org.uk/index/select?fl=*&wt=json&rows=1&indent=on&q=authority:' . rawurlencode( $authority ) . '&start=0';
 			$result            = $this->perform_request( $url );
 			$number_of_objects = $result['response']['numFound'];
 			echo '<p>';
 			printf(
-				__( 'There are %d objects currently available to sync from CultureGrid based on your current authority.' ),
+				esc_html__( 'There are %d objects currently available to sync from CultureGrid based on your current authority.' ),
 				number_format( $number_of_objects )
 			);
 			echo '</p><p>';
 			printf(
-				__( 'Based on this number, you should expect a sync to take approximately %d minutes to complete.' ),
-				round( $number_of_objects / 420 )
+				esc_html__( 'Based on this number, you should expect a sync to take approximately %d minutes to complete.' ),
+				intval( round( $number_of_objects / 420 ) )
 			);
 			echo '<br /><small>';
-			_e( 'This number can vary significantly on the speed on your network, server, and database.', 'culture-object' );
+			esc_html_e( 'This number can vary significantly on the speed on your network, server, and database.', 'culture-object' );
 			echo '</small></p>';
 			if ( $number_of_objects > 100000 ) {
-				echo '<p>' . __( 'CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.' ) . '</p>';
+				echo '<p>' . esc_html__( 'CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.' ) . '</p>';
 			}
 		}
 	}
@@ -68,17 +68,17 @@ class CultureGrid extends \CultureObject\Provider {
 			if ( isset( $data['response'] ) ) {
 				return $data;
 			} else {
-				throw new CultureGridException( sprintf( __( '%s returned an invalid JSON response', 'culture-object' ), 'CultureGrid' ) );
+				throw new CultureGridException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'CultureGrid' ) );
 			}
 		} else {
-			throw new CultureGridException( sprintf( __( '%s returned an invalid response: ', 'culture-object' ) . $json, 'CultureGrid' ) );
+			throw new CultureGridException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'CultureGrid', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}
 
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ) );
 	}
 
 	function perform_sync() {
@@ -89,7 +89,7 @@ class CultureGrid extends \CultureObject\Provider {
 
 		$authority = get_option( 'cos_provider_search_authority' );
 		if ( empty( $authority ) ) {
-			throw new CultureGridException( __( "You haven't yet configured a search authority in the Culture Object Sync settings", 'culture-object' ) );
+			throw new CultureGridException( esc_html__( "You haven't yet configured a search authority in the Culture Object Sync settings", 'culture-object' ) );
 		}
 
 		$previous_posts = $this->get_current_object_ids();
@@ -116,8 +116,8 @@ class CultureGrid extends \CultureObject\Provider {
 		$end = microtime( true );
 
 		printf(
-			__( 'Sync Complete in %d seconds', 'culture-object' ) . "\r\n",
-			( $end - $start )
+			esc_html__( 'Sync Complete in %d seconds', 'culture-object' ) . "\r\n",
+			intval( $end - $start )
 		);
 	}
 
@@ -141,8 +141,8 @@ class CultureGrid extends \CultureObject\Provider {
 			wp_delete_post( $remove_id, true );
 			printf(
 				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
-				__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
-				$remove_id,
+				esc_html__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
+				intval( $remove_id ),
 				'CultureGrid'
 			) . '<br />';
 		}
@@ -203,7 +203,7 @@ class CultureGrid extends \CultureObject\Provider {
 		);
 		$posts = get_posts( $args );
 		if ( count( $posts ) == 0 ) {
-			throw new Exception( __( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
+			throw new Exception( esc_html__( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
 		}
 		return $posts[0]->ID;
 	}

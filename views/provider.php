@@ -1,14 +1,14 @@
 <div class="wrap">
 	<?php if ( get_transient( 'cos_message' ) ) { ?>
 		<div class="updated">
-			<p><?php echo get_transient( 'cos_message' ); ?></p>
+			<p><?php echo wp_kses_post( get_transient( 'cos_message' ) ); ?></p>
 		</div>
 		<?php delete_transient( 'cos_message' ); ?>
 	<?php } ?>
 
 	<?php $plugin_data = get_plugin_data( __DIR__ . '/../CultureObject.php' ); ?>
 
-	<h2><?php _e( 'Culture Object Provider Settings', 'culture-object' ); ?> <small><?php printf( /* Translators: %s: Version Number */__( 'Version %s', 'culture-object' ), $plugin_data['Version'] ); ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
+	<h2><?php esc_html_e( 'Culture Object Provider Settings', 'culture-object' ); ?> <small><?php printf( /* Translators: %s: Version Number */esc_html__( 'Version %s', 'culture-object' ), esc_html( $plugin_data['Version'] ) ); ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
 
 
 	<?php
@@ -40,7 +40,7 @@
 		?>
 
 		<p>Once you've completed the settings above and saved, click perform sync to initiate the sync</p>
-		<input type="submit" name="perform_ajax_sync" id="perform_ajax_sync" data-sync-key="<?php echo get_option( 'cos_core_sync_key' ); ?>" class="button button-primary" value="<?php _e( 'Perform Sync', 'culture-object' ); ?>">
+		<input type="submit" name="perform_ajax_sync" id="perform_ajax_sync" data-sync-key="<?php echo esc_attr( get_option( 'cos_core_sync_key' ) ); ?>" class="button button-primary" value="<?php esc_html_e( 'Perform Sync', 'culture-object' ); ?>">
 
 		<div id="ajax_output">
 

@@ -23,32 +23,31 @@ class AdLib extends \CultureObject\Provider {
 			if ( wp_verify_nonce( $_POST['cos_adlib_nonce'], 'cos_adlib_import' ) && current_user_can( 'upload_files' ) ) {
 				$this->perform_sync();
 			} else {
-				wp_die( __( 'Security Violation.', 'culture-object' ) );
+				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
 			}
 		}
 	}
 
 	function register_settings() {
-		return;
 	}
 
 	function generate_settings_outside_form_html() {
 
-		echo '<h3>' . __( 'Provider Settings', 'culture-object' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'Provider Settings', 'culture-object' ) . '</h3>';
 
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+			esc_html__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+			esc_html( $this->provider['version'] ),
+			esc_html( $this->provider['name'] ),
+			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
 
 		$show_message = get_transient( 'cos_adlib_show_message' );
 		if ( $show_message ) {
-			echo '<p><strong>' . __( 'Your AdLib import was successful.', 'culture-object' ) . '</strong></p>';
+			echo '<p><strong>' . esc_html__( 'Your AdLib import was successful.', 'culture-object' ) . '</strong></p>';
 
 			echo '<a href="#" id="show_adlib_import_log">Show Log</a>';
 
@@ -66,10 +65,10 @@ class AdLib extends \CultureObject\Provider {
 
 			echo '<div id="adlib_import_log" style="display: none">';
 			if ( get_transient( 'cos_adlib_status' ) ) {
-				echo implode( '<br />', get_transient( 'cos_adlib_status' ) );
+				echo wp_kses_post( implode( '<br />', get_transient( 'cos_adlib_status' ) ) );
 			}
 			if ( get_transient( 'cos_adlib_deleted' ) ) {
-				echo implode( '<br />', get_transient( 'cos_adlib_deleted' ) );
+				echo wp_kses_post( implode( '<br />', get_transient( 'cos_adlib_deleted' ) ) );
 			}
 			echo '</div>';
 
@@ -77,12 +76,12 @@ class AdLib extends \CultureObject\Provider {
 			delete_transient( 'cos_adlib_status' );
 			delete_transient( 'cos_adlib_deleted' );
 		} else {
-			echo '<p>' . __( 'You need to upload an xml export file from AdLib in order to import.', 'culture-object' ) . '</p>';
+			echo '<p>' . esc_html__( 'You need to upload an xml export file from AdLib in order to import.', 'culture-object' ) . '</p>';
 
 			echo '<form id="adlib_import_form" method="post" action="" enctype="multipart/form-data">';
 			echo '<input type="file" name="cos_adlib_import_file" />';
-			echo '<input type="hidden" name="cos_adlib_nonce" value="' . wp_create_nonce( 'cos_adlib_import' ) . '" /><br /><br />';
-			echo '<input id="adlib_import_submit" type="button" class="button button-primary" value="' . __( 'Import AdLib Dump', 'culture-object' ) . '" />';
+			echo '<input type="hidden" name="cos_adlib_nonce" value="' . esc_attr( wp_create_nonce( 'cos_adlib_import' ) ) . '" /><br /><br />';
+			echo '<input id="adlib_import_submit" type="button" class="button button-primary" value="' . esc_html__( 'Import AdLib Dump', 'culture-object' ) . '" />';
 			echo '</form>';
 			echo '<script>
             jQuery("#adlib_import_submit").click(function(e) {
@@ -97,7 +96,7 @@ class AdLib extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ) );
 	}
 
 	function perform_sync() {
@@ -108,25 +107,23 @@ class AdLib extends \CultureObject\Provider {
 
 		$previous_posts = $this->get_current_object_ids();
 
-		$file = $_FILES['cos_adlib_import_file'];
+		$file = $_FILES['cos_adlib_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in execute_load_action().
 		if ( $file['error'] !== 0 ) {
 			throw new Exception(
 				sprintf(
 				/* Translators: %s: The numeric error code PHP reported for an upload failure */
-					__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
-					$file['error']
+					esc_html__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
+					intval( $file['error'] )
 				)
 			);
-			return;
 		}
 		$data = file_get_contents( $file['tmp_name'] );
 		if ( ! $data ) {
-			throw new Exception( __( 'Unable to import: File upload corrupt', 'culture-object' ) );
-			return;
+			throw new Exception( esc_html__( 'Unable to import: File upload corrupt', 'culture-object' ) );
 		}
-		$result = json_decode( json_encode( (array) simplexml_load_string( $data ) ), 1 );
+		$result = json_decode( wp_json_encode( (array) simplexml_load_string( $data ) ), 1 );
 
-		unlink( $file['tmp_name'] );
+		wp_delete_file( $file['tmp_name'] );
 
 		$created = 0;
 		$updated = 0;
@@ -136,8 +133,7 @@ class AdLib extends \CultureObject\Provider {
 		} elseif ( isset( $result['record'] ) ) {
 			$import = $result['record'];
 		} else {
-			throw new Exception( __( 'Unable to import. This file appears to be incompatible.', 'culture-object' ) );
-			return;
+			throw new Exception( esc_html__( 'Unable to import. This file appears to be incompatible.', 'culture-object' ) );
 		}
 
 		$number_of_objects = count( $import );
@@ -150,11 +146,11 @@ class AdLib extends \CultureObject\Provider {
 
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['title'] );
+					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['title'] );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['title'] );
+					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['title'] );
 					++$updated;
 				}
 			}
@@ -169,7 +165,7 @@ class AdLib extends \CultureObject\Provider {
 			'cos_message',
 			sprintf(
 			/* Translators: 1: The name/type of import - usually the provider name. 2: The number of created objects. 3: The number of updated objects. 4: The number of deleted objects. 5: The number of seconds the whole process took to complete */
-				__( '%1$s import completed with %2$d objects created, %3$d updated and %4$d deleted in %5$d seconds.', 'culture-object' ),
+				esc_html__( '%1$s import completed with %2$d objects created, %3$d updated and %4$d deleted in %5$d seconds.', 'culture-object' ),
 				'AdLib',
 				$created,
 				$updated,
@@ -207,8 +203,8 @@ class AdLib extends \CultureObject\Provider {
 			wp_delete_post( $remove_id, true );
 			$import_delete[] = sprintf(
 			/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (CSV, AdLib, etc) */
-				__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
-				$remove_id,
+				esc_html__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
+				intval( $remove_id ),
 				'CSV'
 			);
 			++$deleted;
@@ -289,7 +285,7 @@ class AdLib extends \CultureObject\Provider {
 		);
 		$posts = get_posts( $args );
 		if ( count( $posts ) == 0 ) {
-			throw new Exception( __( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
+			throw new Exception( esc_html__( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
 		}
 		return $posts[0]->ID;
 	}

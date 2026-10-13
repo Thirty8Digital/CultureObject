@@ -1,14 +1,14 @@
 <div class="wrap">
 	<?php if ( get_transient( 'cos_message' ) ) { ?>
 	<div class="updated">
-		<p><?php echo get_transient( 'cos_message' ); ?></p>
+		<p><?php echo wp_kses_post( get_transient( 'cos_message' ) ); ?></p>
 	</div>
 		<?php delete_transient( 'cos_message' ); ?>
 	<?php } ?>
 
 	<?php $plugin_data = get_plugin_data( __DIR__ . '/../CultureObject.php' ); ?>
 
-	<h2><?php _e( 'Culture Object Settings', 'culture-object' ); ?> <small><?php printf( /* Translators: 1 Version Number */__( 'Version %s', 'culture-object' ), $plugin_data['Version'] ); ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
+	<h2><?php esc_html_e( 'Culture Object Settings', 'culture-object' ); ?> <small><?php printf( /* Translators: 1 Version Number */esc_html__( 'Version %s', 'culture-object' ), esc_html( $plugin_data['Version'] ) ); ?> by <a href="http://www.thirty8.co.uk">Thirty8 Digital</a>.</small></h2>
 
 	<?php
 	$key = get_option( 'cos_core_sync_key' );
@@ -23,23 +23,30 @@
 	<p><strong>
 		<?php
 		printf(
-			__( 'Your current provider, %s, doesn\'t support automated import by cron. You do not need to create a cronjob for this provider.', 'culture-object' ),
-			$provider_info['name']
+			esc_html__( 'Your current provider, %s, doesn\'t support automated import by cron. You do not need to create a cronjob for this provider.', 'culture-object' ),
+			esc_html( $provider_info['name'] )
 		);
 		echo '<br />';
-		_e( 'Use the provider settings page to process an import.', 'culture-object' );
+		esc_html_e( 'Use the provider settings page to process an import.', 'culture-object' );
 		?>
 		</strong></p>
 	<?php } else { ?>
 
-	<p><?php _e( 'The Culture Object plugin you\'re using requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.', 'culture-object' ); ?></p>
-	<p><?php _e( 'You shouldn\'t do this too frequently to avoid causing problems with your provider.', 'culture-object' ); ?></p>
+	<p><?php esc_html_e( 'The Culture Object plugin you\'re using requires you to set up a manual cronjob to the frequency you wish to check for updates for your chosen sync provider.', 'culture-object' ); ?></p>
+	<p><?php esc_html_e( 'You shouldn\'t do this too frequently to avoid causing problems with your provider.', 'culture-object' ); ?></p>
 	<p>
 		<?php
+		$sync_url = add_query_arg(
+			array(
+				'perform_culture_object_sync' => 'true',
+				'key'                         => get_option( 'cos_core_sync_key' ),
+			),
+			get_site_url()
+		);
 		printf(
 		/* Translators 1: URL to perform cron sync */
-			__( 'You should load the following URL: %s', 'culture-object' ),
-			'<a target="_blank" href="' . get_site_url() . '?perform_culture_object_sync=true&key=' . get_option( 'cos_core_sync_key' ) . '">' . get_site_url() . '?perform_culture_object_sync=true&key=' . get_option( 'cos_core_sync_key' ) . '</a>'
+			esc_html__( 'You should load the following URL: %s', 'culture-object' ),
+			'<a target="_blank" href="' . esc_url( $sync_url ) . '">' . esc_html( $sync_url ) . '</a>'
 		);
 		?>
 	</p>
@@ -47,7 +54,7 @@
 		<?php
 		printf(
 		/* Translators 1: <pre> wrapped cli path */
-			__( 'Alternatively, you can call the following script from your root path to bypass any web timeouts that may exist with your provider. %s', 'culture-object' ),
+			esc_html__( 'Alternatively, you can call the following script from your root path to bypass any web timeouts that may exist with your provider. %s', 'culture-object' ),
 			'<pre>php wp-content/plugins/[culture-object-sync-folder-name]/cron.php</pre>'
 		);
 		?>
@@ -65,7 +72,7 @@
 		<form method="POST" action="" onsubmit="return confirm('<?php echo esc_js( __( 'Permanently delete ALL objects? This cannot be undone.', 'culture-object' ) ); ?>');">
 			<?php wp_nonce_field( 'cos_purge_objects' ); ?>
 			<input type="hidden" name="cos_purge_objects" value="1" />
-			<?php submit_button( __( 'Delete all objects', 'culture-object' ), 'delete', 'submit', false ); ?>
+			<?php submit_button( esc_html__( 'Delete all objects', 'culture-object' ), 'delete', 'submit', false ); ?>
 		</form>
 	</div>
 	<?php } ?>

@@ -18,10 +18,11 @@ class Modes extends \CultureObject\Provider {
 	);
 
 	function register_remappable_fields() {
-		if ( $path = $this->has_uploaded_file() ) {
+		$path = $this->has_uploaded_file();
+		if ( $path ) {
 			if ( is_file( $path ) ) {
 				$xml = simplexml_load_file( $path );
-				return $this->get_fields( $xml->Object );
+				return $this->get_fields( $xml->Object ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SimpleXML element name.
 			} else {
 				return array();
 			}
@@ -47,8 +48,8 @@ class Modes extends \CultureObject\Provider {
 		wp_register_script( 'modes_admin_js', $js_url, array( 'jquery', 'jquery-ui-core', 'jquery-ui-progressbar' ), '1.0.0', true );
 		wp_enqueue_script( 'modes_admin_js' );
 
-		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css' );
-		wp_enqueue_style( 'modes_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time() );
+		wp_enqueue_style( 'jquery-ui-css', plugin_dir_url( __FILE__ ) . 'assets/jquery-ui-fresh.css', array(), '1.0.0' );
+		wp_enqueue_style( 'modes_admin_css', plugin_dir_url( __FILE__ ) . 'assets/admin.css?nc=' . time(), array(), '1.0.0' );
 	}
 
 	function get_provider_information() {
@@ -60,39 +61,39 @@ class Modes extends \CultureObject\Provider {
 			if ( wp_verify_nonce( $_POST['cos_modes_nonce'], 'cos_modes_import' ) && current_user_can( 'upload_files' ) ) {
 				$this->save_upload();
 			} else {
-				wp_die( __( 'Security Violation.', 'culture-object' ) );
+				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
 			}
 		}
 		if ( isset( $_POST['delete_uploaded_file'] ) && isset( $_POST['cos_modes_nonce'] ) ) {
 			if ( wp_verify_nonce( $_POST['cos_modes_nonce'], 'cos_modes_delete_uploaded_file' ) && current_user_can( 'upload_files' ) ) {
 				$this->delete_uploaded_file();
 			} else {
-				wp_die( __( 'Security Violation.', 'culture-object' ) );
+				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
 			}
 		}
 	}
 
 	function register_settings() {
-		return;
 	}
 
 	function generate_settings_outside_form_html() {
 
 		$this->output_js_localization();
 
-		echo '<h3>' . __( 'Provider Settings', 'culture-object' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'Provider Settings', 'culture-object' ) . '</h3>';
 
 		echo '<p>';
 		printf(
 			/* Translators: 1: Provider Plugin Version 2: Provider Name 3: Provider Developer */
-			__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
-			$this->provider['version'],
-			$this->provider['name'],
-			$this->provider['developer']
+			esc_html__( 'You\'re currently using version %1$s of the %2$s sync provider by %3$s.', 'culture-object' ),
+			esc_html( $this->provider['version'] ),
+			esc_html( $this->provider['name'] ),
+			esc_html( $this->provider['developer'] )
 		);
 		echo '</p>';
 
-		if ( $path = $this->has_uploaded_file() ) {
+		$path = $this->has_uploaded_file();
+		if ( $path ) {
 			$this->parse_uploaded_file( $path );
 		} else {
 			$this->display_upload_prompt();
@@ -144,38 +145,38 @@ class Modes extends \CultureObject\Provider {
 
 
 	function get_total_objects_count( $xml ) {
-		return count( $xml->Object );
+		return count( $xml->Object ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SimpleXML element name.
 	}
 
 	function parse_uploaded_file( $path ) {
 		if ( ! is_file( $path ) ) {
-			throw new ModesException( __( 'An error occurred when trying to parse the Modes XML.', 'culture-object' ) );
+			throw new ModesException( esc_html__( 'An error occurred when trying to parse the Modes XML.', 'culture-object' ) );
 		}
 
 		$xml    = simplexml_load_file( $path );
-		$fields = $this->get_fields( $xml->Object );
+		$fields = $this->get_fields( $xml->Object ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- SimpleXML element name.
 
 		echo '<div id="hide-on-import">';
 
 		echo '<p>';
 		printf(
 			/* Translators: 1: Modes XML File Name 2: Number of columns in the Modes XML */
-			__( 'Your uploaded Modes XML "%1$s" contains %2$d objects.', 'culture-object' ),
-			basename( $path ),
-			$this->get_total_objects_count( $xml )
+			esc_html__( 'Your uploaded Modes XML "%1$s" contains %2$d objects.', 'culture-object' ),
+			esc_html( basename( $path ) ),
+			intval( $this->get_total_objects_count( $xml ) )
 		);
 		echo ' <a id="delete_uploaded_csv" href="#">';
-		_e( 'Remove uploaded Modes XML?', 'culture-object' );
+		esc_html_e( 'Remove uploaded Modes XML?', 'culture-object' );
 		echo '</a>';
 		echo '</p>';
 
 		$import_images = get_option( 'cos_core_import_images' );
 
 		if ( ! $import_images ) {
-			echo '<p style="font-weight:bold">' . __( 'If your Modes XML contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object' ) . '</p>';
+			echo '<p style="font-weight:bold">' . esc_html__( 'If your Modes XML contains an image URL, you can automatically import them by enabling image importing in Main Settings.', 'culture-object' ) . '</p>';
 		}
 
-		echo '<p>' . __( 'To begin the import, click the button below.', 'culture-object' ) . '</p>';
+		echo '<p>' . esc_html__( 'To begin the import, click the button below.', 'culture-object' ) . '</p>';
 
 		$id_field = get_option( 'cos_modes_id_field' );
 
@@ -228,24 +229,25 @@ class Modes extends \CultureObject\Provider {
             	</label>
             </fieldset>';
 
-		echo '<input id="csv_perform_ajax_import" data-import-id="' . uniqid( '', true ) . '" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . wp_create_nonce( 'cos_ajax_import_request' ) . '" type="button" class="button button-primary" value="';
-		_e( 'Process Import', 'culture-object' );
+		echo '<input id="csv_perform_ajax_import" data-import-id=\"' . esc_attr( uniqid( '', true ) ) . '\" data-sync-key="' . esc_attr( get_option( 'cos_core_sync_key' ) ) . '" data-starting-nonce="' . esc_attr( wp_create_nonce( 'cos_ajax_import_request' ) ) . '" type="button" class="button button-primary" value="';
+		esc_html_e( 'Process Import', 'culture-object' );
 		echo '" />';
 
 		echo '</div>';
 
-		echo '<div id="csv_import_progressbar"><div class="progress-label">' . __( 'Starting Import...', 'culture-object' ) . '</div></div>';
+		echo '<div id="csv_import_progressbar"><div class="progress-label">' . esc_html__( 'Starting Import...', 'culture-object' ) . '</div></div>';
 		echo '<div id="csv_import_detail"></div>';
 
 		echo '<form id="delete_uploaded_csv_form" method="post" action="">';
-		echo '<input type="hidden" name="cos_modes_nonce" value="' . wp_create_nonce( 'cos_modes_delete_uploaded_file' ) . '" /><br /><br />';
+		echo '<input type="hidden" name="cos_modes_nonce" value="' . esc_attr( wp_create_nonce( 'cos_modes_delete_uploaded_file' ) ) . '" /><br /><br />';
 		echo '<input type="hidden" name="delete_uploaded_file" value="true" />';
 		echo '</form>';
 	}
 
+	//phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified by CultureObject before provider method is called.
 	function perform_ajax_sync() {
 		if ( ! isset( $_POST['start'] ) || ! isset( $_POST['import_id'] ) ) {
-			throw new ModesException( __( 'Invalid AJAX import request', 'culture-object' ) );
+			throw new ModesException( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
 		$start     = ( 'cleanup' === $_POST['start'] ) ? 'cleanup' : max( 0, intval( $_POST['start'] ) );
@@ -260,7 +262,7 @@ class Modes extends \CultureObject\Provider {
 			return $this->clean_objects( $objects, $previous_posts );
 		} else {
 			if ( ! isset( $_POST['id_field'] ) || ! isset( $_POST['title_field'] ) ) {
-				throw new ModesException( __( 'Invalid AJAX import request', 'culture-object' ) );
+				throw new ModesException( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 			}
 			$id_field    = $_POST['id_field'];
 			$title_field = $_POST['title_field'];
@@ -278,14 +280,14 @@ class Modes extends \CultureObject\Provider {
 			$cleanup = isset( $_POST['perform_cleanup'] ) && $_POST['perform_cleanup'];
 
 			$count = 50;
-			if ( $path = $this->has_uploaded_file() ) {
+			$path  = $this->has_uploaded_file();
+			if ( $path ) {
 				$xml         = simplexml_load_file( $path );
 				$total_count = $this->get_total_objects_count( $xml );
 				$xpath       = '//Object[position() >= ' . $start . ' and position() < ' . ( $start + $count ) . ']';
 				$data        = $xml->xpath( $xpath );
 
-				$result = $this->import_chunk( $data, $id_field, $title_field, $image_field );
-				// $result['looking'] = "Looking for: $xpath";
+				$result               = $this->import_chunk( $data, $id_field, $title_field, $image_field );
 				$result['total_rows'] = $total_count;
 				if ( $start + $count < $result['total_rows'] ) {
 					$result['next_start'] = $start + $count;
@@ -304,10 +306,12 @@ class Modes extends \CultureObject\Provider {
 
 				return $result;
 			} else {
-				throw new ModesException( __( 'Attempted to import without a file uploaded.', 'culture-object' ) );
+				throw new ModesException( esc_html__( 'Attempted to import without a file uploaded.', 'culture-object' ) );
 			}
 		}
 	}
+
+	//phpcs:enable WordPress.Security.NonceVerification.Missing
 
 	function import_chunk( $data, $id_field = 0, $title_field = 0, $image_field = false ) {
 
@@ -321,8 +325,10 @@ class Modes extends \CultureObject\Provider {
 			)
 		);
 
-		$data_array = $current_objects = array();
-		$updated    = $created = 0;
+		$data_array      = array();
+		$current_objects = array();
+		$updated         = 0;
+		$created         = 0;
 
 		$number_of_objects = count( $data );
 
@@ -345,22 +351,22 @@ class Modes extends \CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$obj_id            = $this->create_object( $obj, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] );
+					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] );
 					++$created;
 				} else {
 					$obj_id            = $this->update_object( $obj, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] );
+					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] );
 					++$updated;
 				}
 
 				if ( $image_field ) {
 					if ( filter_var( $obj[ $image_field ], FILTER_VALIDATE_URL ) === false || ! wp_http_validate_url( $obj[ $image_field ] ) ) { // Uploaded data is untrusted: refuse internal/loopback hosts.
-						$import_status[] = __( "Failed to import image as the selected field doesn't contain a valid URL", 'culture-object' );
+						$import_status[] = esc_html__( "Failed to import image as the selected field doesn't contain a valid URL", 'culture-object' );
 					} else {
 						$image_id = $helper->add_image_to_gallery_from_url( $obj[ $image_field ], (string) $obj[ $id_field ], $context, 0, false, true );
 						set_post_thumbnail( $obj_id, $image_id );
-						$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] ) . ' [' . intval( $obj_id ) . ']';
+						$import_status[] = esc_html__( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] ) . ' [' . intval( $obj_id ) . ']';
 					}
 				}
 			}
@@ -391,14 +397,14 @@ class Modes extends \CultureObject\Provider {
 
 	function display_upload_prompt() {
 		echo '<p>';
-		_e( 'Select a Modes XML export file to upload', 'culture-object' );
+		esc_html_e( 'Select a Modes XML export file to upload', 'culture-object' );
 		echo '</p>';
 
 		echo '<form id="csv_import_form" method="post" action="" enctype="multipart/form-data">';
 		echo '<input type="file" name="cos_modes_import_file" />';
-		echo '<input type="hidden" name="cos_modes_nonce" value="' . wp_create_nonce( 'cos_modes_import' ) . '" /><br /><br />';
+		echo '<input type="hidden" name="cos_modes_nonce" value="' . esc_attr( wp_create_nonce( 'cos_modes_import' ) ) . '" /><br /><br />';
 		echo '<input id="csv_import_submit" type="button" class="button button-primary" value="';
-		_e( 'Upload Modes XML File', 'culture-object' );
+		esc_html_e( 'Upload Modes XML File', 'culture-object' );
 		echo '" />';
 		echo '</form>';
 	}
@@ -407,33 +413,31 @@ class Modes extends \CultureObject\Provider {
 		$helper     = new \CultureObject\Helper();
 		$upload_dir = $helper->get_protected_upload_dir();
 
-		$file = $_FILES['cos_modes_import_file'];
+		$file = $_FILES['cos_modes_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified before this method is called.
 		if ( $file['error'] !== 0 ) {
 			throw new ModesException(
 				sprintf(
 				/* Translators: %s: The numeric error code PHP reported for an upload failure */
-					__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
-					$file['error']
+					esc_html__( 'Unable to import. PHP reported an error code: %s', 'culture-object' ),
+					intval( $file['error'] )
 				)
 			);
-			return;
 		}
 
 		if ( $file['type'] != 'text/xml' ) {
-			throw new ModesException( __( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
-			return;
+			throw new ModesException( esc_html__( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
 		}
 
 		$current_path = $this->has_uploaded_file();
 		if ( $current_path && is_file( $current_path ) ) {
-			unlink( $current_path );
+			wp_delete_file( $current_path );
 			delete_option( 'cos_modes_uploaded_file_path' );
 		}
 
 		// The extension is forced to an allowed value; never trust the client supplied name or type.
 		$file_name = $helper->get_safe_upload_filename( $file['name'], $upload_dir, array( 'xml' ) );
 		if ( false === $file_name ) {
-			throw new ModesException( __( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
+			throw new ModesException( esc_html__( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
 		}
 		$full_path = $upload_dir . $file_name;
 
@@ -442,21 +446,21 @@ class Modes extends \CultureObject\Provider {
 		$full_path_real  = realpath( dirname( $full_path ) ) . DIRECTORY_SEPARATOR . basename( $full_path );
 
 		if ( ! $upload_dir_real || strpos( $full_path_real, $upload_dir_real ) !== 0 ) {
-			throw new ModesException( __( 'Invalid file path detected.', 'culture-object' ) );
+			throw new ModesException( esc_html__( 'Invalid file path detected.', 'culture-object' ) );
 		}
 
 		if ( move_uploaded_file( $file['tmp_name'], $full_path ) ) {
 			update_option( 'cos_modes_uploaded_file_path', $full_path );
 			return;
 		} else {
-			throw new ModesException( __( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
+			throw new ModesException( esc_html__( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
 		}
 	}
 
 	function delete_uploaded_file() {
 		$path = get_option( 'cos_modes_uploaded_file_path' );
 		if ( is_file( $path ) ) {
-			unlink( $path );
+			wp_delete_file( $path );
 		}
 		delete_option( 'cos_modes_uploaded_file_path' );
 	}
@@ -477,7 +481,7 @@ class Modes extends \CultureObject\Provider {
 	function generate_settings_field_input_text( $args ) {
 		$field = $args['field'];
 		$value = get_option( $field );
-		printf( '<input type="text" name="%s" id="%s" value="%s" />', $field, $field, esc_attr( $value ) );
+		printf( '<input type="text" name="%s" id="%s" value="%s" />', esc_attr( $field ), esc_attr( $field ), esc_attr( $value ) );
 	}
 
 	function create_object( $obj, $id_field, $title_field ) {
@@ -539,7 +543,7 @@ class Modes extends \CultureObject\Provider {
 		);
 
 		if ( empty( $post ) ) {
-			throw new Exception( __( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
+			throw new Exception( esc_html__( "Called existing_object_id for an object that doesn't exist. This is likely a bug in your provider plugin, but because it is probably unsafe to continue the import, it has been aborted.", 'culture-object' ) );
 		}
 
 		$post = array_shift( $post );
@@ -571,8 +575,8 @@ class Modes extends \CultureObject\Provider {
 			wp_delete_post( $remove_id, true );
 			$import_delete[] = sprintf(
 				/* Translators: 1: A WordPress Post ID 2: The type of file or the provider name (Modes XML, AdLib, etc) */
-				__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
-				$remove_id,
+				esc_html__( 'Removed Post ID %1$d as it is no longer in the exported list of objects from %2$s', 'culture-object' ),
+				intval( $remove_id ),
 				'Modes XML'
 			);
 			++$deleted;
@@ -587,6 +591,6 @@ class Modes extends \CultureObject\Provider {
 	}
 
 	function perform_sync() {
-		throw new ModesException( __( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
+		throw new ModesException( esc_html__( 'Only AJAX sync is supported for this provider.', 'culture-object' ) );
 	}
 }

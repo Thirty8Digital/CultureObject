@@ -96,7 +96,7 @@ class MDS extends \CultureObject\Provider {
 				throw new MDSException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'MDS' ) );
 			}
 		} else {
-			throw new MDSException( sprintf( esc_html__( '%s returned an invalid response: ', 'culture-object' ) . esc_html( $json ), 'MDS' ) );
+			throw new MDSException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'MDS', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}
 
@@ -323,7 +323,7 @@ class MDS extends \CultureObject\Provider {
 	}
 
 	function create_object( $identifier, $obj ) {
-		$meta = $this->build_mds_data( $obj );
+		$meta                   = $this->build_mds_data( $obj );
 		$meta['_cos_object_id'] = $identifier;
 
 		$post    = array(
@@ -339,7 +339,7 @@ class MDS extends \CultureObject\Provider {
 
 
 	function update_object( $identifier, $obj ) {
-		$meta = $this->build_mds_data( $obj );
+		$meta                   = $this->build_mds_data( $obj );
 		$meta['_cos_object_id'] = $identifier;
 
 		$existing_id = $this->existing_object_id( $identifier );
