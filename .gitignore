@@ -5,3 +5,4 @@ crowdin.yaml
 providers/GAC
 providers/IndexPlusModa
 .claude
+build/

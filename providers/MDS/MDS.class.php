@@ -38,7 +38,7 @@ class MDS extends \CultureObject\Provider {
 	function register_settings() {
 		add_settings_section( 'cos_provider_settings', esc_html__( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_resumption_token' );
+		register_setting( 'cos_provider_settings', 'cos_provider_resumption_token', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 
 		add_settings_field( 'cos_provider_resumption_token', esc_html__( 'MDS Resumption Token', 'culture-object' ), array( $this, 'generate_settings_field_input_textarea' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_resumption_token' ) );
 	}
@@ -57,17 +57,17 @@ class MDS extends \CultureObject\Provider {
 
 	function execute_init_action() {
 		$labels = array(
-			'name'              => esc_html_x( 'Object Categories', 'taxonomy general name' ),
-			'singular_name'     => esc_html_x( 'Object Category', 'taxonomy singular name' ),
-			'search_items'      => esc_html__( 'Search Object Categories' ),
-			'all_items'         => esc_html__( 'All Object Categories' ),
-			'parent_item'       => esc_html__( 'Parent Object Category' ),
-			'parent_item_colon' => esc_html__( 'Parent Object Category:' ),
-			'edit_item'         => esc_html__( 'Edit Object Category' ),
-			'update_item'       => esc_html__( 'Update Object Category' ),
-			'add_new_item'      => esc_html__( 'Add New Object Category' ),
-			'new_item_name'     => esc_html__( 'New Object Category Name' ),
-			'menu_name'         => esc_html__( 'Object Category' ),
+			'name'              => esc_html_x( 'Object Categories', 'taxonomy general name', 'culture-object' ),
+			'singular_name'     => esc_html_x( 'Object Category', 'taxonomy singular name', 'culture-object' ),
+			'search_items'      => esc_html__( 'Search Object Categories', 'culture-object' ),
+			'all_items'         => esc_html__( 'All Object Categories', 'culture-object' ),
+			'parent_item'       => esc_html__( 'Parent Object Category', 'culture-object' ),
+			'parent_item_colon' => esc_html__( 'Parent Object Category:', 'culture-object' ),
+			'edit_item'         => esc_html__( 'Edit Object Category', 'culture-object' ),
+			'update_item'       => esc_html__( 'Update Object Category', 'culture-object' ),
+			'add_new_item'      => esc_html__( 'Add New Object Category', 'culture-object' ),
+			'new_item_name'     => esc_html__( 'New Object Category Name', 'culture-object' ),
+			'menu_name'         => esc_html__( 'Object Category', 'culture-object' ),
 		);
 
 		$args = array(
@@ -93,9 +93,11 @@ class MDS extends \CultureObject\Provider {
 			if ( isset( $data['data'] ) ) {
 				return $data;
 			} else {
+				/* translators: %s: Provider name */
 				throw new MDSException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'MDS' ) );
 			}
 		} else {
+			/* translators: 1: Provider name 2: Excerpt of the response returned by the provider */
 			throw new MDSException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'MDS', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}

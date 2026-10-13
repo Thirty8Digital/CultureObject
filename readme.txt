@@ -2,7 +2,7 @@
 Contributors: lgladdy
 Tags: museum, culture, objects, object, sync
 Requires at least: 6.2
-Tested up to: 6.5
+Tested up to: 7.1
 Stable tag: 4.4
 Requires PHP: 8.1
 License: Apache 2.0
@@ -38,6 +38,7 @@ Security: Fixed a cross-site scripting issue where imported titles and identifie
 Security: CSV2 and Modes image downloads now use wp_safe_remote_get (including for redirects), so uploaded data can no longer make the server request internal or loopback addresses. Use the http_request_host_is_external filter if your images are hosted on an internal address
 Security: Imported field names that match WordPress protected (underscore prefixed) meta keys are no longer written, for all providers
 Security: Sanitised the start and import_id values in the CSV2, IndexPlus and Modes AJAX sync (the Modes value was used in an XPath query)
+Improvement: Passes the WordPress.org Plugin Check (translation text domains and translator comments, setting sanitisation callbacks, direct access protection, and uploads now use wp_handle_upload). Tested up to WordPress 7.1
 Improvement: Output escaping and WordPress coding standards fixes across the admin screens and legacy providers (AdLib, CultureGrid, Emu, IndexPlus, Modes, RAMM, SWCE); the plugin now passes the WordPress coding standards with no errors
 Fix: Provider errors that included a remote response body no longer pass it through sprintf as part of the format string
 Fix: The Emu import button did not submit the form because it used $ instead of jQuery

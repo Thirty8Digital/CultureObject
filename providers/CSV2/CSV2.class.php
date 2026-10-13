@@ -703,8 +703,7 @@ class CSV2 extends \CultureObject\Provider {
 
 		$valid_file_types = array( 'text/csv', 'application/vnd.ms-excel' );
 
-		$helper     = new \CultureObject\Helper();
-		$upload_dir = $helper->get_protected_upload_dir();
+		$helper = new \CultureObject\Helper();
 
 		$file = $_FILES['cos_csv_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified before this method is called.
 		if ( $file['error'] !== 0 ) {
@@ -728,26 +727,11 @@ class CSV2 extends \CultureObject\Provider {
 		}
 
 		// The extension is forced to an allowed value; never trust the client supplied name or type.
-		$file_name = $helper->get_safe_upload_filename( $file['name'], $upload_dir, array( 'csv', 'txt' ) );
-		if ( false === $file_name ) {
-			throw new CSV2Exception( esc_html__( 'Unable to import. You didn\'t upload a CSV file', 'culture-object' ) );
+		$stored_path = $helper->store_protected_upload( $file, array( 'csv', 'txt' ) );
+		if ( false === $stored_path ) {
+			throw new CSV2Exception( esc_html__( 'Unable to import. Could not save the CSV file. Check it has a .csv extension.', 'culture-object' ) );
 		}
-		$full_path = $upload_dir . $file_name;
-
-		// Validate the final path is within the upload directory
-		$upload_dir_real = realpath( $upload_dir );
-		$full_path_real  = realpath( dirname( $full_path ) ) . DIRECTORY_SEPARATOR . basename( $full_path );
-
-		if ( ! $upload_dir_real || strpos( $full_path_real, $upload_dir_real ) !== 0 ) {
-			throw new CSV2Exception( esc_html__( 'Invalid file path detected.', 'culture-object' ) );
-		}
-
-		if ( move_uploaded_file( $file['tmp_name'], $full_path ) ) {
-			update_option( 'cos_csv2_uploaded_file_path', $full_path );
-			return;
-		} else {
-			throw new CSV2Exception( esc_html__( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
-		}
+		update_option( 'cos_csv2_uploaded_file_path', $stored_path );
 	}
 
 	function delete_uploaded_file() {

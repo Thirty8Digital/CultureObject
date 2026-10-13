@@ -1,3 +1,9 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+?>
 <div class="wrap">
 	<?php if ( get_transient( 'cos_message' ) ) { ?>
 		<div class="updated">

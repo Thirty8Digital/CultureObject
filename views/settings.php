@@ -1,3 +1,9 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+?>
 <div class="wrap">
 	<?php if ( get_transient( 'cos_message' ) ) { ?>
 	<div class="updated">
@@ -23,6 +29,7 @@
 	<p><strong>
 		<?php
 		printf(
+			/* translators: %s: Name of the current provider */
 			esc_html__( 'Your current provider, %s, doesn\'t support automated import by cron. You do not need to create a cronjob for this provider.', 'culture-object' ),
 			esc_html( $provider_info['name'] )
 		);
@@ -44,7 +51,7 @@
 			get_site_url()
 		);
 		printf(
-		/* Translators 1: URL to perform cron sync */
+			/* translators: %s: Link to the sync URL */
 			esc_html__( 'You should load the following URL: %s', 'culture-object' ),
 			'<a target="_blank" href="' . esc_url( $sync_url ) . '">' . esc_html( $sync_url ) . '</a>'
 		);
@@ -53,7 +60,7 @@
 	<p>
 		<?php
 		printf(
-		/* Translators 1: <pre> wrapped cli path */
+			/* translators: %s: Example command line to run the sync */
 			esc_html__( 'Alternatively, you can call the following script from your root path to bypass any web timeouts that may exist with your provider. %s', 'culture-object' ),
 			'<pre>php wp-content/plugins/[culture-object-sync-folder-name]/cron.php</pre>'
 		);

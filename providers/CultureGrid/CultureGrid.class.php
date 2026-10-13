@@ -20,7 +20,7 @@ class CultureGrid extends \CultureObject\Provider {
 	function register_settings() {
 		add_settings_section( 'cos_provider_settings', esc_html__( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_search_authority' );
+		register_setting( 'cos_provider_settings', 'cos_provider_search_authority', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 
 		add_settings_field( 'cos_provider_search_authority', esc_html__( 'CultureGrid Search Authority', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_search_authority' ) );
 	}
@@ -44,19 +44,21 @@ class CultureGrid extends \CultureObject\Provider {
 			$number_of_objects = $result['response']['numFound'];
 			echo '<p>';
 			printf(
-				esc_html__( 'There are %d objects currently available to sync from CultureGrid based on your current authority.' ),
+				/* translators: %d: Number of objects available to sync */
+				esc_html__( 'There are %d objects currently available to sync from CultureGrid based on your current authority.', 'culture-object' ),
 				number_format( $number_of_objects )
 			);
 			echo '</p><p>';
 			printf(
-				esc_html__( 'Based on this number, you should expect a sync to take approximately %d minutes to complete.' ),
+				/* translators: %d: Estimated number of minutes for the sync to complete */
+				esc_html__( 'Based on this number, you should expect a sync to take approximately %d minutes to complete.', 'culture-object' ),
 				intval( round( $number_of_objects / 420 ) )
 			);
 			echo '<br /><small>';
 			esc_html_e( 'This number can vary significantly on the speed on your network, server, and database.', 'culture-object' );
 			echo '</small></p>';
 			if ( $number_of_objects > 100000 ) {
-				echo '<p>' . esc_html__( 'CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.' ) . '</p>';
+				echo '<p>' . esc_html__( 'CultureGrid sync only supports 100,000 objects maximum for the sake of performance. Only the first 100,000 objects will sync.', 'culture-object' ) . '</p>';
 			}
 		}
 	}
@@ -68,9 +70,11 @@ class CultureGrid extends \CultureObject\Provider {
 			if ( isset( $data['response'] ) ) {
 				return $data;
 			} else {
+				/* translators: %s: Provider name */
 				throw new CultureGridException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'CultureGrid' ) );
 			}
 		} else {
+			/* translators: 1: Provider name 2: Excerpt of the response returned by the provider */
 			throw new CultureGridException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'CultureGrid', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}
@@ -116,6 +120,7 @@ class CultureGrid extends \CultureObject\Provider {
 		$end = microtime( true );
 
 		printf(
+			/* translators: %d: Number of seconds the sync took */
 			esc_html__( 'Sync Complete in %d seconds', 'culture-object' ) . "\r\n",
 			intval( $end - $start )
 		);

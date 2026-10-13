@@ -20,7 +20,7 @@ class RAMM extends \CultureObject\Provider {
 	function register_settings() {
 		add_settings_section( 'cos_provider_settings', esc_html__( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_feed_url' );
+		register_setting( 'cos_provider_settings', 'cos_provider_feed_url', array( 'sanitize_callback' => 'esc_url_raw' ) );
 
 		add_settings_field( 'cos_provider_feed_url', esc_html__( 'RAMM Feed URL', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_feed_url' ) );
 	}
@@ -50,9 +50,11 @@ class RAMM extends \CultureObject\Provider {
 			if ( isset( $data[0]['Id'] ) ) {
 				return $data;
 			} else {
+				/* translators: %s: Provider name */
 				throw new RAMMException( sprintf( esc_html__( '%s returned an invalid JSON response', 'culture-object' ), 'RAMM' ) );
 			}
 		} else {
+			/* translators: 1: Provider name 2: Excerpt of the response returned by the provider */
 			throw new RAMMException( sprintf( esc_html__( '%1$s returned an invalid response: %2$s', 'culture-object' ), 'RAMM', esc_html( substr( (string) $json, 0, 500 ) ) ) );
 		}
 	}
@@ -80,6 +82,7 @@ class RAMM extends \CultureObject\Provider {
 
 		$number_of_objects = count( $result );
 		printf(
+			/* translators: %d: Number of objects being imported */
 			esc_html__( 'Importing %d objects.', 'culture-object' ) . "<br />\r\n",
 			intval( $number_of_objects )
 		);
@@ -102,6 +105,7 @@ class RAMM extends \CultureObject\Provider {
 		$end = microtime( true );
 
 		printf(
+			/* translators: %d: Number of seconds the sync took */
 			esc_html__( 'Sync Complete in %d seconds', 'culture-object' ) . "\r\n",
 			intval( $end - $start )
 		);

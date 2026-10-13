@@ -259,6 +259,7 @@ class CultureObject extends Core {
 			2  => esc_html__( 'Custom field updated.', 'culture-object' ),
 			3  => esc_html__( 'Custom field deleted.', 'culture-object' ),
 			4  => esc_html__( 'Object updated.', 'culture-object' ),
+			/* translators: %s: Title of the revision */
 			5  => isset( $_GET['revision'] ) ? sprintf( esc_html__( 'Object restored to revision from %s', 'culture-object' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not needed here.
 			6  => sprintf( esc_html__( 'Object published.', 'culture-object' ) . ' <a href="%s">' . esc_html__( 'View object', 'culture-object' ) . '</a>', esc_url( get_permalink( $post_ID ) ) ),
 			7  => esc_html__( 'Object saved.', 'culture-object' ),

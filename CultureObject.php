@@ -10,9 +10,15 @@
  * Requires at least: 6.2
  * Author URI: https://github.com/lgladdy
  * License: Apache 2 License
+ *
+ * @package CultureObject
  */
 
-require_once 'vendor/autoload.php';
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Prevent direct access.
+}
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 register_activation_hook( __FILE__, array( 'CultureObject\CultureObject', 'check_versions' ) );
 register_activation_hook( __FILE__, array( 'CultureObject\CultureObject', 'regenerate_permalinks' ) );

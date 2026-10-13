@@ -410,8 +410,7 @@ class Modes extends \CultureObject\Provider {
 	}
 
 	function save_upload() {
-		$helper     = new \CultureObject\Helper();
-		$upload_dir = $helper->get_protected_upload_dir();
+		$helper = new \CultureObject\Helper();
 
 		$file = $_FILES['cos_modes_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified before this method is called.
 		if ( $file['error'] !== 0 ) {
@@ -424,7 +423,7 @@ class Modes extends \CultureObject\Provider {
 			);
 		}
 
-		if ( $file['type'] != 'text/xml' ) {
+		if ( ! in_array( $file['type'], array( 'text/xml', 'application/xml' ), true ) ) {
 			throw new ModesException( esc_html__( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
 		}
 
@@ -435,26 +434,11 @@ class Modes extends \CultureObject\Provider {
 		}
 
 		// The extension is forced to an allowed value; never trust the client supplied name or type.
-		$file_name = $helper->get_safe_upload_filename( $file['name'], $upload_dir, array( 'xml' ) );
-		if ( false === $file_name ) {
-			throw new ModesException( esc_html__( "Unable to import. You didn't upload a Modes XML file.", 'culture-object' ) );
+		$stored_path = $helper->store_protected_upload( $file, array( 'xml' ) );
+		if ( false === $stored_path ) {
+			throw new ModesException( esc_html__( 'Unable to import. Could not save the Modes XML file. Check it has an .xml extension.', 'culture-object' ) );
 		}
-		$full_path = $upload_dir . $file_name;
-
-		// Validate the final path is within the upload directory
-		$upload_dir_real = realpath( $upload_dir );
-		$full_path_real  = realpath( dirname( $full_path ) ) . DIRECTORY_SEPARATOR . basename( $full_path );
-
-		if ( ! $upload_dir_real || strpos( $full_path_real, $upload_dir_real ) !== 0 ) {
-			throw new ModesException( esc_html__( 'Invalid file path detected.', 'culture-object' ) );
-		}
-
-		if ( move_uploaded_file( $file['tmp_name'], $full_path ) ) {
-			update_option( 'cos_modes_uploaded_file_path', $full_path );
-			return;
-		} else {
-			throw new ModesException( esc_html__( 'Unable to import. Could not write file to uploads folder.', 'culture-object' ) );
-		}
+		update_option( 'cos_modes_uploaded_file_path', $stored_path );
 	}
 
 	function delete_uploaded_file() {

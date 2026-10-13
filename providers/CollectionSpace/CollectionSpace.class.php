@@ -49,6 +49,16 @@ class CollectionSpace extends \CultureObject\Provider {
 		add_filter( 'pre_update_option_cos_provider_collectionspace_password', array( $this, 'prevent_safe_password_save' ), 10, 2 );
 	}
 
+	/**
+	 * Passwords must be stored exactly as typed, so only make sure a string is saved.
+	 *
+	 * @param mixed $value Submitted value.
+	 * @return string
+	 */
+	function sanitize_password( $value ) {
+		return is_string( $value ) ? $value : '';
+	}
+
 	function prevent_safe_password_save( $new_pw, $old ) {
 		if ( $new_pw == str_repeat( '*', strlen( $new_pw ) ) ) {
 			return $old;
@@ -68,17 +78,17 @@ class CollectionSpace extends \CultureObject\Provider {
 
 	function register_taxonomies() {
 		$labels = array(
-			'name'              => __( 'People' ),
-			'singular_name'     => __( 'Person' ),
-			'search_items'      => __( 'Search People' ),
-			'all_items'         => __( 'All People' ),
-			'parent_item'       => __( 'Parent Person' ),
-			'parent_item_colon' => __( 'Parent Person:' ),
-			'edit_item'         => __( 'Edit Person' ),
-			'update_item'       => __( 'Update Person' ),
-			'add_new_item'      => __( 'Add New Person' ),
-			'new_item_name'     => __( 'New Person Name' ),
-			'menu_name'         => __( 'People' ),
+			'name'              => __( 'People', 'culture-object' ),
+			'singular_name'     => __( 'Person', 'culture-object' ),
+			'search_items'      => __( 'Search People', 'culture-object' ),
+			'all_items'         => __( 'All People', 'culture-object' ),
+			'parent_item'       => __( 'Parent Person', 'culture-object' ),
+			'parent_item_colon' => __( 'Parent Person:', 'culture-object' ),
+			'edit_item'         => __( 'Edit Person', 'culture-object' ),
+			'update_item'       => __( 'Update Person', 'culture-object' ),
+			'add_new_item'      => __( 'Add New Person', 'culture-object' ),
+			'new_item_name'     => __( 'New Person Name', 'culture-object' ),
+			'menu_name'         => __( 'People', 'culture-object' ),
 		);
 
 		$args = array(
@@ -96,17 +106,17 @@ class CollectionSpace extends \CultureObject\Provider {
 		register_taxonomy( 'people', array( 'object' ), $args );
 
 		$labels = array(
-			'name'              => __( 'Organizations' ),
-			'singular_name'     => __( 'Organization' ),
-			'search_items'      => __( 'Search Organizations' ),
-			'all_items'         => __( 'All Organizations' ),
-			'parent_item'       => __( 'Parent Organization' ),
-			'parent_item_colon' => __( 'Parent Organization:' ),
-			'edit_item'         => __( 'Edit Organization' ),
-			'update_item'       => __( 'Update Organization' ),
-			'add_new_item'      => __( 'Add New Organization' ),
-			'new_item_name'     => __( 'New Organization Name' ),
-			'menu_name'         => __( 'Organizations' ),
+			'name'              => __( 'Organizations', 'culture-object' ),
+			'singular_name'     => __( 'Organization', 'culture-object' ),
+			'search_items'      => __( 'Search Organizations', 'culture-object' ),
+			'all_items'         => __( 'All Organizations', 'culture-object' ),
+			'parent_item'       => __( 'Parent Organization', 'culture-object' ),
+			'parent_item_colon' => __( 'Parent Organization:', 'culture-object' ),
+			'edit_item'         => __( 'Edit Organization', 'culture-object' ),
+			'update_item'       => __( 'Update Organization', 'culture-object' ),
+			'add_new_item'      => __( 'Add New Organization', 'culture-object' ),
+			'new_item_name'     => __( 'New Organization Name', 'culture-object' ),
+			'menu_name'         => __( 'Organizations', 'culture-object' ),
 		);
 
 		$args = array(
@@ -127,13 +137,13 @@ class CollectionSpace extends \CultureObject\Provider {
 	function register_settings() {
 		add_settings_section( 'cos_provider_settings', __( 'Provider Settings', 'culture-object' ), array( $this, 'generate_settings_group_content' ), 'cos_provider_settings' );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_collectionspace_host_uri' );
+		register_setting( 'cos_provider_settings', 'cos_provider_collectionspace_host_uri', array( 'sanitize_callback' => 'esc_url_raw' ) );
 		add_settings_field( 'cos_provider_collectionspace_host_uri', __( 'CollectionSpace Host URI', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_collectionspace_host_uri' ) );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_collectionspace_username' );
+		register_setting( 'cos_provider_settings', 'cos_provider_collectionspace_username', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 		add_settings_field( 'cos_provider_collectionspace_username', __( 'CollectionSpace Username', 'culture-object' ), array( $this, 'generate_settings_field_input_text' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_collectionspace_username' ) );
 
-		register_setting( 'cos_provider_settings', 'cos_provider_collectionspace_password' );
+		register_setting( 'cos_provider_settings', 'cos_provider_collectionspace_password', array( 'sanitize_callback' => array( $this, 'sanitize_password' ) ) );
 		add_settings_field( 'cos_provider_collectionspace_password', __( 'CollectionSpace Password', 'culture-object' ), array( $this, 'generate_settings_field_input_password' ), 'cos_provider_settings', 'cos_provider_settings', array( 'field' => 'cos_provider_collectionspace_password' ) );
 	}
 
@@ -176,7 +186,8 @@ class CollectionSpace extends \CultureObject\Provider {
 				echo '<p>';
 				echo esc_html(
 					sprintf(
-						__( 'There are %d objects currently available to sync from CollectionSpace.' ),
+						/* translators: %d: Number of objects available to sync */
+						__( 'There are %d objects currently available to sync from CollectionSpace.', 'culture-object' ),
 						$number_of_objects
 					)
 				);
@@ -184,7 +195,8 @@ class CollectionSpace extends \CultureObject\Provider {
 				echo '<p>';
 				echo esc_html(
 					sprintf(
-						__( 'Based on this number, you should expect a sync to take approximately %d minutes to complete.' ),
+						/* translators: %d: Estimated number of minutes for the sync to complete */
+						__( 'Based on this number, you should expect a sync to take approximately %d minutes to complete.', 'culture-object' ),
 						ceil( ( $number_of_objects / 30 ) + 2 )
 					)
 				);
@@ -263,14 +275,16 @@ class CollectionSpace extends \CultureObject\Provider {
 
 					if ( ! $co_object_exists ) {
 						$current_objects[] = $this->create_object( $doc );
-						$ttext             = sprintf( __( 'Created initial object: %s', 'culture-object' ), $doc['csid'] );
-						$import_status[]   = $ttext;
+						/* translators: %s: CollectionSpace object ID (csid) */
+						$ttext           = sprintf( __( 'Created initial object: %s', 'culture-object' ), $doc['csid'] );
+						$import_status[] = $ttext;
 						echo esc_html( $ttext );
 						++$created;
 					} else {
 						$current_objects[] = $this->update_object( $doc );
-						$ttext             = sprintf( __( 'Updated initial object: %s', 'culture-object' ), $doc['csid'] );
-						$import_status[]   = $ttext;
+						/* translators: %s: CollectionSpace object ID (csid) */
+						$ttext           = sprintf( __( 'Updated initial object: %s', 'culture-object' ), $doc['csid'] );
+						$import_status[] = $ttext;
 						echo esc_html( $ttext );
 						++$updated;
 					}
@@ -313,6 +327,7 @@ class CollectionSpace extends \CultureObject\Provider {
 
 			$saved_image = $this->check_for_image( $post );
 			if ( $saved_image ) {
+				/* translators: %d: WordPress post ID of the object */
 				$ttext           = sprintf( __( 'Saved image for object %d', 'culture-object' ), $post->ID );
 				$import_status[] = $ttext;
 				echo esc_html( $ttext ) . "\r\n";
@@ -325,10 +340,12 @@ class CollectionSpace extends \CultureObject\Provider {
 					'post_status' => 'publish',
 				);
 				wp_update_post( $update_post );
+				/* translators: %d: WordPress post ID of the object */
 				$ttext           = sprintf( __( 'Completed initial detail import for object %d', 'culture-object' ), $post->ID );
 				$import_status[] = $ttext;
 				echo esc_html( $ttext ) . "\r\n";
 			} else {
+				/* translators: %d: WordPress post ID of the object */
 				$ttext           = sprintf( __( 'Updated details for object %d', 'culture-object' ), $post->ID );
 				$import_status[] = $ttext;
 				echo esc_html( $ttext ) . "\r\n";

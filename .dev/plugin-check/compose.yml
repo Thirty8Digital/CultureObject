@@ -1,0 +1,50 @@
+# Throwaway WordPress used only to run the official WordPress.org Plugin Check against this plugin.
+# Driven by bin/plugin-check.sh; nothing here is shipped with the plugin.
+name: co-plugin-check
+
+x-wp-env: &wp-env
+  WORDPRESS_DB_HOST: db
+  WORDPRESS_DB_USER: wp
+  WORDPRESS_DB_PASSWORD: wp
+  WORDPRESS_DB_NAME: wp
+  WORDPRESS_DEBUG: "1"
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: wp
+      MARIADB_USER: wp
+      MARIADB_PASSWORD: wp
+      MARIADB_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+
+  wordpress:
+    image: wordpress:php8.3-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: *wp-env
+    volumes:
+      - wp:/var/www/html
+      - ${PLUGIN_SRC:?run via bin/plugin-check.sh}:/var/www/html/wp-content/plugins/culture-object
+
+  # Shares the wordpress container's network so http://localhost is the site (Plugin Check's runtime checks need that).
+  cli:
+    image: wordpress:cli-php8.3
+    user: "33:33"
+    network_mode: "service:wordpress"
+    depends_on:
+      - wordpress
+    environment: *wp-env
+    volumes:
+      - wp:/var/www/html
+      - ${PLUGIN_SRC:?run via bin/plugin-check.sh}:/var/www/html/wp-content/plugins/culture-object
+    profiles: ["tools"]
+
+volumes:
+  wp:

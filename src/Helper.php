@@ -70,6 +70,57 @@ class Helper extends Core {
 	}
 
 	/**
+	 * Moves an uploaded file into the protected upload directory using WordPress' upload handling.
+	 * The extension is forced to one of $allowed_exts; the client supplied name and type are never trusted.
+	 *
+	 * @param array $file         The $_FILES entry.
+	 * @param array $allowed_exts Allowed extensions, the first is the default.
+	 * @return string|false Absolute path of the stored file, or false on failure.
+	 */
+	function store_protected_upload( $file, $allowed_exts ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$upload_dir = $this->get_protected_upload_dir();
+		$file_name  = $this->get_safe_upload_filename( $file['name'], $upload_dir, $allowed_exts );
+		if ( false === $file_name ) {
+			return false;
+		}
+
+		$to_protected_dir = function ( $uploads ) use ( $upload_dir ) {
+			$base = untrailingslashit( $upload_dir );
+			return array_merge(
+				$uploads,
+				array(
+					'path'    => $base,
+					'url'     => '',
+					'subdir'  => '',
+					'basedir' => $base,
+					'baseurl' => '',
+					'error'   => false,
+				)
+			);
+		};
+
+		add_filter( 'upload_dir', $to_protected_dir );
+		$result = wp_handle_upload(
+			$file,
+			array(
+				'test_form'                => false,
+				'test_type'                => false, // The allowlisted extension above is the type check.
+				'unique_filename_callback' => function () use ( $file_name ) {
+					return $file_name;
+				},
+			)
+		);
+		remove_filter( 'upload_dir', $to_protected_dir );
+
+		if ( ! is_array( $result ) || ! empty( $result['error'] ) || empty( $result['file'] ) ) {
+			return false;
+		}
+		return $result['file'];
+	}
+
+	/**
 	 * Builds a safe destination filename for a provider upload. The extension is forced to one of
 	 * the allowed values rather than trusted from the client.
 	 *
