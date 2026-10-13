@@ -3,7 +3,7 @@
         'name' => 'lgladdy/culture-object-csv',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b0ed9b99513061a4def45c24c7af08bc015f3d9c',
+        'reference' => '8f9cf5b0da88128d904df067507d4dd51bb2614d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'composer/pcre' => array(
-            'pretty_version' => '3.3.2',
-            'version' => '3.3.2.0',
-            'reference' => 'b2bed4734f0cc156ee1fe9c0da2550420d99a21e',
+            'pretty_version' => '3.4.0',
+            'version' => '3.4.0.0',
+            'reference' => 'd5a341b3fb61f3001970940afb1d332968a183ed',
             'type' => 'library',
             'install_path' => __DIR__ . '/./pcre',
             'aliases' => array(),
@@ -22,7 +22,7 @@
         'lgladdy/culture-object-csv' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b0ed9b99513061a4def45c24c7af08bc015f3d9c',
+            'reference' => '8f9cf5b0da88128d904df067507d4dd51bb2614d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -56,9 +56,9 @@
             'dev_requirement' => false,
         ),
         'phpoffice/phpspreadsheet' => array(
-            'pretty_version' => '2.4.7',
-            'version' => '2.4.7.0',
-            'reference' => '03e65f7c3399756d77f656118f75a61e0fca23c6',
+            'pretty_version' => '2.4.8',
+            'version' => '2.4.8.0',
+            'reference' => 'badf4f22c54332046af37687c3384c6a0ed14ae1',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpoffice/phpspreadsheet',
             'aliases' => array(),
