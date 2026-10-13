@@ -20,7 +20,7 @@ class Emu extends CultureObject\Provider {
 
 	function execute_load_action() {
 		if ( isset( $_FILES['cos_emu_import_file'] ) && isset( $_POST['cos_emu_nonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cos_emu_nonce'], 'cos_emu_import' ) ) {
+			if ( wp_verify_nonce( $_POST['cos_emu_nonce'], 'cos_emu_import' ) && current_user_can( 'upload_files' ) ) {
 				$this->perform_sync();
 			} else {
 				wp_die( __( 'Security Violation.', 'culture-object' ) );

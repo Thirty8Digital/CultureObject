@@ -121,7 +121,7 @@ class CSV2 extends \CultureObject\Provider {
 			}
 		}
 		if ( isset( $_POST['delete_uploaded_file'] ) && isset( $_POST['cos_csv_nonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cos_csv_nonce'], 'cos_csv_delete_uploaded_file' ) ) {
+			if ( wp_verify_nonce( $_POST['cos_csv_nonce'], 'cos_csv_delete_uploaded_file' ) && current_user_can( 'upload_files' ) ) {
 				$this->delete_uploaded_file();
 			} else {
 				wp_die( esc_html__( 'Security Violation.', 'culture-object' ) );
@@ -706,12 +706,8 @@ class CSV2 extends \CultureObject\Provider {
 
 		$valid_file_types = array( 'text/csv', 'application/vnd.ms-excel' );
 
-		$upload     = wp_upload_dir();
-		$upload_dir = $upload['basedir'];
-		$upload_dir = $upload_dir . '/culture-object/';
-		if ( ! is_dir( $upload_dir ) ) {
-			mkdir( $upload_dir, 0700 ); //phpcs:ignore WordPress.WP.AlternativeFunctions
-		}
+		$helper     = new \CultureObject\Helper();
+		$upload_dir = $helper->get_protected_upload_dir();
 
 		$file = $_FILES['cos_csv_import_file']; //phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified before this method is called.
 		if ( $file['error'] !== 0 ) {
@@ -734,25 +730,11 @@ class CSV2 extends \CultureObject\Provider {
 			delete_option( 'cos_csv2_uploaded_file_path' );
 		}
 
-		// Use basename to strip any directory components and sanitize filename safely
-		$original_name = basename( $file['name'] );
-		$file_name     = preg_replace( '/[^A-Za-z0-9_\-]/', '_', pathinfo( $original_name, PATHINFO_FILENAME ) );
-		$extension     = pathinfo( $original_name, PATHINFO_EXTENSION );
-
-		// Ensure we have a valid filename
-		if ( empty( $file_name ) ) {
-			$file_name = 'uploaded_file';
+		// The extension is forced to an allowed value; never trust the client supplied name or type.
+		$file_name = $helper->get_safe_upload_filename( $file['name'], $upload_dir, array( 'csv', 'txt' ) );
+		if ( false === $file_name ) {
+			throw new CSV2Exception( esc_html__( 'Unable to import. You didn\'t upload a CSV file', 'culture-object' ) );
 		}
-
-		// Add extension back if it's safe
-		if ( ! empty( $extension ) && preg_match( '/^[a-zA-Z0-9]+$/', $extension ) ) {
-			$file_name .= '.' . $extension;
-		} else {
-			$file_name .= '.csv'; // Default to CSV extension
-		}
-
-		// Generate unique filename to prevent conflicts
-		$file_name = wp_unique_filename( $upload_dir, $file_name );
 		$full_path = $upload_dir . $file_name;
 
 		// Validate the final path is within the upload directory

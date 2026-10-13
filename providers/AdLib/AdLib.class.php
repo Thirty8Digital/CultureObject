@@ -20,7 +20,7 @@ class AdLib extends \CultureObject\Provider {
 
 	function execute_load_action() {
 		if ( isset( $_FILES['cos_adlib_import_file'] ) && isset( $_POST['cos_adlib_nonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cos_adlib_nonce'], 'cos_adlib_import' ) ) {
+			if ( wp_verify_nonce( $_POST['cos_adlib_nonce'], 'cos_adlib_import' ) && current_user_can( 'upload_files' ) ) {
 				$this->perform_sync();
 			} else {
 				wp_die( __( 'Security Violation.', 'culture-object' ) );

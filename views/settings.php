@@ -13,7 +13,7 @@
 	<?php
 	$key = get_option( 'cos_core_sync_key' );
 	if ( empty( $key ) ) {
-		$key = md5( time() . rand( 0, 100000 ) );
+		$key = wp_generate_password( 32, false );
 		update_option( 'cos_core_sync_key', $key );
 	}
 	?>
