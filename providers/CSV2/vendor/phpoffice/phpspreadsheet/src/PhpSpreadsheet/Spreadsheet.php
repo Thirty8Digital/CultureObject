@@ -450,6 +450,7 @@ class Spreadsheet implements JsonSerializable
             unset($worksheet);
         }
         $this->workSheetCollection = [];
+        $this->activeSheetIndex = -1;
     }
 
     /**
@@ -668,9 +669,8 @@ class Spreadsheet implements JsonSerializable
      */
     public function getIndex(Worksheet $worksheet, bool $noThrow = false): int
     {
-        $wsHash = $worksheet->getHashInt();
         foreach ($this->workSheetCollection as $key => $value) {
-            if ($value->getHashInt() === $wsHash) {
+            if ($value === $worksheet) {
                 return $key;
             }
         }
@@ -1575,5 +1575,26 @@ class Spreadsheet implements JsonSerializable
     public function getExcelCalendar(): int
     {
         return $this->excelCalendar;
+    }
+
+    /** @var string[] */
+    private $domainWhiteList = [];
+
+    /**
+     * Currently used only by WEBSERVICE function.
+     *
+     * @param string[] $domainWhiteList
+     */
+    public function setDomainWhiteList(array $domainWhiteList): self
+    {
+        $this->domainWhiteList = $domainWhiteList;
+
+        return $this;
+    }
+
+    /** @return string[] */
+    public function getDomainWhiteList(): array
+    {
+        return $this->domainWhiteList;
     }
 }
