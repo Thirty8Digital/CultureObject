@@ -4,5 +4,4 @@ tools/
 crowdin.yaml
 providers/GAC
 providers/IndexPlusModa
-CLAUDE.md
 .claude
