@@ -57,7 +57,7 @@ Change Log
 ---------------------
 
 #### Version 4.4
-* Security: debug object purge endpoint now requires `manage_options` and a nonce (previously callable unauthenticated via admin-ajax.php)
+* Security: debug object purge endpoint (previously callable unauthenticated via admin-ajax.php) is now a nonce-protected POST requiring `manage_options`, triggered from a "Delete all objects" button on the Main Settings page. Visit the page with `?enable_purge=true` to reveal it
 * Security: CSV2 and Modes uploads force a safe extension, are stored in a web-denied directory and no longer trust the client file type
 * Security: image imports only fetch over http(s), sanitise file names, require an image type and ignore remote supplied paths
 * Security: timing-safe sync key comparison, empty key no longer authenticates, stronger key generation

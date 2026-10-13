@@ -55,6 +55,21 @@
 
 	<?php } ?>
 
+	<?php
+	// Hidden by default: only shown when visiting this page with ?enable_purge=true.
+	if ( current_user_can( 'manage_options' ) && isset( $_GET['enable_purge'] ) && 'true' === $_GET['enable_purge'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only toggles display of a nonce-protected form.
+		?>
+	<div class="notice notice-error inline">
+		<h3><?php esc_html_e( 'Delete all objects', 'culture-object' ); ?></h3>
+		<p><?php esc_html_e( 'This permanently deletes every imported object. It cannot be undone.', 'culture-object' ); ?></p>
+		<form method="POST" action="" onsubmit="return confirm('<?php echo esc_js( __( 'Permanently delete ALL objects? This cannot be undone.', 'culture-object' ) ); ?>');">
+			<?php wp_nonce_field( 'cos_purge_objects' ); ?>
+			<input type="hidden" name="cos_purge_objects" value="1" />
+			<?php submit_button( __( 'Delete all objects', 'culture-object' ), 'delete', 'submit', false ); ?>
+		</form>
+	</div>
+	<?php } ?>
+
 	<form method="POST" action="options.php">
 	<?php
 	settings_fields( 'cos_settings' );

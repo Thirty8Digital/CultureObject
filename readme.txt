@@ -28,7 +28,7 @@ It supports a number of collection management systems (AdLib, CollectionSpace, C
 == Changelog ==
 
 = 4.4 =
-Security: Fixed the debug object purge endpoint being callable without authentication. It now requires the manage_options capability and a nonce
+Security: Fixed the debug object purge endpoint being callable without authentication. It is now a nonce protected POST that requires manage_options, triggered from a Delete all objects button on the settings page (visit the Main Settings page with ?enable_purge=true to reveal it)
 Security: CSV2 and Modes uploads now force a safe file extension, are stored in a directory that denies direct web access, and no longer trust the client supplied file type
 Security: Image imports only fetch over http(s) and now sanitise the file name, require an image file type, and ignore path components supplied by the remote server
 Security: Sync key comparison is now timing safe and an empty sync key no longer authenticates; new sync keys are generated with wp_generate_password

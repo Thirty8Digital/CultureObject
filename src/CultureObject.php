@@ -196,23 +196,26 @@ class CultureObject extends Core {
 	}
 
 	function purge_objects() {
-		if ( is_admin() && isset( $_GET['perform_cos_debug_purge'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified below via check_admin_referer.
-			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( esc_html__( 'You do not have permission to do that.', 'culture-object' ), '', array( 'response' => 403 ) );
-			}
-			check_admin_referer( 'cos_debug_purge' );
-			$all_objects = get_posts(
-				array(
-					'post_status'    => 'any',
-					'post_type'      => 'object',
-					'posts_per_page' => -1,
-				)
-			);
-			foreach ( $all_objects as $obj ) {
-				wp_delete_post( $obj->ID, true );
-			}
-			wp_die( esc_html__( 'Deleted all COS objects.', 'culture-object' ) );
+		if ( ! is_admin() || ! isset( $_POST['cos_purge_objects'] ) ) {
+			return;
 		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to do that.', 'culture-object' ), '', array( 'response' => 403 ) );
+		}
+		check_admin_referer( 'cos_purge_objects' );
+
+		$all_objects = get_posts(
+			array(
+				'post_status'    => 'any',
+				'post_type'      => 'object',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+		foreach ( $all_objects as $object_id ) {
+			wp_delete_post( $object_id, true );
+		}
+		wp_die( esc_html__( 'Deleted all COS objects.', 'culture-object' ), '', array( 'back_link' => true ) );
 	}
 
 	function wordpress_init() {
