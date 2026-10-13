@@ -3,11 +3,11 @@
         'name' => 'lgladdy/culture-object-csv',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '8f9cf5b0da88128d904df067507d4dd51bb2614d',
+        'reference' => '75e950b6a13f899f69ce3e136e056ad40316b10b',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => true,
+        'dev' => false,
     ),
     'versions' => array(
         'composer/pcre' => array(
@@ -22,7 +22,7 @@
         'lgladdy/culture-object-csv' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '8f9cf5b0da88128d904df067507d4dd51bb2614d',
+            'reference' => '75e950b6a13f899f69ce3e136e056ad40316b10b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
