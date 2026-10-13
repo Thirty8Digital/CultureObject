@@ -210,11 +210,11 @@ class SWCE extends \CultureObject\Provider {
 				$object_exists         = $this->object_exists( $doc['accession-loan-no'] );
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['accession-loan-no'];
+					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['accession-loan-no'] );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['accession-loan-no'];
+					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['accession-loan-no'] );
 					++$updated;
 				}
 			}

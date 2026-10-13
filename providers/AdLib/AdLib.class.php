@@ -150,11 +150,11 @@ class AdLib extends \CultureObject\Provider {
 
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['title'];
+					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['title'] );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['title'];
+					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['title'] );
 					++$updated;
 				}
 			}

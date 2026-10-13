@@ -136,9 +136,9 @@ class IndexPlus extends \CultureObject\Provider {
 			throw new IndexPlusException( __( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$start     = $_POST['start'];
-		$service   = intval( $_POST['service'] );
-		$import_id = $_POST['import_id'];
+		$start     = ( 'cleanup' === $_POST['start'] ) ? 'cleanup' : max( 0, intval( $_POST['start'] ) );
+		$service   = isset( $_POST['service'] ) ? intval( $_POST['service'] ) : 1;
+		$import_id = sanitize_key( wp_unslash( $_POST['import_id'] ) );
 		$result    = array();
 
 		if ( $start === 'cleanup' ) {
@@ -201,11 +201,11 @@ class IndexPlus extends \CultureObject\Provider {
 			$object_exists         = $this->object_exists( $doc['uniqueID'] );
 			if ( ! $object_exists ) {
 				$current_objects[] = $this->create_object( $doc );
-				$import_status[]   = __( 'Created object for service URL', 'culture-object' ) . ' ' . $service . ': ' . $doc['uniqueID'];
+				$import_status[]   = __( 'Created object for service URL', 'culture-object' ) . ' ' . intval( $service ) . ': ' . esc_html( $doc['uniqueID'] );
 				++$created;
 			} else {
 				$current_objects[] = $this->update_object( $doc );
-				$import_status[]   = __( 'Updated object for service URL', 'culture-object' ) . ' ' . $service . ': ' . $doc['uniqueID'];
+				$import_status[]   = __( 'Updated object for service URL', 'culture-object' ) . ' ' . intval( $service ) . ': ' . esc_html( $doc['uniqueID'] );
 				++$updated;
 			}
 		}

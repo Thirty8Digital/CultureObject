@@ -60,6 +60,8 @@ Change Log
 * Security: debug object purge endpoint (previously callable unauthenticated via admin-ajax.php) is now a nonce-protected POST requiring `manage_options`, triggered from a "Delete all objects" button on the Main Settings page. Visit the page with `?enable_purge=true` to reveal it
 * Security: CSV2 and Modes uploads force a safe extension, are stored in a web-denied directory and no longer trust the client file type
 * Security: image imports only fetch over http(s), sanitise file names, require an image type and ignore remote supplied paths
+* Security: imported titles/identifiers are now escaped in the admin import log (fixes XSS from uploaded CSV/Modes/AdLib/Emu data and remote feeds)
+* Security: CSV2 and Modes image URLs are validated with `wp_http_validate_url` (use the `http_request_host_is_external` filter for images on internal hosts)
 * Security: timing-safe sync key comparison, empty key no longer authenticates, stronger key generation
 * Security: capability checks added to AJAX sync and the AdLib, Emu, CSV2 and Modes upload handlers; `cron.php` is CLI only
 * Security: updated PhpSpreadsheet to 2.4.8 (CVE-2026-59931/59932/59933) and composer/pcre to 3.4.0

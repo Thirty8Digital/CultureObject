@@ -146,11 +146,11 @@ class Emu extends CultureObject\Provider {
 
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc['Name'];
+					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['Name'] );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc['Name'];
+					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['Name'] );
 					++$updated;
 				}
 			}

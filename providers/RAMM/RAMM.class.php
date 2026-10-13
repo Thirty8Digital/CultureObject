@@ -90,10 +90,10 @@ class RAMM extends \CultureObject\Provider {
 				$object_exists = $this->object_exists( $doc['identifier'] );
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $doc );
-					echo __( 'Created object', 'culture-object' ) . ': ' . $doc['Title'] . "<br />\r\n";
+					echo esc_html__( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc['Title'] ) . "<br />\r\n";
 				} else {
 					$current_objects[] = $this->update_object( $doc );
-					echo __( 'Updated object', 'culture-object' ) . ': ' . $doc['Title'] . "<br />\r\n";
+					echo esc_html__( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc['Title'] ) . "<br />\r\n";
 				}
 			}
 			$this->clean_objects( $current_objects, $previous_posts );

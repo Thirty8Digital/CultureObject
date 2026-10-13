@@ -183,7 +183,7 @@ class Modes extends \CultureObject\Provider {
 		echo '<select id="id_field">';
 		echo '<option value="0">' . esc_attr__( '-- Object ID Field --', 'culture-object' ) . '</object>';
 		foreach ( $fields as $key => $header ) {
-			echo '<option value="' . $key . '" ' . selected( trim( $id_field ), $key, false ) . '>' . $header . '</option>';
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( trim( $id_field ), $key, false ) . '>' . esc_html( $header ) . '</option>';
 		}
 		echo '</select>';
 		echo '<span class="description"> ';
@@ -197,7 +197,7 @@ class Modes extends \CultureObject\Provider {
 		echo '<select id="title_field">';
 		echo '<option value="0">' . esc_attr__( '-- Object Title Field --', 'culture-object' ) . '</object>';
 		foreach ( $fields as $key => $header ) {
-			echo '<option value="' . $key . '" ' . selected( trim( $title_field ), $key, false ) . '>' . $header . '</option>';
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( trim( $title_field ), $key, false ) . '>' . esc_html( $header ) . '</option>';
 		}
 		echo '</select>';
 		echo '<span class="description"> ';
@@ -212,7 +212,7 @@ class Modes extends \CultureObject\Provider {
 			echo '<select id="image_field">';
 			echo '<option value="0">' . esc_attr__( '-- Don\'t Import Images --', 'culture-object' ) . '</object>';
 			foreach ( $fields as $key => $header ) {
-				echo '<option value="' . $key . '" ' . selected( $image_field, $key, false ) . '>' . $header . '</option>';
+				echo '<option value="' . esc_attr( $key ) . '" ' . selected( $image_field, $key, false ) . '>' . esc_html( $header ) . '</option>';
 			}
 			echo '</select>';
 			echo '<span class="description"> ';
@@ -345,22 +345,22 @@ class Modes extends \CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$obj_id            = $this->create_object( $obj, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $obj[ $title_field ];
+					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] );
 					++$created;
 				} else {
 					$obj_id            = $this->update_object( $obj, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $obj[ $title_field ];
+					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] );
 					++$updated;
 				}
 
 				if ( $image_field ) {
-					if ( filter_var( $obj[ $image_field ], FILTER_VALIDATE_URL ) === false ) {
+					if ( filter_var( $obj[ $image_field ], FILTER_VALIDATE_URL ) === false || ! wp_http_validate_url( $obj[ $image_field ] ) ) { // Uploaded data is untrusted: refuse internal/loopback hosts.
 						$import_status[] = __( "Failed to import image as the selected field doesn't contain a valid URL", 'culture-object' );
 					} else {
 						$image_id = $helper->add_image_to_gallery_from_url( $obj[ $image_field ], $obj[ $id_field ], $context );
 						set_post_thumbnail( $obj_id, $image_id );
-						$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . $obj[ $title_field ] . ' [' . $obj_id . ']';
+						$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] ) . ' [' . intval( $obj_id ) . ']';
 					}
 				}
 			}

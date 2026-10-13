@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## What this is
 
-**Culture Object** is a WordPress plugin (v4.3, Apache 2.0) that syncs museum/collection object records from external collection-management systems (or uploaded CSV files) into a WordPress custom post type called `object`. Themes/other plugins (e.g. Culture Object Display) then render those posts.
+**Culture Object** is a WordPress plugin (v4.4, Apache 2.0) that syncs museum/collection object records from external collection-management systems (or uploaded CSV files) into a WordPress custom post type called `object`. Themes/other plugins (e.g. Culture Object Display) then render those posts.
 
 - Requires PHP 8.1+ and WordPress 6.2+ (plugin header in `CultureObject.php`, `readme.txt`, and `phpcs.ruleset.xml` `testVersion`).
 - Text domain: `culture-object`. All user-facing strings must be translatable.
@@ -14,12 +14,12 @@ Guidance for AI coding agents working in this repository.
 
 ```
 CultureObject.php        Plugin bootstrap, instantiates \CultureObject\CultureObject, global helper functions
-cron.php                 CLI entry point: boots wp-blog-header.php with CO_CLI_CRON defined to run a cron sync
+cron.php                 CLI-only entry point (exits for non-CLI SAPIs): boots wp-blog-header.php with CO_CLI_CRON defined to run a cron sync
 src/                     PSR-4 namespace CultureObject\ (composer autoload, vendor/autoload.php is committed)
   CultureObject.php      Main class: registers `object` CPT, sync triggers (HTTP key / CLI / AJAX), debug purge
   Core.php               Abstract base: provider discovery (find_providers, get_sync_provider), get_core_setting
   Settings.php           Admin menu + Settings API pages, renders views/, calls provider hooks
-  Helper.php             Field remapping lookups, add_image_to_gallery_from_url()
+  Helper.php             Field remapping lookups, add_image_to_gallery_from_url(), protected upload dir + safe upload filename helpers
   Provider.php           Abstract base class every provider extends
   Exception/             Exception, ProviderException, NotYetImplementedException
 providers/<Name>/<Name>.class.php   One directory per data source (see below)
@@ -64,7 +64,8 @@ AdLib, CollectionSpace, CSV2 (upload; uses PhpSpreadsheet via its own `providers
 - Follow WordPress Coding Standards: tabs, spaces inside parentheses, Yoda-ish style optional (rule excluded), `array()` syntax, snake_case functions/methods. Config is `phpcs.ruleset.xml` (WordPress-Extra + PHPCompatibilityWP, vendor excluded). Run `phpcs --standard=phpcs.ruleset.xml <paths>` if phpcs with WPCS is installed (it is not bundled or in composer.json).
 - **Security is a recurring theme** (recent releases fixed escaping vulnerabilities). Escape all output (`esc_html__`, `esc_attr`, `esc_url`, `wp_kses_post`), sanitise and `wp_unslash` all input, and verify nonces. Where a nonce is verified upstream in core, providers use `//phpcs:disable WordPress.Security.NonceVerification.Missing -- verified by CO upstream.`
 - Wrap strings in `esc_html__( '...', 'culture-object' )`; add `/* Translators: */` comments for placeholders.
-- Provider file downloads/uploads go in `wp_upload_dir()`; use the shared path-generation approach already in file-upload providers.
+- Provider file uploads go in the protected `uploads/culture-object/` dir via `Helper::get_protected_upload_dir()` and `Helper::get_safe_upload_filename()` (forces an allowlisted extension; never trust the client file type).
+- Imported data (uploaded files and remote feeds) is untrusted: `import_status` strings are injected as HTML by each provider's admin.js, so `esc_html()` every data value placed in them. Check `current_user_can()` as well as nonces on handlers.
 - Version bumps: update the plugin header in `CultureObject.php`, `readme.txt` (Stable tag + changelog), and the changelog in `README.md`.
 - There is no automated test suite, no build step, and no CI config in this repo. Verify changes with `php -l <file>` and phpcs where available; real behaviour needs a WordPress install.
 
@@ -74,6 +75,6 @@ AdLib, CollectionSpace, CSV2 (upload; uses PhpSpreadsheet via its own `providers
 - `register_post_type` uses `apply_filters( 'co_object_slug ', 'object' )` with a **trailing space in the hook name**, so the documented filter never fires under `co_object_slug`.
 - `README.md` still says "Currently v4.1" and mentions `CultureObject/Provider.class.php` (now `src/Provider.php`).
 - `Settings::register_settings()` throws a `ProviderException` from an `admin_init` callback if a remap provider lacks `register_remappable_fields()`.
-- `Helper::add_image_to_gallery_from_url()` uses `file_get_contents` + `$http_response_header` and `@` suppression; providers fetching remote data use `file_get_contents` rather than `wp_remote_get`.
+- `Helper::add_image_to_gallery_from_url()` uses `file_get_contents` (http/https only, sanitised filename, image types only); providers fetching remote data use `file_get_contents` rather than `wp_remote_get`.
 - `js/culture-object-sync.js` is a stub (alerts the raw response); provider `assets/admin.js` do the real AJAX work.
-- `?perform_cos_debug_purge` in admin deletes **all** `object` posts (admin context only, no nonce/capability check beyond `is_admin()`); treat with care.
+- The "Delete all objects" button on Main Settings (only shown with `?enable_purge=true`) POSTs `cos_purge_objects`, handled by `purge_objects()`; it requires `manage_options` and a nonce. It deletes **all** `object` posts.

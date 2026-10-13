@@ -185,11 +185,11 @@ class MDS extends \CultureObject\Provider {
 				$object_exists         = $this->object_exists( $identifier );
 				if ( ! $object_exists ) {
 					$current_objects[] = $this->create_object( $identifier, $obj );
-					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . $identifier;
+					$import_status[]   = esc_html__( 'Created object', 'culture-object' ) . ': ' . esc_html( $identifier );
 					++$created;
 				} else {
 					$current_objects[] = $this->update_object( $identifier, $obj );
-					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . $identifier;
+					$import_status[]   = esc_html__( 'Updated object', 'culture-object' ) . ': ' . esc_html( $identifier );
 					++$updated;
 				}
 			}

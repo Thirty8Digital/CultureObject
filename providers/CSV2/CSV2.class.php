@@ -301,10 +301,10 @@ class CSV2 extends \CultureObject\Provider {
 			throw new CSV2Exception( esc_html__( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$start     = $_POST['start'];
-		$import_id = $_POST['import_id'];
+		$start     = ( 'cleanup' === $_POST['start'] ) ? 'cleanup' : max( 0, intval( $_POST['start'] ) );
+		$import_id = sanitize_key( wp_unslash( $_POST['import_id'] ) );
 
-		if ( $start == 'cleanup' ) {
+		if ( 'cleanup' === $start ) {
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_csv2_import_' . $import_id, array() );
@@ -423,12 +423,12 @@ class CSV2 extends \CultureObject\Provider {
 				if ( ! $object_exists ) {
 					$obj_id            = $this->create_object( $doc, $fields, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . $doc[ $title_field ];
+					$import_status[]   = __( 'Created object', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] );
 					++$created;
 				} else {
 					$obj_id            = $this->update_object( $doc, $fields, $id_field, $title_field );
 					$current_objects[] = $obj_id;
-					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . $doc[ $title_field ];
+					$import_status[]   = __( 'Updated object', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] );
 					++$updated;
 				}
 
@@ -441,7 +441,7 @@ class CSV2 extends \CultureObject\Provider {
 					$doc[ $image_field ] = trim( $doc[ $image_field ] );
 					if ( has_post_thumbnail( $obj_id ) ) {
 						$import_status[] = __( 'Skipping image import for object as it already has a post thumbnail', 'culture-object' );
-					} elseif ( filter_var( $doc[ $image_field ], FILTER_VALIDATE_URL ) ) {
+					} elseif ( filter_var( $doc[ $image_field ], FILTER_VALIDATE_URL ) && wp_http_validate_url( $doc[ $image_field ] ) ) { // Uploaded data is untrusted: refuse internal/loopback hosts (see the http_request_host_is_external filter).
 
 							// Trusted extensions
 							$presumed_extension = pathinfo( $doc[ $image_field ], PATHINFO_EXTENSION );
@@ -463,7 +463,7 @@ class CSV2 extends \CultureObject\Provider {
 							$image_id  = $helper->add_image_to_gallery_from_url( $doc[ $image_field ], $save_path, $context, $obj_id, trim( $doc[ $title_field ] ) );
 						if ( $image_id ) {
 							set_post_thumbnail( $obj_id, $image_id );
-							$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . $doc[ $title_field ] . ' [' . $image_id . ']';
+							$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] ) . ' [' . intval( $image_id ) . ']';
 						} else {
 							$import_status[] = __( 'Failed to download image. Check it is accessible.', 'culture-object' );
 						}
@@ -810,6 +810,10 @@ class CSV2 extends \CultureObject\Provider {
 	function update_object_meta( $post_id, $doc, $fields ) {
 		foreach ( $fields as $key => $value ) {
 			if ( ! empty( $value ) ) {
+				// Column headers come from uploaded data: never write WordPress' protected (underscore prefixed) meta.
+				if ( '_cos_object_id' !== trim( $value ) && is_protected_meta( trim( $value ), 'post' ) ) {
+					continue;
+				}
 				update_post_meta( $post_id, trim( $value ), trim( $doc[ $key ] ) );
 			}
 		}
