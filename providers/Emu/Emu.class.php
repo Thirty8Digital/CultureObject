@@ -90,9 +90,9 @@ class Emu extends CultureObject\Provider {
 			echo '</form>';
 			echo '<script>
             jQuery("#emu_import_submit").click(function(e) {
-                $("#csv_import_submit").val("' . esc_html__( 'Importing... This may take some time...', 'culture-object' ) . '");
-                $("#emu_import_submit").addClass("button-disabled");
-                window.setTimeout(\'$("#emu_import_form").submit();\',100);
+                jQuery("#emu_import_submit").val("' . esc_html__( 'Importing... This may take some time...', 'culture-object' ) . '");
+                jQuery("#emu_import_submit").addClass("button-disabled");
+                window.setTimeout(\'jQuery("#emu_import_form").submit();\',100);
             });
             </script>';
 		}
@@ -242,8 +242,12 @@ class Emu extends CultureObject\Provider {
 	function update_object_meta( $post_id, $doc ) {
 		$doc['identifier'] = $doc['ID'];
 		unset( $doc['ID'] );
+		$helper = new \CultureObject\Helper();
 		foreach ( $doc as $key => $value ) {
 			$key = strtolower( $key );
+			if ( ! $helper->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			if ( is_array( $value ) ) {
 				$value = array_filter( $value );
 				$value = array_unique( $value, SORT_REGULAR );

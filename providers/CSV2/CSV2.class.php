@@ -23,7 +23,7 @@ class CSV2 extends \CultureObject\Provider {
 	);
 
 	function __construct() {
-		require 'vendor/autoload.php';
+		require_once __DIR__ . '/vendor/autoload.php';
 	}
 
 	function register_remappable_fields() {
@@ -449,18 +449,15 @@ class CSV2 extends \CultureObject\Provider {
 							$ext                = false;
 
 						if ( ! in_array( $presumed_extension, $trusted_extensions, true ) ) {
-							// Try to parse the extension from content headers - if we don't think we can trust pathinfo.
-							$headers = get_headers( $doc[ $image_field ], 1 );
-							if ( isset( $headers['Content-Type'] ) ) {
-								$ext = $this->mime2ext( $headers['Content-Type'] );
-							}
+							// Not a trusted extension: leave it to the image helper, which checks the downloaded file's real type.
+							$presumed_extension = '';
 						}
 						if ( ! $ext ) {
 							$ext = $presumed_extension;
 						}
 
 							$save_path = $obj_id . '.' . $ext;
-							$image_id  = $helper->add_image_to_gallery_from_url( $doc[ $image_field ], $save_path, $context, $obj_id, trim( $doc[ $title_field ] ) );
+							$image_id  = $helper->add_image_to_gallery_from_url( $doc[ $image_field ], $save_path, $context, $obj_id, trim( $doc[ $title_field ] ), true );
 						if ( $image_id ) {
 							set_post_thumbnail( $obj_id, $image_id );
 							$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $doc[ $title_field ] ) . ' [' . intval( $image_id ) . ']';

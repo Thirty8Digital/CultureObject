@@ -174,7 +174,11 @@ class CultureGrid extends \CultureObject\Provider {
 	}
 
 	function update_object_meta( $post_id, $doc ) {
+		$helper = new \CultureObject\Helper();
 		foreach ( $doc as $key => $value ) {
+			if ( ! $helper->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			if ( is_array( $value ) ) {
 				$value = $value[0];
 			}

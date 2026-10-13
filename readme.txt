@@ -35,7 +35,11 @@ Security: Sync key comparison is now timing safe and an empty sync key no longer
 Security: AJAX sync, and the AdLib, Emu, CSV2 and Modes upload handlers, now check user capabilities as well as nonces
 Security: cron.php can no longer be run over the web
 Security: Fixed a cross-site scripting issue where imported titles and identifiers (for example from an uploaded CSV, Modes or AdLib/Emu file) were shown unescaped in the admin import log, which could be used by a lower privileged user to run script in an administrator's session
-Security: CSV2 and Modes image URLs are now validated with wp_http_validate_url, so uploaded data can no longer make the server request internal or loopback addresses (use the http_request_host_is_external filter if your images are hosted on an internal address)
+Security: CSV2 and Modes image downloads now use wp_safe_remote_get (including for redirects), so uploaded data can no longer make the server request internal or loopback addresses. Use the http_request_host_is_external filter if your images are hosted on an internal address
+Security: Imported field names that match WordPress protected (underscore prefixed) meta keys are no longer written, for all providers
+Security: Sanitised the start and import_id values in the CSV2, IndexPlus and Modes AJAX sync (the Modes value was used in an XPath query)
+Fix: The Emu import button did not submit the form because it used $ instead of jQuery
+Fix: CSV2 now loads its own bundled autoloader by absolute path
 Security: Updated PhpSpreadsheet to 2.4.8 (fixes CVE-2026-59931, CVE-2026-59932 and CVE-2026-59933) and composer/pcre to 3.4.0
 Fix: The co_object_slug filter name contained a trailing space so it could never be used
 Fix: Activation version check now matches the plugin header (PHP 8.1, WordPress 6.2)

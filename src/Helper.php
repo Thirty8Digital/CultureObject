@@ -34,6 +34,21 @@ class Helper extends Core {
 	}
 
 	/**
+	 * Whether an imported field name may be written as post meta. Field names come from uploaded
+	 * files or remote feeds, so WordPress' protected (underscore prefixed) keys are refused.
+	 *
+	 * @param string $key Meta key.
+	 * @return bool
+	 */
+	function is_safe_meta_key( $key ) {
+		$key = (string) $key;
+		if ( '_cos_object_id' === $key ) {
+			return true;
+		}
+		return '' !== $key && ! is_protected_meta( $key, 'post' );
+	}
+
+	/**
 	 * Returns a protected directory inside uploads for provider file uploads, creating it if needed.
 	 * Direct web access is denied and the files are never served.
 	 *
@@ -79,19 +94,50 @@ class Helper extends Core {
 		return wp_unique_filename( $upload_dir, $name . '.' . $extension );
 	}
 
-	function add_image_to_gallery_from_url( $url, $save_as, $stream_context = false, $post_parent = 0, $image_title = false ) {
+	/**
+	 * Downloads an image from a URL and adds it to the media library.
+	 *
+	 * @param string        $url            Image URL.
+	 * @param string        $save_as        Suggested file name.
+	 * @param resource|bool $stream_context Optional stream context (e.g. for authenticated sources).
+	 * @param int           $post_parent    Parent post ID.
+	 * @param string|bool   $image_title    Attachment title.
+	 * @param bool          $untrusted_url  True when the URL comes from uploaded data. The download then uses
+	 *                                      wp_safe_remote_get(), which refuses internal hosts, including via redirects.
+	 * @return int|false Attachment ID or false.
+	 */
+	function add_image_to_gallery_from_url( $url, $save_as, $stream_context = false, $post_parent = 0, $image_title = false, $untrusted_url = false ) {
 		// Image URLs come from imported data, so only ever fetch over http(s) (not file://, php://, etc).
 		$scheme = wp_parse_url( $url, PHP_URL_SCHEME );
 		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
 			return false;
 		}
 
-		$upload_dir = wp_upload_dir();
-		$img        = @file_get_contents( $url, false, $stream_context ); //phpcs:ignore WordPress.WP.AlternativeFunctions,WordPress.PHP.NoSilencedErrors
-		if ( $img ) {
+		$upload_dir       = wp_upload_dir();
+		$response_headers = array();
+		if ( $untrusted_url ) {
+			$response = wp_safe_remote_get(
+				$url,
+				array(
+					'timeout'             => 30,
+					'redirection'         => 5,
+					'limit_response_size' => 20 * MB_IN_BYTES,
+				)
+			);
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return false;
+			}
+			$img = wp_remote_retrieve_body( $response );
+			if ( wp_remote_retrieve_header( $response, 'content-disposition' ) ) {
+				$response_headers[] = 'content-disposition: ' . wp_remote_retrieve_header( $response, 'content-disposition' );
+			}
+		} else {
+			$img              = @file_get_contents( $url, false, $stream_context ); //phpcs:ignore WordPress.WP.AlternativeFunctions,WordPress.PHP.NoSilencedErrors
 			$response_headers = function_exists( 'http_get_last_response_headers' ) ? http_get_last_response_headers() : ( $http_response_header ?? array() );
+		}
+		if ( $img ) {
 			if ( ! empty( $response_headers ) ) {
-				foreach ( $response_headers as $header ) {
+				foreach ( (array) $response_headers as $header ) {
 					if ( stripos( $header, 'content-disposition' ) !== false && preg_match( '/filename\*?=(?:UTF-8\'\')?"?([^";]+)"?/i', $header, $matches ) ) {
 						$save_as = rawurldecode( $matches[1] );
 					}

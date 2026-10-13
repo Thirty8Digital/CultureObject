@@ -248,10 +248,10 @@ class Modes extends \CultureObject\Provider {
 			throw new ModesException( __( 'Invalid AJAX import request', 'culture-object' ) );
 		}
 
-		$start     = $_POST['start'];
-		$import_id = $_POST['import_id'];
+		$start     = ( 'cleanup' === $_POST['start'] ) ? 'cleanup' : max( 0, intval( $_POST['start'] ) );
+		$import_id = sanitize_key( wp_unslash( $_POST['import_id'] ) );
 
-		if ( $start == 'cleanup' ) {
+		if ( 'cleanup' === $start ) {
 			ini_set( 'memory_limit', '2048M' );
 
 			$objects        = get_option( 'cos_modes_import_' . $import_id, array() );
@@ -358,7 +358,7 @@ class Modes extends \CultureObject\Provider {
 					if ( filter_var( $obj[ $image_field ], FILTER_VALIDATE_URL ) === false || ! wp_http_validate_url( $obj[ $image_field ] ) ) { // Uploaded data is untrusted: refuse internal/loopback hosts.
 						$import_status[] = __( "Failed to import image as the selected field doesn't contain a valid URL", 'culture-object' );
 					} else {
-						$image_id = $helper->add_image_to_gallery_from_url( $obj[ $image_field ], $obj[ $id_field ], $context );
+						$image_id = $helper->add_image_to_gallery_from_url( $obj[ $image_field ], (string) $obj[ $id_field ], $context, 0, false, true );
 						set_post_thumbnail( $obj_id, $image_id );
 						$import_status[] = __( 'Downloaded and saved image', 'culture-object' ) . ': ' . esc_html( $obj[ $title_field ] ) . ' [' . intval( $obj_id ) . ']';
 					}
@@ -508,8 +508,9 @@ class Modes extends \CultureObject\Provider {
 	}
 
 	function update_object_meta( $post_id, $obj ) {
+		$helper = new \CultureObject\Helper();
 		foreach ( $obj as $key => $value ) {
-			if ( ! empty( $value ) ) {
+			if ( ! empty( $value ) && $helper->is_safe_meta_key( trim( $key ) ) ) {
 				update_post_meta( $post_id, trim( $key ), trim( $value ) );
 			}
 		}

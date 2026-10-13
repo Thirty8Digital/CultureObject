@@ -298,7 +298,10 @@ class SWCE extends \CultureObject\Provider {
 			if ( empty( $value ) ) {
 				continue;
 			}
-			$key          = strtolower( $key );
+			$key = strtolower( $key );
+			if ( ! ( new \CultureObject\Helper() )->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			$meta[ $key ] = $value;
 		}
 
@@ -334,7 +337,10 @@ class SWCE extends \CultureObject\Provider {
 			if ( empty( $value ) ) {
 				continue;
 			}
-			$key          = strtolower( $key );
+			$key = strtolower( $key );
+			if ( ! ( new \CultureObject\Helper() )->is_safe_meta_key( $key ) ) {
+				continue;
+			}
 			$meta[ $key ] = $value;
 		}
 
